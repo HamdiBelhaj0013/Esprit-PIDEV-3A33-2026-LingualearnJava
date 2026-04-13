@@ -1,0 +1,157 @@
+/* ──────────────────────────────────────────────
+   LinguaLearn — Global Stylesheet
+   ────────────────────────────────────────────── */
+
+/* ── Shared defaults ── */
+.label {
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-text-fill: #333;
+}
+
+/* ═══════════════════════════════════════════════
+   LOGIN SCREEN
+   ═══════════════════════════════════════════════ */
+
+.root-pane {
+    -fx-background-color: #f0f2f5;
+}
+
+.login-card {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 24, 0, 0, 6);
+}
+
+.app-title {
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1a237e;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: #757575;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.field-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #424242;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.input-field {
+    -fx-pref-height: 42px;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-border-color: #ddd;
+    -fx-border-width: 1.5;
+    -fx-font-size: 14px;
+    -fx-padding: 8 12;
+    -fx-background-color: #fafafa;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.input-field:focused {
+    -fx-border-color: #1a237e;
+    -fx-background-color: white;
+}
+
+.login-btn {
+    -fx-background-color: #1a237e;
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-pref-height: 44px;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.login-btn:hover {
+    -fx-background-color: #283593;
+}
+
+.login-btn:pressed {
+    -fx-background-color: #0d1b6b;
+}
+
+.error-label {
+    -fx-text-fill: #d32f2f;
+    -fx-font-size: 13px;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* ═══════════════════════════════════════════════
+   DASHBOARD — SHARED
+   ═══════════════════════════════════════════════ */
+
+.dashboard-root {
+    -fx-background-color: #f5f6fa;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.dashboard-header {
+    -fx-background-color: #1a237e;
+    -fx-padding: 16 32;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 8, 0, 0, 2);
+}
+
+.header-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.welcome-title {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1a237e;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.welcome-subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: #757575;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.role-badge-admin {
+    -fx-background-color: #ffcc02;
+    -fx-text-fill: #1a237e;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-padding: 4 10;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.role-badge-user {
+    -fx-background-color: rgba(255,255,255,0.25);
+    -fx-text-fill: white;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-padding: 4 10;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.logout-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: rgba(255,255,255,0.7);
+    -fx-border-width: 1.5;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+    -fx-padding: 6 16;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.logout-btn:hover {
+    -fx-background-color: rgba(255,255,255,0.15);
+}

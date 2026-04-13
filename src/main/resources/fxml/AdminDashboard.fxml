@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.controller.AdminDashboardController"
+      prefWidth="900.0" prefHeight="600.0"
+      styleClass="dashboard-root"
+      stylesheets="@../css/style.css"
+      spacing="0.0">
+
+    <!-- ── Header bar ─────────────────────────── -->
+    <HBox styleClass="dashboard-header" alignment="CENTER_LEFT" spacing="16.0">
+        <Label text="LinguaLearn" styleClass="header-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label text="ADMIN" styleClass="role-badge-admin"/>
+        <Button text="Logout" styleClass="logout-btn" onAction="#handleLogout"/>
+    </HBox>
+
+    <Separator/>
+
+    <!-- ── Welcome area ───────────────────────── -->
+    <VBox alignment="CENTER" spacing="12.0" VBox.vgrow="ALWAYS">
+        <padding>
+            <Insets top="60.0" right="60.0" bottom="60.0" left="60.0"/>
+        </padding>
+
+        <Label fx:id="welcomeLabel"
+               text="Welcome, Admin!"
+               styleClass="welcome-title"/>
+
+        <Label fx:id="userInfoLabel"
+               text=""
+               styleClass="welcome-subtitle"
+               wrapText="true"/>
+    </VBox>
+
+</VBox>
