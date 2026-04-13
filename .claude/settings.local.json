@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//mnt/skills/public/**)",
+      "Bash(mvn compile:*)",
+      "Bash(xargs -I{} sh -c '\"$\\(dirname {}\\)/java\" -version 2>&1')",
+      "Bash(/c/Users/belha/.jdks/openjdk-23.0.1/bin/java -version)",
+      "Bash(/c/Users/belha/.m2/wrapper/dists/apache-maven-3.8.5-bin/5i5jha092a3i37g0paqnfr15e0/apache-maven-3.8.5/bin/mvn compile:*)"
+    ]
+  }
+}

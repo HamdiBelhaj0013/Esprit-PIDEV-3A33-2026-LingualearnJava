@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.controller.admin.UserDetailController"
+      styleClass="dialog-root"
+      stylesheets="@../../css/admin.css"
+      minWidth="680.0" spacing="0.0">
+
+    <!-- Header -->
+    <VBox spacing="6.0">
+        <padding>
+            <Insets top="20.0" right="24.0" bottom="14.0" left="24.0"/>
+        </padding>
+        <HBox alignment="CENTER_LEFT" spacing="12.0">
+            <Label fx:id="fullNameLabel" text="User Name" styleClass="dialog-title"/>
+            <Label fx:id="statusBadge"  text="active"    styleClass="badge-active"/>
+        </HBox>
+        <Label fx:id="emailLabel" text="email@example.com" styleClass="page-subtitle"/>
+    </VBox>
+    <Separator/>
+
+    <!-- Scrollable body -->
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="scroll-pane">
+        <VBox spacing="20.0">
+            <padding>
+                <Insets top="20.0" right="24.0" bottom="20.0" left="24.0"/>
+            </padding>
+
+            <!-- ── PROFILE section ── -->
+            <VBox spacing="10.0">
+                <Label text="Profile" styleClass="section-title"/>
+                <Separator/>
+                <HBox spacing="8.0"><Label text="Roles:"       styleClass="info-label"/>
+                                    <Label fx:id="rolesLabel"  styleClass="info-value"/></HBox>
+                <HBox spacing="8.0"><Label text="Verified:"    styleClass="info-label"/>
+                                    <Label fx:id="verifiedLabel" styleClass="info-value"/></HBox>
+                <HBox spacing="8.0"><Label text="Banned:"      styleClass="info-label"/>
+                                    <Label fx:id="bannedLabel" styleClass="info-value"/></HBox>
+                <HBox spacing="8.0"><Label text="Ban reason:"  styleClass="info-label"/>
+                                    <Label fx:id="banReasonLabel" styleClass="info-value" wrapText="true"/></HBox>
+                <HBox spacing="8.0"><Label text="Joined:"      styleClass="info-label"/>
+                                    <Label fx:id="joinedLabel" styleClass="info-value"/></HBox>
+            </VBox>
+
+            <!-- ── SUBSCRIPTION section ── -->
+            <VBox spacing="10.0">
+                <Label text="Subscription" styleClass="section-title"/>
+                <Separator/>
+                <HBox spacing="8.0"><Label text="Plan:"        styleClass="info-label"/>
+                                    <Label fx:id="planLabel"   styleClass="info-value"/></HBox>
+                <HBox spacing="8.0"><Label text="Premium:"     styleClass="info-label"/>
+                                    <Label fx:id="premiumLabel" styleClass="info-value"/></HBox>
+                <HBox spacing="8.0"><Label text="Expiry:"      styleClass="info-label"/>
+                                    <Label fx:id="expiryLabel" styleClass="info-value"/></HBox>
+                <HBox spacing="8.0"><Label text="Last payment:" styleClass="info-label"/>
+                                    <Label fx:id="paymentLabel" styleClass="info-value"/></HBox>
+
+                <!-- Premium action buttons -->
+                <HBox fx:id="premiumActions" spacing="8.0">
+                    <Button fx:id="grantMonthlyBtn" text="★ Grant Monthly"
+                            styleClass="btn-warning" onAction="#handleGrantMonthly"/>
+                    <Button fx:id="grantYearlyBtn"  text="★ Grant Yearly"
+                            styleClass="btn-warning" onAction="#handleGrantYearly"/>
+                    <Button fx:id="revokePremiumBtn" text="Revoke Premium"
+                            styleClass="btn-outline"  onAction="#handleRevokePremium"/>
+                </HBox>
+            </VBox>
+
+            <!-- ── LEARNING STATS section ── -->
+            <VBox spacing="10.0">
+                <Label text="Learning Stats" styleClass="section-title"/>
+                <Separator/>
+                <HBox spacing="8.0"><Label text="Total XP:"       styleClass="info-label"/>
+                                    <Label fx:id="xpLabel"        styleClass="info-value"/></HBox>
+                <HBox spacing="8.0"><Label text="Words learned:"  styleClass="info-label"/>
+                                    <Label fx:id="wordsLabel"     styleClass="info-value"/></HBox>
+                <HBox spacing="8.0"><Label text="Minutes studied:" styleClass="info-label"/>
+                                    <Label fx:id="minutesLabel"   styleClass="info-value"/></HBox>
+                <HBox spacing="8.0"><Label text="Last session:"   styleClass="info-label"/>
+                                    <Label fx:id="lastSessionLabel" styleClass="info-value"/></HBox>
+            </VBox>
+
+            <!-- ── RECENT NOTIFICATIONS section ── -->
+            <VBox spacing="10.0">
+                <Label text="Recent Notifications" styleClass="section-title"/>
+                <Separator/>
+                <VBox fx:id="notifList" spacing="6.0">
+                    <Label text="No notifications" styleClass="page-subtitle"/>
+                </VBox>
+            </VBox>
+
+        </VBox>
+    </ScrollPane>
+
+    <Separator/>
+
+    <!-- Action footer -->
+    <VBox styleClass="dialog-footer" spacing="10.0">
+        <Label text="Actions" styleClass="form-section-title"/>
+        <HBox spacing="10.0" alignment="CENTER_LEFT">
+            <Button text="Edit User"   styleClass="btn-primary"       onAction="#handleEdit"/>
+            <Button fx:id="toggleStatusBtn" text="Suspend"
+                    styleClass="btn-warning"                          onAction="#handleToggleStatus"/>
+            <Button text="Edit Stats"  styleClass="btn-outline"       onAction="#handleEditStats"/>
+            <Button text="Send Notif"  styleClass="btn-outline"       onAction="#handleSendNotif"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Delete User" styleClass="btn-danger"        onAction="#handleDelete"/>
+            <Button text="Close"       styleClass="btn-outline-muted" onAction="#handleClose"/>
+        </HBox>
+    </VBox>
+</VBox>
