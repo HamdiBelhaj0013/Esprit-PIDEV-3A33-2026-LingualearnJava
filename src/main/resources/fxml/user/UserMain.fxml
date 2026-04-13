@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.controller.user.UserMainController"
+            prefWidth="1100.0" prefHeight="700.0"
+            styleClass="user-root"
+            stylesheets="@../../css/user.css">
+
+    <!-- ── LEFT SIDEBAR ──────────────────────── -->
+    <left>
+        <VBox styleClass="sidebar" spacing="0.0">
+
+            <Label text="LinguaLearn" styleClass="sidebar-brand"/>
+
+            <!-- Sidebar user info -->
+            <VBox styleClass="sidebar-user-info" spacing="4" alignment="CENTER">
+                <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+                <Label fx:id="sidebarAvatarLabel" text="?" styleClass="sidebar-avatar"/>
+                <Label fx:id="sidebarNameLabel" text="User" styleClass="sidebar-user-name"/>
+                <Label fx:id="sidebarEmailLabel" text="" styleClass="sidebar-user-email"/>
+            </VBox>
+
+            <Label text="NAVIGATION" styleClass="sidebar-section"/>
+
+            <Button fx:id="btnDashboard" text="  Dashboard"
+                    styleClass="sidebar-item" onAction="#showDashboard"
+                    maxWidth="Infinity"/>
+            <Button fx:id="btnProfile" text="  My Profile"
+                    styleClass="sidebar-item" onAction="#showProfile"
+                    maxWidth="Infinity"/>
+
+            <Label text="COMING SOON" styleClass="sidebar-section"/>
+            <Button text="  Courses"  styleClass="sidebar-item" disable="true" maxWidth="Infinity"/>
+            <Button text="  Progress" styleClass="sidebar-item" disable="true" maxWidth="Infinity"/>
+            <Button text="  Forum"    styleClass="sidebar-item" disable="true" maxWidth="Infinity"/>
+
+            <Region VBox.vgrow="ALWAYS"/>
+
+            <Button text="  Logout"
+                    styleClass="sidebar-item, sidebar-item-logout"
+                    onAction="#handleLogout"
+                    maxWidth="Infinity"/>
+        </VBox>
+    </left>
+
+    <!-- ── MAIN AREA (topbar + content) ─────── -->
+    <center>
+        <VBox>
+            <!-- Top bar -->
+            <HBox styleClass="user-topbar" alignment="CENTER_LEFT" spacing="12.0">
+                <Label fx:id="topbarTitle" text="My Profile" styleClass="topbar-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="Logout" styleClass="topbar-logout" onAction="#handleLogout"/>
+            </HBox>
+
+            <!-- Dynamic content pane -->
+            <StackPane fx:id="contentArea" VBox.vgrow="ALWAYS" styleClass="content-area"/>
+        </VBox>
+    </center>
+
+</BorderPane>
