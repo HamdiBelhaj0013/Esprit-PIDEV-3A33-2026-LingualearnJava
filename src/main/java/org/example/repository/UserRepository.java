@@ -78,28 +78,65 @@ public class UserRepository {
         User managed = em.contains(user) ? user : em.merge(user);
         em.remove(managed);
     }
+    /** Legacy overload — delegates to the full version with no role/sort. */
     public List<User> findAdvanced(String search, String status, String plan, int page, int pageSize) {
-        String jpql = "SELECT u FROM User u WHERE 1=1" +
-                (search != null && !search.isBlank()
-                        ? " AND (LOWER(u.email) LIKE :search OR LOWER(u.firstName) LIKE :search OR LOWER(u.lastName) LIKE :search)"
-                        : "") +
-                (status != null && !status.isBlank() ? " AND u.status = :status" : "") +
-                (plan   != null && !plan.isBlank()   ? " AND u.subscriptionPlan = :plan"   : "") +
-                " ORDER BY u.createdAt DESC";
+        return findAdvanced(search, status, null, plan, null, page, pageSize);
+    }
 
-        var query = em.createQuery(jpql, User.class);
-
+    /** Full advanced search with role filter and sort. */
+    public List<User> findAdvanced(String search, String status, String role,
+                                   String plan, String sort, int page, int pageSize) {
+        StringBuilder jpql = new StringBuilder("SELECT u FROM User u WHERE 1=1");
+        if (search != null && !search.isBlank())
+            jpql.append(" AND (LOWER(u.email) LIKE :search OR LOWER(u.firstName) LIKE :search OR LOWER(u.lastName) LIKE :search)");
+        if (status != null && !status.isBlank())
+            jpql.append(" AND u.status = :status");
+        if (role != null && !role.isBlank())
+            jpql.append(" AND u.roles LIKE :role");
+        if (plan != null && !plan.isBlank())
+            jpql.append(" AND u.subscriptionPlan = :plan");
+        jpql.append(switch (sort != null ? sort : "") {
+            case "name"    -> " ORDER BY u.firstName ASC, u.lastName ASC";
+            case "email"   -> " ORDER BY u.email ASC";
+            case "status"  -> " ORDER BY u.status ASC";
+            case "premium" -> " ORDER BY u.isPremium DESC, u.subscriptionPlan ASC";
+            default        -> " ORDER BY u.createdAt DESC";
+        });
+        var query = em.createQuery(jpql.toString(), User.class);
         if (search != null && !search.isBlank())
             query.setParameter("search", "%" + search.toLowerCase() + "%");
         if (status != null && !status.isBlank())
             query.setParameter("status", status);
+        if (role != null && !role.isBlank())
+            query.setParameter("role", "%\"" + role + "\"%");
         if (plan != null && !plan.isBlank())
             query.setParameter("plan", plan);
+        return query.setFirstResult((page - 1) * pageSize)
+                    .setMaxResults(pageSize)
+                    .getResultList();
+    }
 
-        return query
-                .setFirstResult((page - 1) * pageSize)
-                .setMaxResults(pageSize)
-                .getResultList();
+    /** Count matching records for pagination. */
+    public long countAdvanced(String search, String status, String role, String plan) {
+        StringBuilder jpql = new StringBuilder("SELECT COUNT(u) FROM User u WHERE 1=1");
+        if (search != null && !search.isBlank())
+            jpql.append(" AND (LOWER(u.email) LIKE :search OR LOWER(u.firstName) LIKE :search OR LOWER(u.lastName) LIKE :search)");
+        if (status != null && !status.isBlank())
+            jpql.append(" AND u.status = :status");
+        if (role != null && !role.isBlank())
+            jpql.append(" AND u.roles LIKE :role");
+        if (plan != null && !plan.isBlank())
+            jpql.append(" AND u.subscriptionPlan = :plan");
+        var query = em.createQuery(jpql.toString(), Long.class);
+        if (search != null && !search.isBlank())
+            query.setParameter("search", "%" + search.toLowerCase() + "%");
+        if (status != null && !status.isBlank())
+            query.setParameter("status", status);
+        if (role != null && !role.isBlank())
+            query.setParameter("role", "%\"" + role + "\"%");
+        if (plan != null && !plan.isBlank())
+            query.setParameter("plan", plan);
+        return query.getSingleResult();
     }
 
     public List<User> findExpiringSubscriptions(LocalDateTime before) {

@@ -11,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import org.example.controller.admin.AdminMainController;
 import org.example.entity.User;
 import org.example.service.UserService;
 
@@ -55,24 +56,30 @@ public class LoginController {
     }
 
     private void navigateToDashboard(User user, boolean isAdmin) throws IOException {
-        String fxmlPath = isAdmin ? "/fxml/AdminDashboard.fxml" : "/fxml/UserDashboard.fxml";
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-        Parent root = loader.load();
+        Stage stage = (Stage) emailField.getScene().getWindow();
 
         if (isAdmin) {
-            AdminDashboardController ctrl = loader.getController();
+            FXMLLoader loader = new FXMLLoader(
+                getClass().getResource("/fxml/admin/AdminMain.fxml"));
+            Parent root = loader.load();
+            AdminMainController ctrl = loader.getController();
             ctrl.setUser(user);
+            stage.setScene(new Scene(root));
+            stage.setTitle("LinguaLearn — Admin");
+            stage.setMinWidth(1100);
+            stage.setMinHeight(700);
         } else {
+            FXMLLoader loader = new FXMLLoader(
+                getClass().getResource("/fxml/UserDashboard.fxml"));
+            Parent root = loader.load();
             UserDashboardController ctrl = loader.getController();
             ctrl.setUser(user);
+            stage.setScene(new Scene(root));
+            stage.setTitle("LinguaLearn — Dashboard");
+            stage.setMinWidth(800);
+            stage.setMinHeight(600);
         }
 
-        Stage stage = (Stage) emailField.getScene().getWindow();
-        Scene scene  = new Scene(root);
-        stage.setScene(scene);
-        stage.setTitle("LinguaLearn — " + (isAdmin ? "Admin Panel" : "Dashboard"));
-        stage.setMinWidth(800);
-        stage.setMinHeight(600);
         stage.centerOnScreen();
     }
 
