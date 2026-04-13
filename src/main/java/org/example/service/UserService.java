@@ -98,7 +98,16 @@ public class UserService {
 
     public List<User> findAdvanced(String search, String status, String plan,
                                    int page, int pageSize) {
-        return userRepository.findAdvanced(search, status, plan, page, pageSize);
+        return userRepository.findAdvanced(search, status, null, plan, null, page, pageSize);
+    }
+
+    public List<User> findAdvanced(String search, String status, String role,
+                                   String plan, String sort, int page, int pageSize) {
+        return userRepository.findAdvanced(search, status, role, plan, sort, page, pageSize);
+    }
+
+    public long countAdvanced(String search, String status, String role, String plan) {
+        return userRepository.countAdvanced(search, status, role, plan);
     }
 
     public List<User> search(String term) { return userRepository.search(term); }
@@ -251,6 +260,20 @@ public class UserService {
             throw new RuntimeException(e);
         }
         return stats;
+    }
+
+    // ── LEARNING STATS UPDATE ────────────────────────────────────────────────
+
+    public void updateLearningStats(LearningStats stats) {
+        EntityTransaction tx = em.getTransaction();
+        tx.begin();
+        try {
+            em.merge(stats);
+            tx.commit();
+        } catch (Exception e) {
+            if (tx.isActive()) tx.rollback();
+            throw new RuntimeException("Could not update learning stats: " + e.getMessage(), e);
+        }
     }
 
     // ── AUTH ──────────────────────────────────────────────────────────────────
