@@ -12,6 +12,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.example.controller.admin.AdminMainController;
+import org.example.controller.user.UserMainController;
 import org.example.entity.User;
 import org.example.service.UserService;
 
@@ -70,14 +71,14 @@ public class LoginController {
             stage.setMinHeight(700);
         } else {
             FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/fxml/UserDashboard.fxml"));
+                getClass().getResource("/fxml/user/UserMain.fxml"));
             Parent root = loader.load();
-            UserDashboardController ctrl = loader.getController();
+            UserMainController ctrl = loader.getController();
             ctrl.setUser(user);
             stage.setScene(new Scene(root));
             stage.setTitle("LinguaLearn — Dashboard");
-            stage.setMinWidth(800);
-            stage.setMinHeight(600);
+            stage.setMinWidth(1100);
+            stage.setMinHeight(700);
         }
 
         stage.centerOnScreen();

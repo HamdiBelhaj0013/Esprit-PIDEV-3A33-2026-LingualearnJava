@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.controller.user.UserProfileController"
+            fitToWidth="true"
+            hbarPolicy="NEVER"
+            styleClass="scroll-pane">
+
+    <VBox spacing="20" styleClass="profile-page">
+        <padding><Insets top="28" right="28" bottom="28" left="28"/></padding>
+
+        <!-- Page header -->
+        <Label text="My Profile" styleClass="page-title"/>
+        <Label text="Manage your personal information and account security" styleClass="page-subtitle"/>
+
+        <!-- Global banner (success or error) -->
+        <Label fx:id="bannerLabel" text="" wrapText="true"
+               visible="false" managed="false" maxWidth="Infinity"/>
+
+        <!-- ── Two-card row ─────────────────────────────────────────── -->
+        <HBox spacing="24">
+
+            <!-- ══════════════════════════════════════
+                 CARD 1 — PERSONAL INFORMATION
+            ══════════════════════════════════════ -->
+            <VBox styleClass="profile-card" HBox.hgrow="ALWAYS" spacing="0">
+
+                <!-- ── DISPLAY MODE ── -->
+                <VBox fx:id="displayModeBox" spacing="16">
+
+                    <!-- Avatar row -->
+                    <HBox spacing="16" alignment="CENTER_LEFT">
+                        <!-- Avatar circle -->
+                        <Label fx:id="avatarLabel" text="JD"
+                               styleClass="user-avatar-circle"/>
+
+                        <!-- Name / email / meta -->
+                        <VBox spacing="5">
+                            <Label fx:id="displayName" text=""
+                                   styleClass="profile-display-name"/>
+                            <Label fx:id="displayEmail" text=""
+                                   styleClass="profile-display-email"/>
+                            <Label fx:id="displayMemberSince" text=""
+                                   styleClass="profile-display-meta"/>
+                            <Label fx:id="statusBadge" text="Active"
+                                   styleClass="badge-active"/>
+                        </VBox>
+                    </HBox>
+
+                    <Button text="✏  Edit Profile" onAction="#startEdit"
+                            styleClass="btn-outline, btn-sm"/>
+                </VBox>
+
+                <!-- ── EDIT MODE (hidden by default) ── -->
+                <VBox fx:id="editModeBox" visible="false" managed="false"
+                      spacing="8" styleClass="edit-mode-form">
+
+                    <Separator/>
+
+                    <Label text="Edit Personal Information"
+                           styleClass="form-section-title"/>
+
+                    <!-- First Name -->
+                    <Label text="First Name" styleClass="form-label"/>
+                    <TextField fx:id="firstNameField" styleClass="form-input"
+                               promptText="First name"/>
+                    <Label fx:id="firstNameError" text="" styleClass="field-error"
+                           visible="false" managed="false"/>
+
+                    <!-- Last Name -->
+                    <Label text="Last Name" styleClass="form-label"/>
+                    <TextField fx:id="lastNameField" styleClass="form-input"
+                               promptText="Last name"/>
+                    <Label fx:id="lastNameError" text="" styleClass="field-error"
+                           visible="false" managed="false"/>
+
+                    <!-- Email -->
+                    <Label text="Email Address" styleClass="form-label"/>
+                    <TextField fx:id="emailField" styleClass="form-input"
+                               promptText="Email address"/>
+                    <Label fx:id="emailError" text="" styleClass="field-error"
+                           visible="false" managed="false"/>
+
+                    <!-- Buttons -->
+                    <HBox spacing="12" style="-fx-padding: 4 0 0 0;">
+                        <Button fx:id="saveButton" text="Save Changes"
+                                onAction="#saveProfile"
+                                styleClass="btn-primary"
+                                disable="true"/>
+                        <Button text="Cancel" onAction="#cancelEdit"
+                                styleClass="btn-outline-muted"/>
+                    </HBox>
+                </VBox>
+
+            </VBox>
+
+            <!-- ══════════════════════════════════════
+                 CARD 2 — CHANGE PASSWORD
+            ══════════════════════════════════════ -->
+            <VBox styleClass="profile-card" HBox.hgrow="ALWAYS" spacing="8">
+
+                <Label text="Change Password" styleClass="form-section-title"/>
+                <Label text="Keep your account secure with a strong password"
+                       styleClass="page-subtitle"/>
+
+                <VBox spacing="8" style="-fx-padding: 12 0 0 0;">
+
+                    <!-- Current Password -->
+                    <Label text="Current Password" styleClass="form-label"/>
+                    <HBox styleClass="pw-field-box" spacing="0">
+                        <StackPane HBox.hgrow="ALWAYS">
+                            <PasswordField fx:id="currentPwField" styleClass="form-input"
+                                           promptText="Current password"
+                                           maxWidth="Infinity"/>
+                            <TextField fx:id="currentPwVisible" styleClass="form-input"
+                                       promptText="Current password"
+                                       maxWidth="Infinity"
+                                       visible="false" managed="false"/>
+                        </StackPane>
+                        <Button fx:id="currentPwToggle" text="👁"
+                                styleClass="pw-toggle-btn"
+                                onAction="#toggleCurrentPw"
+                                focusTraversable="false"/>
+                    </HBox>
+
+                    <!-- New Password -->
+                    <Label text="New Password" styleClass="form-label"/>
+                    <HBox styleClass="pw-field-box" spacing="0">
+                        <StackPane HBox.hgrow="ALWAYS">
+                            <PasswordField fx:id="newPwField" styleClass="form-input"
+                                           promptText="New password"
+                                           maxWidth="Infinity"/>
+                            <TextField fx:id="newPwVisible" styleClass="form-input"
+                                       promptText="New password"
+                                       maxWidth="Infinity"
+                                       visible="false" managed="false"/>
+                        </StackPane>
+                        <Button fx:id="newPwToggle" text="👁"
+                                styleClass="pw-toggle-btn"
+                                onAction="#toggleNewPw"
+                                focusTraversable="false"/>
+                    </HBox>
+
+                    <!-- Strength bar -->
+                    <HBox fx:id="strengthBar" spacing="4" style="-fx-padding: 2 0 0 0;">
+                        <Region fx:id="seg1" styleClass="strength-segment" HBox.hgrow="ALWAYS"/>
+                        <Region fx:id="seg2" styleClass="strength-segment" HBox.hgrow="ALWAYS"/>
+                        <Region fx:id="seg3" styleClass="strength-segment" HBox.hgrow="ALWAYS"/>
+                        <Region fx:id="seg4" styleClass="strength-segment" HBox.hgrow="ALWAYS"/>
+                    </HBox>
+                    <Label fx:id="strengthLabel" text="" styleClass="field-error"/>
+
+                    <!-- Confirm Password -->
+                    <Label text="Confirm New Password" styleClass="form-label"/>
+                    <HBox styleClass="pw-field-box" spacing="0">
+                        <StackPane HBox.hgrow="ALWAYS">
+                            <PasswordField fx:id="confirmPwField" styleClass="form-input"
+                                           promptText="Confirm new password"
+                                           maxWidth="Infinity"/>
+                            <TextField fx:id="confirmPwVisible" styleClass="form-input"
+                                       promptText="Confirm new password"
+                                       maxWidth="Infinity"
+                                       visible="false" managed="false"/>
+                        </StackPane>
+                        <Button fx:id="confirmPwToggle" text="👁"
+                                styleClass="pw-toggle-btn"
+                                onAction="#toggleConfirmPw"
+                                focusTraversable="false"/>
+                    </HBox>
+                    <Label fx:id="matchLabel" text="" styleClass="field-error"/>
+
+                    <!-- Update button -->
+                    <Button fx:id="updatePwButton" text="Update Password"
+                            onAction="#updatePassword"
+                            styleClass="btn-primary"
+                            disable="true"
+                            style="-fx-padding: 10 20;"/>
+
+                </VBox>
+            </VBox>
+
+        </HBox>
+    </VBox>
+</ScrollPane>
