@@ -194,8 +194,11 @@ public class UserProfileController {
             currentUser.setEmail(email);
             svc.updateName(currentUser, firstName, lastName);
 
-            SessionManager.setCurrentUser(currentUser);
-            UserMainController.refreshUserInfo();
+            // Reload from DB so LearningStats and all fields are current in the session
+            svc.findById(currentUser.getId()).ifPresent(fresh -> {
+                SessionManager.setCurrentUser(fresh);
+                UserMainController.refreshUserInfo();
+            });
 
         } catch (Exception ex) {
             showBanner("Error saving profile: " + ex.getMessage(), false);

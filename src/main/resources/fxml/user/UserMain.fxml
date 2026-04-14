@@ -35,14 +35,20 @@
             <Button fx:id="btnDashboard" text="  Dashboard"
                     styleClass="sidebar-item" onAction="#showDashboard"
                     maxWidth="Infinity"/>
+            <Button text="  My Courses"        styleClass="sidebar-item" onAction="#showCourses"        maxWidth="Infinity"/>
+            <Button text="  Practice"           styleClass="sidebar-item" onAction="#showPractice"       maxWidth="Infinity"/>
+            <Button text="  Forum"              styleClass="sidebar-item" onAction="#showForum"          maxWidth="Infinity"/>
+            <Button text="  FAQ"                styleClass="sidebar-item" onAction="#showFAQ"            maxWidth="Infinity"/>
+            <Button text="  Mes réclamations"   styleClass="sidebar-item" onAction="#showReclamations"   maxWidth="Infinity"/>
+            <Button text="  Mock Tests"         styleClass="sidebar-item" onAction="#showMockTests"      maxWidth="Infinity"/>
+
+            <Label text="ACCOUNT" styleClass="sidebar-section"/>
+
             <Button fx:id="btnProfile" text="  My Profile"
                     styleClass="sidebar-item" onAction="#showProfile"
                     maxWidth="Infinity"/>
-
-            <Label text="COMING SOON" styleClass="sidebar-section"/>
-            <Button text="  Courses"  styleClass="sidebar-item" disable="true" maxWidth="Infinity"/>
-            <Button text="  Progress" styleClass="sidebar-item" disable="true" maxWidth="Infinity"/>
-            <Button text="  Forum"    styleClass="sidebar-item" disable="true" maxWidth="Infinity"/>
+            <Button text="  Notifications"      styleClass="sidebar-item" onAction="#showNotifications"  maxWidth="Infinity"/>
+            <Button text="  Plans &amp; Billing" styleClass="sidebar-item" onAction="#showBilling"       maxWidth="Infinity"/>
 
             <Region VBox.vgrow="ALWAYS"/>
 
