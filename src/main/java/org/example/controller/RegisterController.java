@@ -8,7 +8,12 @@ import javafx.scene.control.TextField;
 import org.example.service.UserService;
 import org.example.util.StageManager;
 
+import java.util.regex.Pattern;
+
 public class RegisterController {
+
+    private static final Pattern EMAIL_PATTERN =
+        Pattern.compile("^[\\w._%+\\-]+@[\\w.\\-]+\\.[a-zA-Z]{2,}$");
 
     @FXML private TextField     firstNameField;
     @FXML private TextField     lastNameField;
@@ -23,55 +28,77 @@ public class RegisterController {
     @FXML private Label confirmPasswordError;
     @FXML private Label generalError;
 
+    // ── Init ─────────────────────────────────────────────────────────────────
+
+    @FXML
+    public void initialize() {
+        firstNameField.textProperty().addListener((o, ov, nv)        -> clearError(firstNameError));
+        lastNameField.textProperty().addListener((o, ov, nv)         -> clearError(lastNameError));
+        emailField.textProperty().addListener((o, ov, nv)            -> clearError(emailError));
+        passwordField.textProperty().addListener((o, ov, nv)         -> clearError(passwordError));
+        confirmPasswordField.textProperty().addListener((o, ov, nv)  -> clearError(confirmPasswordError));
+    }
+
     // ── Handlers ─────────────────────────────────────────────────────────────
 
     @FXML
     private void handleRegister(ActionEvent event) {
         clearErrors();
 
-        String firstName      = firstNameField.getText().trim();
-        String lastName       = lastNameField.getText().trim();
-        String email          = emailField.getText().trim();
-        String password       = passwordField.getText();
+        String firstName       = firstNameField.getText().trim();
+        String lastName        = lastNameField.getText().trim();
+        String email           = emailField.getText().trim();
+        String password        = passwordField.getText();
         String confirmPassword = confirmPasswordField.getText();
-
-        boolean valid = true;
 
         if (firstName.isBlank()) {
             showError(firstNameError, "First name is required.");
-            valid = false;
-        } else if (firstName.length() < 2) {
+            return;
+        }
+        if (firstName.length() < 2) {
             showError(firstNameError, "At least 2 characters.");
-            valid = false;
+            return;
+        }
+        if (firstName.chars().anyMatch(Character::isDigit)) {
+            showError(firstNameError, "First name must not contain numbers.");
+            return;
         }
 
         if (lastName.isBlank()) {
             showError(lastNameError, "Last name is required.");
-            valid = false;
-        } else if (lastName.length() < 2) {
+            return;
+        }
+        if (lastName.length() < 2) {
             showError(lastNameError, "At least 2 characters.");
-            valid = false;
+            return;
+        }
+        if (lastName.chars().anyMatch(Character::isDigit)) {
+            showError(lastNameError, "Last name must not contain numbers.");
+            return;
         }
 
         if (email.isBlank()) {
             showError(emailError, "Email is required.");
-            valid = false;
+            return;
+        }
+        if (!EMAIL_PATTERN.matcher(email).matches()) {
+            showError(emailError, "Please enter a valid email address.");
+            return;
         }
 
         if (password.isEmpty()) {
             showError(passwordError, "Password is required.");
-            valid = false;
-        } else if (password.length() < 6) {
-            showError(passwordError, "At least 6 characters.");
-            valid = false;
+            return;
+        }
+        if (password.length() < 8) {
+            showError(passwordError, "At least 8 characters.");
+            return;
         }
 
         if (!password.equals(confirmPassword)) {
             showError(confirmPasswordError, "Passwords do not match.");
-            valid = false;
+            return;
         }
-
-        if (!valid) return;
 
         try {
             new UserService().registerUser(firstName, lastName, email, password);

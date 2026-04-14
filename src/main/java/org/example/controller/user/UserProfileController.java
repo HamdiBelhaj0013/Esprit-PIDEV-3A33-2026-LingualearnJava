@@ -16,8 +16,12 @@ import org.example.service.UserService;
 import org.example.util.SessionManager;
 
 import java.time.format.DateTimeFormatter;
+import java.util.regex.Pattern;
 
 public class UserProfileController {
+
+    private static final Pattern EMAIL_PATTERN =
+        Pattern.compile("^[\\w._%+\\-]+@[\\w.\\-]+\\.[a-zA-Z]{2,}$");
 
     // ── Card 1 — display mode ─────────────────────────────────────────────────
     @FXML private VBox   displayModeBox;
@@ -169,7 +173,7 @@ public class UserProfileController {
             showFieldError(lastNameError, "Last name must be at least 2 characters");
             valid = false;
         }
-        if (!email.contains("@") || !email.contains(".")) {
+        if (!EMAIL_PATTERN.matcher(email).matches()) {
             showFieldError(emailError, "Please enter a valid email address");
             valid = false;
         }
@@ -256,8 +260,8 @@ public class UserProfileController {
         }
 
         // 3. Minimum length
-        if (newPw.length() < 6) {
-            showBanner("New password must be at least 6 characters.", false);
+        if (newPw.length() < 8) {
+            showBanner("New password must be at least 8 characters.", false);
             return;
         }
 

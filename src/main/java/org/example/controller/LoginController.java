@@ -16,20 +16,42 @@ import org.example.service.UserService;
 import org.example.util.StageManager;
 
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 public class LoginController {
 
+    private static final Pattern EMAIL_PATTERN =
+        Pattern.compile("^[\\w._%+\\-]+@[\\w.\\-]+\\.[a-zA-Z]{2,}$");
+
     @FXML private TextField     emailField;
     @FXML private PasswordField passwordField;
+    @FXML private Label         emailError;
+    @FXML private Label         passwordError;
     @FXML private Label         errorLabel;
 
     @FXML
+    public void initialize() {
+        emailField.textProperty().addListener((o, ov, nv) -> clearFieldError(emailError));
+        passwordField.textProperty().addListener((o, ov, nv) -> clearFieldError(passwordError));
+    }
+
+    @FXML
     private void handleLogin(ActionEvent event) {
+        clearAllErrors();
+
         String email    = emailField.getText().trim();
         String password = passwordField.getText();
 
-        if (email.isEmpty() || password.isEmpty()) {
-            showError("Please enter your email and password.");
+        if (email.isBlank()) {
+            showFieldError(emailError, "Email is required.");
+            return;
+        }
+        if (!EMAIL_PATTERN.matcher(email).matches()) {
+            showFieldError(emailError, "Please enter a valid email address.");
+            return;
+        }
+        if (password.isEmpty()) {
+            showFieldError(passwordError, "Password is required.");
             return;
         }
 
@@ -92,5 +114,23 @@ public class LoginController {
         errorLabel.setText(message);
         errorLabel.setVisible(true);
         errorLabel.setManaged(true);
+    }
+
+    private void showFieldError(Label label, String message) {
+        label.setText(message);
+        label.setVisible(true);
+        label.setManaged(true);
+    }
+
+    private void clearFieldError(Label label) {
+        label.setText("");
+        label.setVisible(false);
+        label.setManaged(false);
+    }
+
+    private void clearAllErrors() {
+        clearFieldError(emailError);
+        clearFieldError(passwordError);
+        clearFieldError(errorLabel);
     }
 }

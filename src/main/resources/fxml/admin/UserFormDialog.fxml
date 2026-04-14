@@ -26,28 +26,28 @@
             <!-- First Name -->
             <VBox spacing="4.0">
                 <Label styleClass="form-label" text="First Name *" />
-                <TextField fx:id="firstNameField" maxWidth="Infinity" promptText="e.g. John" styleClass="form-input" />
+                <TextField fx:id="firstNameField" maxWidth="Infinity" promptText="First name" styleClass="form-input" />
                 <Label fx:id="firstNameError" managed="false" styleClass="form-error" visible="false" />
             </VBox>
 
             <!-- Last Name -->
             <VBox spacing="4.0">
                 <Label styleClass="form-label" text="Last Name *" />
-                <TextField fx:id="lastNameField" maxWidth="Infinity" promptText="e.g. Doe" styleClass="form-input" />
+                <TextField fx:id="lastNameField" maxWidth="Infinity" promptText="Last name" styleClass="form-input" />
                 <Label fx:id="lastNameError" managed="false" styleClass="form-error" visible="false" />
             </VBox>
 
             <!-- Email -->
             <VBox spacing="4.0">
                 <Label styleClass="form-label" text="Email Address *" />
-                <TextField fx:id="emailField" maxWidth="Infinity" promptText="john@example.com" styleClass="form-input" />
+                <TextField fx:id="emailField" maxWidth="Infinity" promptText="Email address" styleClass="form-input" />
                 <Label fx:id="emailError" managed="false" styleClass="form-error" visible="false" />
             </VBox>
 
             <!-- Password -->
             <VBox spacing="4.0">
                 <Label fx:id="passwordLabel" styleClass="form-label" text="Password *" />
-                <PasswordField fx:id="passwordField" maxWidth="Infinity" promptText="Min. 6 characters" styleClass="form-input" />
+                <PasswordField fx:id="passwordField" maxWidth="Infinity" promptText="Min. 8 characters" styleClass="form-input" />
                 <Label fx:id="passwordError" managed="false" styleClass="form-error" visible="false" />
             </VBox>
 

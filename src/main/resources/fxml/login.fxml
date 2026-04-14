@@ -21,18 +21,20 @@
         <Label styleClass="subtitle" text="Sign in to your account" />
 
         <!-- ── Email ───────────────────────────── -->
-        <VBox spacing="6.0">
+        <VBox spacing="4.0">
             <Label styleClass="field-label" text="Email" />
-            <TextField fx:id="emailField" promptText="your@email.com" styleClass="input-field" />
+            <TextField fx:id="emailField" promptText="Email address" styleClass="input-field" />
+            <Label fx:id="emailError" managed="false" styleClass="error-label" visible="false" />
         </VBox>
 
         <!-- ── Password ────────────────────────── -->
-        <VBox spacing="6.0">
+        <VBox spacing="4.0">
             <Label styleClass="field-label" text="Password" />
             <PasswordField fx:id="passwordField" promptText="••••••••" styleClass="input-field" />
+            <Label fx:id="passwordError" managed="false" styleClass="error-label" visible="false" />
         </VBox>
 
-        <!-- ── Error message ───────────────────── -->
+        <!-- ── General error message ───────────── -->
         <Label fx:id="errorLabel" managed="false" maxWidth="292.0" styleClass="error-label" visible="false" wrapText="true" />
 
         <!-- ── Login button ────────────────────── -->

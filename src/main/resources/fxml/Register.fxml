@@ -28,7 +28,7 @@
         <!-- ── First Name ──────────────────────────── -->
         <VBox spacing="4.0">
             <Label styleClass="field-label" text="First Name" />
-            <TextField fx:id="firstNameField" promptText="John"
+            <TextField fx:id="firstNameField" promptText="First name"
                        styleClass="input-field" />
             <Label fx:id="firstNameError" managed="false"
                    styleClass="error-label" visible="false" />
@@ -37,7 +37,7 @@
         <!-- ── Last Name ───────────────────────────── -->
         <VBox spacing="4.0">
             <Label styleClass="field-label" text="Last Name" />
-            <TextField fx:id="lastNameField" promptText="Doe"
+            <TextField fx:id="lastNameField" promptText="Last name"
                        styleClass="input-field" />
             <Label fx:id="lastNameError" managed="false"
                    styleClass="error-label" visible="false" />
