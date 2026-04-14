@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+
+<VBox spacing="12" styleClass="main-container"
+      stylesheets="@../css/style.css"
+      prefWidth="500"
+      xmlns:fx="http://javafx.com/fxml/1"
+      xmlns="http://javafx.com/javafx/25"
+      fx:controller="controllers.frontoffice.AjouterPublicationController">
+    <padding><Insets top="30" left="40" right="40" bottom="30"/></padding>
+
+    <Label text="Ajouter une publication" styleClass="view-title"/>
+
+    <!-- TITRE -->
+    <Label text="Titre *"/>
+    <TextField fx:id="titreField" promptText="Titre de la publication"/>
+    <Label fx:id="titreError" text="" styleClass="error-label"/>
+
+    <!-- CONTENU -->
+    <Label text="Contenu *"/>
+    <TextArea fx:id="contenuArea" promptText="Contenu de la publication..."
+              prefHeight="120" wrapText="true"/>
+    <Label fx:id="contenuError" text="" styleClass="error-label"/>
+
+    <!-- IMAGE -->
+    <Label text="Image (optionnel)"/>
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <TextField fx:id="imagePathField" promptText="Aucune image sélectionnée..."
+                   editable="false" HBox.hgrow="ALWAYS"/>
+        <Button text="📁 Choisir" styleClass="btn-secondary" onAction="#handleChoisirImage"/>
+    </HBox>
+    <Label fx:id="imageError" text="" styleClass="error-label"/>
+
+    <ImageView fx:id="imagePreview" fitWidth="200" fitHeight="120"
+               preserveRatio="true" visible="false"/>
+
+    <!-- BOUTONS -->
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Annuler" styleClass="btn-secondary" onAction="#handleAnnuler"/>
+        <Button text="Publier" styleClass="btn-primary" onAction="#handlePublier"/>
+    </HBox>
+
+</VBox>

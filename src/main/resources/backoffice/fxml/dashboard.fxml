@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<HBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.backoffice.DashboardController"
+      stylesheets="@../css/style.css"
+      prefWidth="1400" prefHeight="800">
+
+    <!-- ===== ELEGANT SIDEBAR ===== -->
+    <VBox styleClass="sidebar-premium" style="-fx-min-width: 260; -fx-max-width: 260;">
+
+        <!-- Premium Logo Section -->
+        <VBox styleClass="sidebar-logo-section">
+            <Label text="✨ LinguaLearn" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #e0e7ff; -fx-font-family: 'Segoe UI';"/>
+            <Label text="Administration Panel" style="-fx-text-fill: #a5b4fc; -fx-font-size: 10px; -fx-letter-spacing: 1;"/>
+        </VBox>
+
+        <!-- Navigation Section -->
+        <VBox spacing="8" VBox.vgrow="ALWAYS" styleClass="sidebar-nav-section">
+            <Label text="MAIN" style="-fx-text-fill: #818cf8; -fx-font-size: 9px; -fx-font-weight: bold; -fx-letter-spacing: 2;"/>
+
+            <Button fx:id="btnDashboard" text="📊 Dashboard" maxWidth="Infinity"
+                    onAction="#showDashboard"
+                    styleClass="sidebar-nav-btn-active"/>
+
+            <Button fx:id="btnPublications" text="📝 Publications" maxWidth="Infinity"
+                    onAction="#showPublications"
+                    styleClass="sidebar-nav-btn"/>
+
+            <Button fx:id="btnCommentaires" text="💬 Commentaires" maxWidth="Infinity"
+                    onAction="#showCommentaires"
+                    styleClass="sidebar-nav-btn"/>
+
+            <Separator styleClass="sidebar-separator"/>
+
+            <Label text="TOOLS" style="-fx-text-fill: #818cf8; -fx-font-size: 9px; -fx-font-weight: bold; -fx-letter-spacing: 2;"/>
+
+            <Button text="📊 Analytics" maxWidth="Infinity" styleClass="sidebar-nav-btn"/>
+            <Button text="⚙️ Settings" maxWidth="Infinity" styleClass="sidebar-nav-btn"/>
+        </VBox>
+
+        <!-- Footer -->
+        <VBox styleClass="sidebar-footer">
+            <Label text="v1.0 • 2024" style="-fx-text-fill: #6366f1; -fx-font-size: 9px; -fx-alignment: CENTER;"/>
+            <Label text="Premium Edition" style="-fx-text-fill: #4f46e5; -fx-font-size: 8px; -fx-alignment: CENTER;"/>
+        </VBox>
+    </VBox>
+
+    <!-- ===== MAIN CONTENT AREA ===== -->
+    <VBox HBox.hgrow="ALWAYS" spacing="14" styleClass="main-content-area">
+
+        <!-- PREMIUM HEADER -->
+        <HBox alignment="CENTER_LEFT" spacing="16" styleClass="premium-header">
+            <VBox spacing="2">
+                <Label text="Analytics Dashboard" style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                <Label text="Real-time insights and metrics" style="-fx-font-size: 11px; -fx-text-fill: #c7d2fe;"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="🔄 Refresh" onAction="#handleRefresh" styleClass="btn-header-action"/>
+            <Button text="📄 PDF" onAction="#exportPdf" styleClass="btn-header-export-pdf"/>
+            <Button text="📊 Excel" onAction="#exportExcel" styleClass="btn-header-export-excel"/>
+        </HBox>
+
+        <!-- DYNAMIC CONTENT AREA - StackPane for switching views -->
+        <StackPane fx:id="contentArea" VBox.vgrow="ALWAYS">
+            <VBox spacing="12" style="-fx-padding: 0;">
+
+                <!-- KPI CARDS -->
+                <HBox spacing="12">
+                    <VBox alignment="TOP_CENTER" spacing="8" styleClass="kpi-card-indigo" HBox.hgrow="ALWAYS">
+                        <Label text="TOTAL PUBLICATIONS" style="-fx-text-fill: #818cf8; -fx-font-size: 10px; -fx-font-weight: bold; -fx-letter-spacing: 1;"/>
+                        <Label fx:id="totalPublications" text="0" style="-fx-text-fill: #4f46e5; -fx-font-size: 36px; -fx-font-weight: bold;"/>
+                        <Label text="Platform Activity" style="-fx-text-fill: #a5b4fc; -fx-font-size: 10px;"/>
+                    </VBox>
+
+                    <VBox alignment="TOP_CENTER" spacing="8" styleClass="kpi-card-slate" HBox.hgrow="ALWAYS">
+                        <Label text="TOTAL COMMENTS" style="-fx-text-fill: #64748b; -fx-font-size: 10px; -fx-font-weight: bold; -fx-letter-spacing: 1;"/>
+                        <Label fx:id="totalCommentaires" text="0" style="-fx-text-fill: #334155; -fx-font-size: 36px; -fx-font-weight: bold;"/>
+                        <Label text="User Engagement" style="-fx-text-fill: #94a3b8; -fx-font-size: 10px;"/>
+                    </VBox>
+
+                    <VBox alignment="TOP_CENTER" spacing="8" styleClass="kpi-card-cyan" HBox.hgrow="ALWAYS">
+                        <Label text="TOTAL LIKES" style="-fx-text-fill: #06b6d4; -fx-font-size: 10px; -fx-font-weight: bold; -fx-letter-spacing: 1;"/>
+                        <Label fx:id="totalLikes" text="0" style="-fx-text-fill: #0891b2; -fx-font-size: 36px; -fx-font-weight: bold;"/>
+                        <Label text="Content Performance" style="-fx-text-fill: #22d3ee; -fx-font-size: 10px;"/>
+                    </VBox>
+
+                    <VBox alignment="TOP_CENTER" spacing="8" styleClass="kpi-card-rose" HBox.hgrow="ALWAYS">
+                        <Label text="TOTAL REPORTS" style="-fx-text-fill: #f43f5e; -fx-font-size: 10px; -fx-font-weight: bold; -fx-letter-spacing: 1;"/>
+                        <Label fx:id="totalReports" text="0" style="-fx-text-fill: #be123c; -fx-font-size: 36px; -fx-font-weight: bold;"/>
+                        <Label text="Moderation Alert" style="-fx-text-fill: #fb7185; -fx-font-size: 10px;"/>
+                    </VBox>
+                </HBox>
+
+                <!-- CHARTS ROW 1 -->
+                <HBox spacing="12" VBox.vgrow="ALWAYS">
+                    <VBox spacing="10" styleClass="chart-container-indigo" HBox.hgrow="ALWAYS">
+                        <Label text="📊 Publications by Type" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                        <PieChart fx:id="pubsByTypeChart" legendSide="BOTTOM" labelsVisible="true" VBox.vgrow="ALWAYS" style="-fx-font-size: 10px;"/>
+                    </VBox>
+
+                    <VBox spacing="10" styleClass="chart-container-cyan" HBox.hgrow="ALWAYS">
+                        <Label text="⭐ Top 5 Most Liked" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                        <BarChart fx:id="topLikedChart" categoryGap="15" barGap="3" animated="false" legendVisible="false" VBox.vgrow="ALWAYS">
+                            <xAxis>
+                                <CategoryAxis label="Publication" style="-fx-font-size: 9px;"/>
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis label="Likes" style="-fx-font-size: 9px;"/>
+                            </yAxis>
+                        </BarChart>
+                    </VBox>
+                </HBox>
+
+                <!-- CHARTS ROW 2 -->
+                <HBox spacing="12" VBox.vgrow="ALWAYS">
+                    <VBox spacing="10" styleClass="chart-container-slate" HBox.hgrow="ALWAYS">
+                        <Label text="💬 Comments by Publication" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                        <BarChart fx:id="commentsPerPubChart" categoryGap="12" barGap="2" animated="false" legendVisible="false" VBox.vgrow="ALWAYS">
+                            <xAxis>
+                                <CategoryAxis label="Publication" style="-fx-font-size: 9px;"/>
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis label="Comments" style="-fx-font-size: 9px;"/>
+                            </yAxis>
+                        </BarChart>
+                    </VBox>
+
+                    <VBox spacing="10" styleClass="chart-container-rose" HBox.hgrow="ALWAYS">
+                        <Label text="🚨 Most Reported Posts" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                        <BarChart fx:id="mostReportedChart" categoryGap="15" barGap="3" animated="false" legendVisible="false" VBox.vgrow="ALWAYS">
+                            <xAxis>
+                                <CategoryAxis label="Publication" style="-fx-font-size: 9px;"/>
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis label="Reports" style="-fx-font-size: 9px;"/>
+                            </yAxis>
+                        </BarChart>
+                    </VBox>
+                </HBox>
+
+            </VBox>
+        </StackPane>
+
+    </VBox>
+
+</HBox>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="controllers.frontoffice.MainController"
+           stylesheets="@../css/style.css">
+
+    <VBox spacing="0">
+
+        <!-- NAVBAR -->
+        <HBox styleClass="navbar" alignment="CENTER_LEFT" spacing="20" prefHeight="60">
+            <padding><Insets top="0" left="20" right="20" bottom="0"/></padding>
+            <Label text="🗺 LinguaLearn" styleClass="navbar-logo"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Accueil"            styleClass="nav-link" onAction="#showAccueil"/>
+            <Button text="Domaines"           styleClass="nav-link" onAction="#showDomaines"/>
+            <Button text="Quiz d'orientation" styleClass="nav-link" onAction="#showQuiz"/>
+            <Button text="S'inscrire"         styleClass="nav-link" onAction="#showInscrire"/>
+            <Button text="Se connecter"       styleClass="nav-link" onAction="#showConnecter"/>
+            <Button text="Ressources"         styleClass="nav-link-active" onAction="#showRessources"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="btnNotifications"
+                    text="🔔 Notifications (0)"
+                    styleClass="btn-notifications"
+                    onAction="#showNotifications"/>
+        </HBox>
+
+        <!-- CONTENT AREA -->
+        <StackPane fx:id="contentArea" styleClass="content-area" VBox.vgrow="ALWAYS">
+            <Label text="Bienvenue sur LinguaLearn" styleClass="placeholder-label"/>
+        </StackPane>
+
+    </VBox>
+
+    <!-- POPUP NOTIFICATIONS EN HAUT A DROITE -->
+    <VBox fx:id="notificationPopupContainer"
+          spacing="8"
+          alignment="TOP_RIGHT"
+          StackPane.alignment="TOP_RIGHT"
+          mouseTransparent="true">
+        <padding><Insets top="70" right="20"/></padding>
+    </VBox>
+
+</StackPane>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.backoffice.CommentaireEditController"
+      spacing="10" style="-fx-padding: 16; -fx-background-color: #f8fafc;" prefWidth="500">
+
+    <Label text="Modifier Commentaire" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #f59e0b;"/>
+
+    <TextField fx:id="idField" promptText="ID" editable="false"/>
+    <TextField fx:id="publicationIdField" promptText="Publication ID"/>
+    <TextArea fx:id="contenuField" promptText="Contenu commentaire..." prefRowCount="5" wrapText="true"/>
+
+    <Label fx:id="statusLabel" text=""/>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Annuler" onAction="#cancel" style="-fx-background-color: #64748b; -fx-text-fill: white;"/>
+        <Button text="Sauvegarder" onAction="#save" style="-fx-background-color: #f59e0b; -fx-text-fill: white; -fx-font-weight: bold;"/>
+    </HBox>
+</VBox>
+

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="20" xmlns:fx="http://javafx.com/fxml">
+
+    <Label text="Vue d ensemble" style="-fx-font-size:16px; -fx-font-weight:bold; -fx-text-fill:#1e293b;"/>
+
+    <!-- STAT CARDS -->
+    <HBox spacing="16">
+        <VBox styleClass="stat-card stat-blue" spacing="6">
+            <Label text="Publications" styleClass="stat-label"/>
+            <Label fx:id="totalPublications" text="0" styleClass="stat-value"/>
+            <Label text="Total publications" styleClass="stat-label"/>
+        </VBox>
+        <VBox styleClass="stat-card stat-green" spacing="6">
+            <Label text="Commentaires" styleClass="stat-label"/>
+            <Label fx:id="totalCommentaires" text="0" styleClass="stat-value"/>
+            <Label text="Total commentaires" styleClass="stat-label"/>
+        </VBox>
+        <VBox styleClass="stat-card stat-orange" spacing="6">
+            <Label text="Likes" styleClass="stat-label"/>
+            <Label fx:id="totalLikes" text="0" styleClass="stat-value"/>
+            <Label text="Likes totaux" styleClass="stat-label"/>
+        </VBox>
+        <VBox styleClass="stat-card stat-red" spacing="6">
+            <Label text="Signalements" styleClass="stat-label"/>
+            <Label fx:id="totalReports" text="0" styleClass="stat-value"/>
+            <Label text="Total signalements" styleClass="stat-label"/>
+        </VBox>
+    </HBox>
+
+    <!-- RECENT PUBLICATIONS TABLE -->
+    <VBox styleClass="form-panel" spacing="10" VBox.vgrow="ALWAYS">
+        <Label text="Publications recentes" styleClass="form-title"/>
+        <TableView fx:id="recentTable" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="colId"    text="ID"    prefWidth="60"/>
+                <TableColumn fx:id="colTitre" text="Titre" prefWidth="400"/>
+                <TableColumn fx:id="colType"  text="Type"  prefWidth="100"/>
+                <TableColumn fx:id="colLikes" text="Likes" prefWidth="80"/>
+                <TableColumn fx:id="colDate"  text="Date"  prefWidth="180"/>
+            </columns>
+        </TableView>
+    </VBox>
+
+</VBox>
+

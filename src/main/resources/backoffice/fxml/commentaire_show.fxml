@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.backoffice.CommentaireShowController"
+      spacing="10" style="-fx-padding: 16; -fx-background-color: #f8fafc;" prefWidth="520">
+
+    <Label text="Détails Commentaire" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2563eb;"/>
+
+    <GridPane hgap="10" vgap="8">
+        <Label text="ID:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <Label fx:id="idLabel" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+        <Label text="Publication ID:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <Label fx:id="publicationIdLabel" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+        <Label text="Date:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <Label fx:id="dateLabel" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+    </GridPane>
+
+    <Label text="Contenu:" style="-fx-font-weight: bold;"/>
+    <Label fx:id="contenuLabel" wrapText="true" style="-fx-background-color: white; -fx-padding: 8; -fx-border-color: #cbd5e1; -fx-border-radius: 6;"/>
+
+    <HBox alignment="CENTER_RIGHT">
+        <Button text="Fermer" onAction="#close" style="-fx-background-color: #475569; -fx-text-fill: white;"/>
+    </HBox>
+</VBox>
+

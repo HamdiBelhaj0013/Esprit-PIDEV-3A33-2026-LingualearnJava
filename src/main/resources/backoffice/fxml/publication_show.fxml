@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.backoffice.PublicationShowController"
+      spacing="10" style="-fx-padding: 16; -fx-background-color: #f8fafc;" prefWidth="560">
+
+    <Label text="Détails Publication" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2563eb;"/>
+
+    <GridPane hgap="10" vgap="8">
+        <Label text="ID:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <Label fx:id="idLabel" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+        <Label text="Titre:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <Label fx:id="titreLabel" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+        <Label text="Type:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <Label fx:id="typeLabel" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+        <Label text="Likes:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+        <Label fx:id="likesLabel" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+        <Label text="Dislikes:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+        <Label fx:id="dislikesLabel" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+
+        <Label text="User ID:" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+        <Label fx:id="userIdLabel" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+
+        <Label text="Date:" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
+        <Label fx:id="dateLabel" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+
+        <Label text="Lien:" GridPane.columnIndex="0" GridPane.rowIndex="7"/>
+        <Label fx:id="lienLabel" GridPane.columnIndex="1" GridPane.rowIndex="7"/>
+    </GridPane>
+
+    <Label text="Contenu:" style="-fx-font-weight: bold;"/>
+    <Label fx:id="contenuLabel" wrapText="true" style="-fx-background-color: white; -fx-padding: 8; -fx-border-color: #cbd5e1; -fx-border-radius: 6;"/>
+
+    <HBox alignment="CENTER_RIGHT">
+        <Button text="Fermer" onAction="#close" style="-fx-background-color: #475569; -fx-text-fill: white;"/>
+    </HBox>
+</VBox>
+

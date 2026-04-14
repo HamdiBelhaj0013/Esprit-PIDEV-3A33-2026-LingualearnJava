@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="10" styleClass="main-container"
+      stylesheets="@../css/style.css"
+      prefWidth="400"
+      xmlns:fx="http://javafx.com/fxml/1"
+      xmlns="http://javafx.com/javafx/25"
+      fx:controller="controllers.frontoffice.NotificationController">
+
+    <padding><Insets top="20" left="20" right="20" bottom="20"/></padding>
+
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <Label text="🔔 Notifications" styleClass="view-title" HBox.hgrow="ALWAYS"/>
+        <Button text="Tout marquer comme lu"
+                styleClass="btn-secondary"
+                onAction="#handleMarquerLues"/>
+    </HBox>
+
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="scroll-pane">
+        <VBox fx:id="notificationsContainer" spacing="8">
+            <padding><Insets top="10" bottom="10"/></padding>
+        </VBox>
+    </ScrollPane>
+
+</VBox>

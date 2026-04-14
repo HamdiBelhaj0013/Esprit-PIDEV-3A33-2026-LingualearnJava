@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.backoffice.PublicationNewController"
+      spacing="10" style="-fx-padding: 16; -fx-background-color: #f8fafc;" prefWidth="520">
+
+    <Label text="Ajouter Publication" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2563eb;"/>
+
+    <TextField fx:id="titreField" promptText="Titre"/>
+    <TextField fx:id="typeField" promptText="Type (post/story)"/>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <TextField fx:id="imagePathField" promptText="Aucune image selectionnee..." editable="false" HBox.hgrow="ALWAYS"/>
+        <Button text="Choisir" onAction="#handleChoisirImage" style="-fx-background-color: #475569; -fx-text-fill: white;"/>
+    </HBox>
+    <ImageView fx:id="imagePreview" fitWidth="220" fitHeight="130" preserveRatio="true" visible="false"/>
+
+    <TextArea fx:id="contenuField" promptText="Contenu publication..." prefRowCount="4" wrapText="true"/>
+    <TextField fx:id="utilisateurIdField" promptText="User ID"/>
+
+    <Label fx:id="statusLabel" text=""/>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Annuler" onAction="#cancel" style="-fx-background-color: #64748b; -fx-text-fill: white;"/>
+        <Button text="Enregistrer" onAction="#save" style="-fx-background-color: #16a34a; -fx-text-fill: white; -fx-font-weight: bold;"/>
+    </HBox>
+</VBox>
+
