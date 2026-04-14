@@ -1,8 +1,7 @@
 # LinguaLearn — Desktop Application
 
-A JavaFX 21 desktop client for the LinguaLearn language-learning platform.
-It mirrors the data model of the companion Symfony web application and shares
-the same MySQL database (`1lingualearn_db`).
+A standalone JavaFX 21 desktop application for managing users on the LinguaLearn
+language-learning platform, using a MySQL database (`1lingualearn_db`).
 
 ---
 
@@ -27,9 +26,9 @@ the same MySQL database (`1lingualearn_db`).
 | Language | Java | 21 | Core language (records, pattern switch, sealed classes available) |
 | UI framework | JavaFX | 21 | FXML-based scene graph, CSS styling |
 | Build tool | Maven | 3.x | Dependency management, fat-JAR packaging |
-| Database | MySQL | 8.x | Persistent storage, shared with Symfony web app |
+| Database | MySQL | 8.x | Persistent storage |
 | JDBC driver | mysql-connector-j | 8.3.0 | Raw JDBC connection to MySQL |
-| Password hashing | jbcrypt | 0.4 | BCrypt with 12 rounds; compatible with Symfony's `$2y$` hashes |
+| Password hashing | jbcrypt | 0.4 | BCrypt hashing for user passwords |
 | Bean Validation | hibernate-validator | 8.0.1.Final | `@NotBlank`, `@Size`, etc. on service-layer DTOs (no ORM) |
 | Validation API | jakarta.validation-api | 3.0.2 | API interfaces for bean validation |
 | EL support | jakarta.el | 4.0.2 | Required by Hibernate Validator for message expressions |
@@ -142,7 +141,6 @@ Pass : (empty)
 
 - `setCurrentUser(User)` / `getCurrentUser()` — set/get after successful login.
 - `clearSession()` — called on logout; nulls the current user.
-- No EntityManager or JPA dependency.
 
 #### `StageManager.java`
 **Centralised JavaFX scene switcher.**
@@ -170,7 +168,7 @@ them via SQL.
 | `id` | `Long` | `id` BIGINT AUTO | Set by repository after INSERT |
 | `email` | `String` | `email` | Unique; lowercased before save |
 | `password` | `String` | `password` | BCrypt hash (`$2a$12$…`) |
-| `roles` | `String` | `roles` JSON | Symfony JSON array: `["ROLE_USER"]` |
+| `roles` | `String` | `roles` JSON | JSON array: `["ROLE_USER"]` |
 | `firstName` | `String` | `first_name` | |
 | `lastName` | `String` | `last_name` | |
 | `subscriptionPlan` | `String` | `subscription_plan` | `FREE` / `MONTHLY` / `YEARLY` |
@@ -189,10 +187,9 @@ them via SQL.
 **Key methods:**
 - `updatePremiumStatus()` — recalculates `isPremium` from plan + expiry.
   Called by `setSubscriptionPlan()`, `setSubscriptionExpiry()`, and explicitly
-  by `UserRepository.mapUser()` after all fields are loaded from the ResultSet
-  (replaces the old `@PostLoad` hook).
-- `getRoles()` / `setRoles(List<String>)` — parse/serialize the Symfony
-  JSON-array format stored in the `roles` column.
+  by `UserRepository.mapUser()` after all fields are loaded from the ResultSet.
+- `getRoles()` / `setRoles(List<String>)` — parse/serialize the JSON-array
+  format stored in the `roles` column.
 - `setRolesJson(String)` — sets the raw JSON string directly (used only by
   the repository mapper).
 - `setId(Long)` / `setCreatedAt(LocalDateTime)` — needed by the repository
@@ -278,9 +275,6 @@ Implements `IUserService`. All business logic lives here.
 | Stats | `initLearningStats()`, `updateLearningStats()` |
 | Counts | `countAll()`, `countByStatus()`, `countPremium()`, `countAdvanced()` |
 
-**Password compatibility:** handles Symfony's `$2y$` prefix by converting it
-to `$2a$` before calling `BCrypt.checkpw()`.
-
 #### `NotificationService.java`
 Direct JDBC against the `notifications` table (no entity class).
 
@@ -364,7 +358,7 @@ Shell for the user layout:
 - Avatar color derived from a deterministic hash of the user's full name.
 
 #### `user/UserProfileController.java`
-Two-card profile page — fully migrated to JDBC:
+Two-card profile page — fully JDBC-backed:
 - **Card 1** — display / edit mode toggle. Saves name + email via
   `UserService.updateName()` (which internally calls `UserRepository.save()`,
   persisting all fields including email in one UPDATE).
@@ -454,7 +448,6 @@ isPremium = (plan == MONTHLY || plan == YEARLY)
             && subscriptionExpiry != null
             && subscriptionExpiry.isAfter(LocalDateTime.now())
 ```
-The column is still written on every UPDATE for Symfony compatibility.
 
 ---
 
@@ -524,7 +517,7 @@ LoginController.handleLogin()
   ├─ UserService.authenticate(email, password)
   │    ├─ UserRepository.findByEmail(email)
   │    ├─ check status == "active"
-  │    └─ BCrypt.checkpw(plain, hash)   ← handles Symfony $2y$ → $2a$ prefix
+  │    └─ BCrypt.checkpw(plain, hash)
   │
   └─ user.getRoles().contains("ROLE_ADMIN") ?
         ├─ YES → AdminMain.fxml   (AdminMainController.setUser)
@@ -532,7 +525,7 @@ LoginController.handleLogin()
                                     → SessionManager.setCurrentUser)
 ```
 
-**Roles stored** as a Symfony-compatible JSON array in the `roles` column:
+**Roles stored** as a JSON array in the `roles` column:
 `["ROLE_USER"]` or `["ROLE_USER","ROLE_ADMIN"]`.
 
 **Session** is held in `SessionManager.currentUser` (static field).
