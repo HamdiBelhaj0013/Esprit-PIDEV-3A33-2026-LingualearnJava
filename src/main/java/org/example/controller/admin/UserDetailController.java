@@ -1,7 +1,5 @@
 package org.example.controller.admin;
 
-import jakarta.persistence.EntityManager;
-import org.example.App;
 import org.example.entity.LearningStats;
 import org.example.entity.User;
 import org.example.service.NotificationService;
@@ -134,10 +132,9 @@ public class UserDetailController {
 
     private void loadNotifications() {
         notifList.getChildren().clear();
-        EntityManager em = App.getEmf().createEntityManager();
         try {
-            NotificationService ns = new NotificationService(em);
-            List<NotificationService.NotifRow> notifs = ns.getRecentForUser(user.getId());
+            List<NotificationService.NotifRow> notifs =
+                new NotificationService().getRecentForUser(user.getId());
             if (notifs.isEmpty()) {
                 notifList.getChildren().add(new Label("No notifications sent yet.") {{
                     getStyleClass().add("page-subtitle");
@@ -148,8 +145,8 @@ public class UserDetailController {
                     notifList.getChildren().add(row);
                 }
             }
-        } finally {
-            em.close();
+        } catch (Exception ex) {
+            showError("Could not load notifications: " + ex.getMessage());
         }
     }
 
@@ -216,7 +213,7 @@ public class UserDetailController {
     @FXML private void handleEditStats(ActionEvent e) {
         openDialog("/fxml/admin/StatsDialog.fxml", "Edit Learning Stats", 400, 340, ctrl -> {
             if (ctrl instanceof StatsController c) {
-                c.setUser(user, App.getEmf(), this::reloadAndRefresh);
+                c.setUser(user, this::reloadAndRefresh);
             }
         });
     }
@@ -224,7 +221,7 @@ public class UserDetailController {
     @FXML private void handleSendNotif(ActionEvent e) {
         openDialog("/fxml/admin/NotificationDialog.fxml", "Send Notification", 420, 300, ctrl -> {
             if (ctrl instanceof NotificationController c) {
-                c.setUser(user, App.getEmf(), this::reloadAndRefresh);
+                c.setUser(user, this::reloadAndRefresh);
             }
         });
     }
@@ -249,25 +246,17 @@ public class UserDetailController {
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     private void reloadAndRefresh() {
-        EntityManager em = App.getEmf().createEntityManager();
-        try {
-            User reloaded = new UserService(em).findById(user.getId()).orElse(user);
-            this.user = reloaded;
-            populate();
-        } finally {
-            em.close();
-        }
+        User reloaded = new UserService().findById(user.getId()).orElse(user);
+        this.user = reloaded;
+        populate();
         mainController.refreshCurrentView();
     }
 
     private void withService(java.util.function.Consumer<UserService> action) {
-        EntityManager em = App.getEmf().createEntityManager();
         try {
-            action.accept(new UserService(em));
+            action.accept(new UserService());
         } catch (Exception ex) {
             showError(ex.getMessage());
-        } finally {
-            em.close();
         }
     }
 

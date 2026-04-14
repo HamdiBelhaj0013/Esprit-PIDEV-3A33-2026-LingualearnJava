@@ -1,42 +1,34 @@
 package org.example.service;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
+import org.example.util.MyDataBase;
 
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Manages notifications via native SQL so we don't need to add
- * a Notification entity to persistence.xml.
- */
 public class NotificationService {
 
-    private final EntityManager em;
+    public NotificationService() {}
 
-    public NotificationService(EntityManager em) {
-        this.em = em;
+    /** Backward-compatible constructor — EntityManager is no longer used. */
+    public NotificationService(Object ignoredEntityManager) {}
+
+    private Connection conn() {
+        return MyDataBase.getInstance().getConnection();
     }
 
     /** Insert a new notification for a user. */
-    @SuppressWarnings("unchecked")
     public void sendNotification(Long userId, String type, String message) {
-        EntityTransaction tx = em.getTransaction();
-        tx.begin();
-        try {
-            em.createNativeQuery(
-                "INSERT INTO notifications (user_id, type, message, is_read, created_at) " +
-                "VALUES (:uid, :type, :msg, 0, :now)"
-            )
-            .setParameter("uid",  userId)
-            .setParameter("type", type)
-            .setParameter("msg",  message)
-            .setParameter("now",  LocalDateTime.now())
-            .executeUpdate();
-            tx.commit();
-        } catch (Exception e) {
-            if (tx.isActive()) tx.rollback();
+        String sql = "INSERT INTO notifications (user_id, type, message, is_read, created_at) " +
+                     "VALUES (?, ?, ?, 0, ?)";
+        try (PreparedStatement ps = conn().prepareStatement(sql)) {
+            ps.setLong(1,      userId);
+            ps.setString(2,    type);
+            ps.setString(3,    message);
+            ps.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
+            ps.executeUpdate();
+        } catch (SQLException e) {
             throw new RuntimeException("Could not send notification: " + e.getMessage(), e);
         }
     }
@@ -45,25 +37,27 @@ public class NotificationService {
      * Returns the 5 most recent notifications for a user as plain DTOs.
      * Each NotifRow has: id, type, message, isRead, createdAt.
      */
-    @SuppressWarnings("unchecked")
     public List<NotifRow> getRecentForUser(Long userId) {
-        List<Object[]> rows = em.createNativeQuery(
-            "SELECT id, type, message, is_read, created_at " +
-            "FROM notifications WHERE user_id = :uid " +
-            "ORDER BY created_at DESC LIMIT 5"
-        )
-        .setParameter("uid", userId)
-        .getResultList();
-
+        String sql = "SELECT id, type, message, is_read, created_at " +
+                     "FROM notifications WHERE user_id = ? " +
+                     "ORDER BY created_at DESC LIMIT 5";
         List<NotifRow> result = new ArrayList<>();
-        for (Object[] r : rows) {
-            NotifRow n = new NotifRow();
-            n.id        = ((Number) r[0]).longValue();
-            n.type      = (String) r[1];
-            n.message   = (String) r[2];
-            n.isRead    = r[3] != null && ((Number) r[3]).intValue() == 1;
-            n.createdAt = r[4] != null ? r[4].toString() : "";
-            result.add(n);
+        try (PreparedStatement ps = conn().prepareStatement(sql)) {
+            ps.setLong(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    NotifRow n = new NotifRow();
+                    n.id        = rs.getLong("id");
+                    n.type      = rs.getString("type");
+                    n.message   = rs.getString("message");
+                    n.isRead    = rs.getInt("is_read") == 1;
+                    Timestamp ts = rs.getTimestamp("created_at");
+                    n.createdAt = ts != null ? ts.toString() : "";
+                    result.add(n);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Could not fetch notifications: " + e.getMessage(), e);
         }
         return result;
     }

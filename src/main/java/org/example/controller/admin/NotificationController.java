@@ -1,7 +1,5 @@
 package org.example.controller.admin;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
 import org.example.entity.User;
 import org.example.service.NotificationService;
 import javafx.collections.FXCollections;
@@ -20,9 +18,8 @@ public class NotificationController {
     @FXML private TextArea    messageArea;
     @FXML private Label       errorLabel;
 
-    private User                 user;
-    private EntityManagerFactory emf;
-    private Runnable             onSent;
+    private User     user;
+    private Runnable onSent;
 
     @FXML
     private void initialize() {
@@ -31,9 +28,8 @@ public class NotificationController {
         typeChoice.setValue("info");
     }
 
-    public void setUser(User u, EntityManagerFactory emf, Runnable onSent) {
+    public void setUser(User u, Runnable onSent) {
         this.user   = u;
-        this.emf    = emf;
         this.onSent = onSent;
         userNameLabel.setText("To: " + u.getFullName());
     }
@@ -48,15 +44,12 @@ public class NotificationController {
             return;
         }
 
-        EntityManager em = emf.createEntityManager();
         try {
-            new NotificationService(em).sendNotification(user.getId(), type, message);
+            new NotificationService().sendNotification(user.getId(), type, message);
             closeStage();
             if (onSent != null) onSent.run();
         } catch (Exception ex) {
             showError("Failed to send: " + ex.getMessage());
-        } finally {
-            em.close();
         }
     }
 

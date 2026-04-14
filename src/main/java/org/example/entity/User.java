@@ -1,94 +1,49 @@
 package org.example.entity;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-@Entity
-@Table(name = "users")
+
 public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "email", unique = true, nullable = false)
+    private Long   id;
     private String email;
-
-    @Column(name = "password", nullable = false)
     private String password;
-
-    @Column(name = "roles", nullable = false, columnDefinition = "json")
     private String roles = "[\"ROLE_USER\"]";
-
-    @Column(name = "first_name", nullable = false)
     private String firstName;
-
-    @Column(name = "last_name", nullable = false)
     private String lastName;
-
-    @Column(name = "subscription_plan", nullable = false)
-    private String subscriptionPlan = "FREE";
-
-    @Column(name = "subscription_expiry")
+    private String subscriptionPlan   = "FREE";
     private LocalDateTime subscriptionExpiry;
-
-
-    @Column(name = "is_premium", nullable = false)
-    private boolean isPremium = false;
-
-    @Column(name = "last_payment_status")
-    private String lastPaymentStatus;
-
-    @Column(name = "status", nullable = false)
-    private String status = "active";
-
-    @Column(name = "created_at")
+    private boolean isPremium         = false;
+    private String  lastPaymentStatus;
+    private String  status            = "active";
     private LocalDateTime createdAt;
-
-    @Column(name = "is_verified", nullable = false)
-    private boolean isVerified = false;
-
-    @Column(name = "stripe_customer_id")
-    private String stripeCustomerId;
-
-    @Column(name = "stripe_subscription_id")
-    private String stripeSubscriptionId;
-
-    @Column(name = "is_banned", nullable = false)
-    private boolean isBanned = false;
-
-    @Column(name = "ban_reason")
-    private String banReason;
-
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private boolean isVerified        = false;
+    private String  stripeCustomerId;
+    private String  stripeSubscriptionId;
+    private boolean isBanned          = false;
+    private String  banReason;
     private LearningStats learningStats;
 
     public User() {}
 
-    @PrePersist
-    public void prePersist() {
-        this.createdAt = LocalDateTime.now();
-    }
+    // ── ID ────────────────────────────────────────────────────────────────────
 
-    /**
-     * Called by JPA after loading from DB so that isPremium is always
-     * consistent with subscriptionPlan + subscriptionExpiry — even if
-     * Symfony wrote a stale is_premium value into the DB.
-     */
-    @PostLoad
-    public void postLoad() {
-        updatePremiumStatus();
-    }
+    public Long getId()            { return id; }
+    public void setId(Long id)     { this.id = id; }
 
-    // ── Getters / setters ────────────────────────────────────────────────────
+    // ── Credentials ───────────────────────────────────────────────────────────
 
-    public Long getId()               { return id; }
     public String getEmail()          { return email; }
     public void setEmail(String e)    { this.email = e; }
 
     public String getPassword()       { return password; }
     public void setPassword(String p) { this.password = p; }
+
+    // ── Roles (stored as Symfony JSON array: ["ROLE_USER","ROLE_ADMIN"]) ──────
+
+    /** Set raw JSON string directly (used by repository when loading from DB). */
+    public void setRolesJson(String json) { this.roles = json; }
 
     /** Parse Symfony JSON array: ["ROLE_USER","ROLE_ADMIN"] */
     public List<String> getRoles() {
@@ -118,7 +73,10 @@ public class User {
         this.roles = sb.append("]").toString();
     }
 
-    public boolean hasRole(String role) { return getRoles().contains(role); }
+    public String getRolesJson()            { return roles; }
+    public boolean hasRole(String role)     { return getRoles().contains(role); }
+
+    // ── Name ──────────────────────────────────────────────────────────────────
 
     public String getFirstName()        { return firstName; }
     public void setFirstName(String v)  { this.firstName = v; }
@@ -128,12 +86,19 @@ public class User {
 
     public String getFullName()         { return firstName + " " + lastName; }
 
+    // ── Status ────────────────────────────────────────────────────────────────
+
     public String getStatus()           { return status; }
     public void setStatus(String v)     { this.status = v; }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
+    // ── Timestamps ────────────────────────────────────────────────────────────
 
-    public String getSubscriptionPlan() { return subscriptionPlan; }
+    public LocalDateTime getCreatedAt()          { return createdAt; }
+    public void          setCreatedAt(LocalDateTime v) { this.createdAt = v; }
+
+    // ── Subscription / premium ────────────────────────────────────────────────
+
+    public String getSubscriptionPlan()  { return subscriptionPlan; }
     public void setSubscriptionPlan(String v) {
         this.subscriptionPlan = v;
         updatePremiumStatus();
@@ -147,32 +112,39 @@ public class User {
 
     public boolean isPremium() { return isPremium; }
 
-    public String getLastPaymentStatus()       { return lastPaymentStatus; }
-    public void setLastPaymentStatus(String v) { this.lastPaymentStatus = v; }
+    public String getLastPaymentStatus()         { return lastPaymentStatus; }
+    public void   setLastPaymentStatus(String v) { this.lastPaymentStatus = v; }
 
     /**
-     * Only place that writes isPremium — mirrors Symfony's updatePremiumStatus().
-     * Also called from @PostLoad so the value is always fresh after a DB read.
+     * Recalculates isPremium — mirrors Symfony's updatePremiumStatus().
+     * Called by setSubscriptionPlan/setSubscriptionExpiry setters and
+     * explicitly by the repository after loading all fields from the DB.
      */
-    void updatePremiumStatus() {
+    public void updatePremiumStatus() {
         this.isPremium =
                 ("MONTHLY".equals(subscriptionPlan) || "YEARLY".equals(subscriptionPlan))
                         && subscriptionExpiry != null
                         && subscriptionExpiry.isAfter(LocalDateTime.now());
     }
 
+    // ── Verification / Stripe ─────────────────────────────────────────────────
+
     public boolean isVerified()        { return isVerified; }
     public void setVerified(boolean v) { this.isVerified = v; }
 
     public String getStripeCustomerId()           { return stripeCustomerId; }
-    public void setStripeCustomerId(String v)     { this.stripeCustomerId = v; }
+    public void   setStripeCustomerId(String v)   { this.stripeCustomerId = v; }
     public String getStripeSubscriptionId()       { return stripeSubscriptionId; }
-    public void setStripeSubscriptionId(String v) { this.stripeSubscriptionId = v; }
+    public void   setStripeSubscriptionId(String v) { this.stripeSubscriptionId = v; }
+
+    // ── Ban ───────────────────────────────────────────────────────────────────
 
     public boolean isBanned()          { return isBanned; }
     public void setIsBanned(boolean v) { this.isBanned = v; }
     public String getBanReason()       { return banReason; }
     public void setBanReason(String v) { this.banReason = v; }
+
+    // ── Learning stats (POJO association — no cascade, managed by repository) ─
 
     public LearningStats getLearningStats()        { return learningStats; }
     public void setLearningStats(LearningStats ls) {

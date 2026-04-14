@@ -1,6 +1,5 @@
 package org.example.controller.admin;
 
-import org.example.App;
 import org.example.entity.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -43,7 +42,6 @@ public class AdminMainController {
         setActive(btnDashboard, "Dashboard");
         loadView("/fxml/admin/DashboardView.fxml", ctrl -> {
             if (ctrl instanceof DashboardViewController c) {
-                c.setEntityManagerFactory(App.getEmf());
                 c.load();
             }
         });
@@ -55,7 +53,6 @@ public class AdminMainController {
         loadView("/fxml/admin/UserListView.fxml", ctrl -> {
             if (ctrl instanceof UserListController c) {
                 c.setMainController(this);
-                c.setEntityManagerFactory(App.getEmf());
                 c.load();
             }
         });
@@ -79,7 +76,7 @@ public class AdminMainController {
         openStage("/fxml/admin/UserFormDialog.fxml", "Create User",
             500, 560, ctrl -> {
                 if (ctrl instanceof UserFormController c) {
-                    c.initForCreate(App.getEmf(), onSaved);
+                    c.initForCreate(onSaved);
                 }
             });
     }
@@ -89,7 +86,7 @@ public class AdminMainController {
         openStage("/fxml/admin/UserFormDialog.fxml", "Edit User — " + user.getFullName(),
             500, 560, ctrl -> {
                 if (ctrl instanceof UserFormController c) {
-                    c.initForEdit(user, App.getEmf(), onSaved);
+                    c.initForEdit(user, onSaved);
                 }
             });
     }

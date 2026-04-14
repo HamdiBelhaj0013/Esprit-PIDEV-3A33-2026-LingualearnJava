@@ -1,7 +1,5 @@
 package org.example.controller;
 
-import org.example.App;
-import jakarta.persistence.EntityManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -15,28 +13,50 @@ import org.example.controller.admin.AdminMainController;
 import org.example.controller.user.UserMainController;
 import org.example.entity.User;
 import org.example.service.UserService;
+import org.example.util.StageManager;
 
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 public class LoginController {
 
-    @FXML private TextField emailField;
+    private static final Pattern EMAIL_PATTERN =
+        Pattern.compile("^[\\w._%+\\-]+@[\\w.\\-]+\\.[a-zA-Z]{2,}$");
+
+    @FXML private TextField     emailField;
     @FXML private PasswordField passwordField;
-    @FXML private Label errorLabel;
+    @FXML private Label         emailError;
+    @FXML private Label         passwordError;
+    @FXML private Label         errorLabel;
+
+    @FXML
+    public void initialize() {
+        emailField.textProperty().addListener((o, ov, nv) -> clearFieldError(emailError));
+        passwordField.textProperty().addListener((o, ov, nv) -> clearFieldError(passwordError));
+    }
 
     @FXML
     private void handleLogin(ActionEvent event) {
+        clearAllErrors();
+
         String email    = emailField.getText().trim();
         String password = passwordField.getText();
 
-        if (email.isEmpty() || password.isEmpty()) {
-            showError("Please enter your email and password.");
+        if (email.isBlank()) {
+            showFieldError(emailError, "Email is required.");
+            return;
+        }
+        if (!EMAIL_PATTERN.matcher(email).matches()) {
+            showFieldError(emailError, "Please enter a valid email address.");
+            return;
+        }
+        if (password.isEmpty()) {
+            showFieldError(passwordError, "Password is required.");
             return;
         }
 
-        EntityManager em = App.getEmf().createEntityManager();
         try {
-            UserService userService = new UserService(em);
+            UserService userService = new UserService();
             var userOpt = userService.authenticate(email, password);
 
             if (userOpt.isEmpty()) {
@@ -44,15 +64,21 @@ public class LoginController {
                 return;
             }
 
-            User user = userOpt.get();
+            User user    = userOpt.get();
             boolean isAdmin = user.getRoles().contains("ROLE_ADMIN");
-
             navigateToDashboard(user, isAdmin);
 
         } catch (Exception e) {
             showError("Connection error. Please try again.");
-        } finally {
-            if (em.isOpen()) em.close();
+        }
+    }
+
+    @FXML
+    private void handleGoToRegister(ActionEvent event) {
+        try {
+            StageManager.switchScene("/fxml/Register.fxml");
+        } catch (IOException e) {
+            showError("Could not open registration page.");
         }
     }
 
@@ -88,5 +114,23 @@ public class LoginController {
         errorLabel.setText(message);
         errorLabel.setVisible(true);
         errorLabel.setManaged(true);
+    }
+
+    private void showFieldError(Label label, String message) {
+        label.setText(message);
+        label.setVisible(true);
+        label.setManaged(true);
+    }
+
+    private void clearFieldError(Label label) {
+        label.setText("");
+        label.setVisible(false);
+        label.setManaged(false);
+    }
+
+    private void clearAllErrors() {
+        clearFieldError(emailError);
+        clearFieldError(passwordError);
+        clearFieldError(errorLabel);
     }
 }
