@@ -29,6 +29,6 @@ public class App extends Application {
 
     @Override
     public void stop() {
-        // Connection lifecycle is managed by MyDataBase singleton.
+        MyDataBase.getInstance().closeConnection();
     }
 }

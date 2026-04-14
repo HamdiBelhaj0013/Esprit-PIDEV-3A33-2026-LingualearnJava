@@ -33,14 +33,8 @@ the same MySQL database (`1lingualearn_db`).
 | Bean Validation | hibernate-validator | 8.0.1.Final | `@NotBlank`, `@Size`, etc. on service-layer DTOs (no ORM) |
 | Validation API | jakarta.validation-api | 3.0.2 | API interfaces for bean validation |
 | EL support | jakarta.el | 4.0.2 | Required by Hibernate Validator for message expressions |
-| JPA API (stub) | jakarta.persistence-api | 3.1.0 | **Compile-time only** — admin controllers import JPA types; no Hibernate runtime is present |
 | Logging | logback-classic | 1.5.13 | SLF4J backend |
 | Testing | junit-jupiter-api | 5.10.2 | Unit tests (test scope) |
-
-> **Important:** `hibernate-core` has been fully removed. The only JPA artifact
-> on the classpath is the thin `jakarta.persistence-api` interfaces jar, kept
-> solely so the (not-yet-migrated) admin controllers compile. No JPA provider
-> runs at runtime.
 
 ---
 
@@ -80,8 +74,7 @@ LingualearnJava/
         │   ├── util/
         │   │   ├── MyDataBase.java
         │   │   ├── SessionManager.java
-        │   │   ├── StageManager.java
-        │   │   └── Menu.java
+        │   │   └── StageManager.java
         │   └── validation/
         │       └── ValidationService.java
         └── resources/
@@ -117,8 +110,8 @@ JavaFX `Application` subclass. Responsibilities:
   startup so any configuration error surfaces immediately.
 - `start(Stage)` — registers the primary stage with `StageManager`, loads
   `login.fxml`, and shows the window.
-- `getEmf()` — **stub that returns `null`**. Kept only so admin controllers
-  that have not yet been migrated compile. Do not call at runtime.
+- `stop()` — calls `MyDataBase.getInstance().closeConnection()` to cleanly
+  shut down the JDBC connection when the application exits.
 
 ---
 
@@ -138,6 +131,8 @@ Pass : (empty)
 
 - `getInstance()` — returns or creates the single instance.
 - `getConnection()` — returns the raw `java.sql.Connection`.
+- `closeConnection()` — closes the connection if open; prints
+  `"Connexion fermée !"`. Called by `App.stop()` on application exit.
 - Prints `"Connexion établie !"` to stdout on successful connect.
 - No connection pooling; no auto-reconnect. For a desktop app with a single
   user this is intentional and sufficient.
@@ -159,10 +154,6 @@ Pass : (empty)
 
 Used by: `LoginController` (→ Register), `RegisterController` (→ Login).
 The dashboard navigation still uses direct `Stage` casting inside controllers.
-
-#### `Menu.java`
-Legacy console UI helper (print tables, prompt helpers). Retained for
-reference; not called by any active code path.
 
 ---
 
@@ -270,11 +261,8 @@ List<User> getAllUsers();
 #### `UserService.java`
 Implements `IUserService`. All business logic lives here.
 
-**Constructors:**
-- `UserService()` — primary constructor; creates a `UserRepository`.
-- `UserService(Object ignoredEntityManager)` — backward-compatible overload
-  called by admin controllers that pass an `EntityManager`. The argument is
-  completely ignored; all DB access goes through JDBC.
+**Constructor:**
+- `UserService()` — creates a `UserRepository` and a `ValidationService`.
 
 **Selected method groups:**
 
@@ -299,8 +287,6 @@ Direct JDBC against the `notifications` table (no entity class).
 - `sendNotification(Long userId, String type, String message)` — INSERT.
 - `getRecentForUser(Long userId)` — returns up to 5 most-recent rows as
   `List<NotifRow>` (inner static DTO).
-- Backward-compat constructor `NotificationService(Object)` mirrors
-  `UserService`.
 
 ---
 
@@ -346,38 +332,28 @@ Shell for the admin layout:
   central `StackPane`.
 - Opens modal dialogs (`UserDetailDialog`, `UserFormDialog`) via `openStage()`.
 - `refreshCurrentView()` — called by child controllers after mutations.
-- ⚠️ Still passes `App.getEmf()` (returns `null`) to child controllers.
-  Admin dialogs will NPE at runtime until those controllers are migrated.
 
 #### `admin/DashboardViewController.java`
-Stat summary cards + recent-users table.
-⚠️ **Pending JDBC migration** — still uses `emf.createEntityManager()` and
-JPQL directly. Will NPE at runtime.
+Stat summary cards + recent-users table. Fully JDBC-backed via `UserService`
+count methods.
 
 #### `admin/UserListController.java`
-Paginated, filterable, sortable user table with bulk actions.
-⚠️ **Pending JDBC migration** — uses `emf.createEntityManager()`. The
-`UserService` calls inside will actually work (since `UserService(em)` ignores
-the em), but the `em.close()` calls will NPE when `em` is null.
+Paginated, filterable, sortable user table with bulk actions. Fully
+JDBC-backed via `UserService`.
 
 #### `admin/UserDetailController.java`
 Read-only user detail popup with quick-action buttons (activate, suspend,
-grant premium, send notification, edit stats).
-⚠️ **Pending JDBC migration** — uses `App.getEmf()`.
+grant premium, send notification, edit stats). Fully JDBC-backed.
 
 #### `admin/UserFormController.java`
-Create / edit user form dialog.
-⚠️ **Pending JDBC migration** — uses `emf.createEntityManager()`.
+Create / edit user form dialog. Fully JDBC-backed via `UserService`.
 
 #### `admin/StatsController.java`
 Dialog to view and edit a user's `LearningStats` (XP, words, minutes).
-Calls `svc.initLearningStats()` and `svc.updateLearningStats()` — both are
-JDBC-backed and will work once the `em.close()` NPE is fixed.
-⚠️ **Pending JDBC migration** — uses `emf.createEntityManager()`.
+Calls `svc.initLearningStats()` and `svc.updateLearningStats()`.
 
 #### `admin/NotificationController.java`
-Dialog to send a notification to a user.
-⚠️ **Pending JDBC migration** — uses `emf.createEntityManager()`.
+Dialog to send a notification to a user via `NotificationService`.
 
 #### `user/UserMainController.java`
 Shell for the user layout:
@@ -526,6 +502,10 @@ App.init()
        └─ DriverManager.getConnection("jdbc:mysql://localhost:3306/1lingualearn_db", "root", "")
             └─ prints "Connexion établie !"
 
+App.stop()
+  └─ MyDataBase.getInstance().closeConnection()
+       └─ connection.close() → prints "Connexion fermée !"
+
 Controller action
   └─ new UserService()
        └─ new UserRepository()
@@ -562,30 +542,22 @@ Cleared on logout via `SessionManager.clearSession()`.
 
 ## Feature Status
 
-### Fully working (JDBC)
+All features are fully JDBC-backed. No JPA/Hibernate runtime dependency.
 
 | Feature | Entry point |
 |---------|------------|
 | User registration | `Register.fxml` → `RegisterController` → `UserService.registerUser()` |
 | Login + role routing | `login.fxml` → `LoginController` → `UserService.authenticate()` |
+| Admin dashboard | `DashboardView.fxml` → `DashboardViewController` → `UserService` counts |
+| Admin user list | `UserListView.fxml` → `UserListController` → `UserService.findAdvanced()` |
+| Admin create/edit user | `UserFormDialog.fxml` → `UserFormController` → `UserService` |
+| Admin user detail | `UserDetailDialog.fxml` → `UserDetailController` → `UserService` |
+| Admin learning stats | `StatsDialog.fxml` → `StatsController` → `UserService.updateLearningStats()` |
+| Admin notifications | `NotificationDialog.fxml` → `NotificationController` → `NotificationService` |
 | User profile — view | `UserProfileView.fxml` → `UserProfileController.populateDisplayMode()` |
 | User profile — edit name + email | `UserProfileController.saveProfile()` → `UserService.updateName()` |
 | User profile — change password | `UserProfileController.updatePassword()` → `UserService.adminResetPassword()` |
 | Logout | `UserMainController.handleLogout()` → `SessionManager.clearSession()` |
-
-### Pending JDBC migration (admin controllers)
-
-These controllers compile but will throw `NullPointerException` at runtime
-because `App.getEmf()` returns `null`.
-
-| Controller | Blocker | Notes |
-|-----------|---------|-------|
-| `DashboardViewController` | Uses `em.createQuery()` directly | Needs conversion to `UserService` count methods |
-| `UserListController` | Calls `emf.createEntityManager()` + `em.close()` | `UserService(em)` calls already work; need to remove EM wrapping |
-| `UserFormController` | Calls `emf.createEntityManager()` | |
-| `UserDetailController` | Calls `App.getEmf()` | |
-| `StatsController` | Calls `emf.createEntityManager()` | Underlying `initLearningStats`/`updateLearningStats` already JDBC |
-| `NotificationController` | Calls `emf.createEntityManager()` | `NotificationService(em)` already JDBC |
 
 ---
 
