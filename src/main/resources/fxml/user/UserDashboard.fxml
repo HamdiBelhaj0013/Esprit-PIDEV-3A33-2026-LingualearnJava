@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane fx:id="rootPane"
+            fitToWidth="true"
+            styleClass="scroll-pane"
+            stylesheets="@../../css/user.css"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.controller.user.UserDashboardController">
+
+    <VBox spacing="20.0">
+        <padding><Insets top="24" right="28" bottom="28" left="28"/></padding>
+
+        <!-- ── Header ──────────────────────────────────────────────────── -->
+        <HBox alignment="CENTER_LEFT" spacing="12.0">
+            <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                <Label fx:id="welcomeLabel" styleClass="page-title" text="Welcome back &#x1F44B;"/>
+                <Label fx:id="dateLabel"    styleClass="page-subtitle" text=""/>
+            </VBox>
+            <Label text="&#x1F514;" style="-fx-font-size: 22px; -fx-cursor: hand;"/>
+            <Label fx:id="topAvatarLabel" text="?"
+                   style="-fx-background-radius: 20; -fx-min-width: 36; -fx-min-height: 36;
+                          -fx-max-width: 36; -fx-max-height: 36; -fx-alignment: center;
+                          -fx-background-color: #3b5bdb; -fx-text-fill: white;
+                          -fx-font-weight: bold; -fx-font-size: 14px;"/>
+        </HBox>
+
+        <!-- ── Stat cards ───────────────────────────────────────────────── -->
+        <HBox spacing="16.0">
+            <VBox styleClass="stat-card, stat-card-blue" HBox.hgrow="ALWAYS" spacing="4.0">
+                <Label text="&#x1F4DA;" style="-fx-font-size: 18px;"/>
+                <Label fx:id="wordsLearnedValue" styleClass="stat-number" text="0"/>
+                <Label text="Words Learned" styleClass="stat-label"/>
+            </VBox>
+            <VBox styleClass="stat-card, stat-card-green" HBox.hgrow="ALWAYS" spacing="4.0">
+                <Label text="&#x2B50;" style="-fx-font-size: 18px;"/>
+                <Label fx:id="totalXpValue" styleClass="stat-number" text="0"/>
+                <Label text="Total XP" styleClass="stat-label"/>
+            </VBox>
+            <VBox styleClass="stat-card, stat-card-orange" HBox.hgrow="ALWAYS" spacing="4.0">
+                <Label text="&#x23F1;" style="-fx-font-size: 18px;"/>
+                <Label fx:id="studyTimeValue" styleClass="stat-number" text="0"/>
+                <Label text="minutes total" styleClass="stat-label"/>
+            </VBox>
+            <VBox styleClass="stat-card, stat-card-purple" HBox.hgrow="ALWAYS" spacing="4.0">
+                <Label text="&#x1F30D;" style="-fx-font-size: 18px;"/>
+                <Label styleClass="stat-number" text="2"/>
+                <Label text="enrolled" styleClass="stat-label"/>
+            </VBox>
+        </HBox>
+
+        <!-- ── My Languages + Recent Notifications ─────────────────────── -->
+        <HBox spacing="16.0">
+
+            <!-- My Languages -->
+            <VBox styleClass="profile-card" HBox.hgrow="ALWAYS" spacing="12.0">
+                <Label text="My Languages" styleClass="form-section-title"/>
+
+                <!-- Arabic row -->
+                <HBox spacing="10.0" alignment="CENTER_LEFT" styleClass="notif-row">
+                    <Label text="AR"
+                           style="-fx-background-color: #1a1f36; -fx-text-fill: white;
+                                  -fx-font-weight: bold; -fx-font-size: 11px;
+                                  -fx-background-radius: 4; -fx-padding: 3 8;
+                                  -fx-alignment: center;"/>
+                    <Label text="Arabe" HBox.hgrow="ALWAYS"
+                           style="-fx-font-size: 13px; -fx-text-fill: #1a1f36;"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label text="A1" styleClass="badge-active"/>
+                </HBox>
+
+                <!-- French row -->
+                <HBox spacing="10.0" alignment="CENTER_LEFT" styleClass="notif-row">
+                    <Label text="FR"
+                           style="-fx-background-color: #1a1f36; -fx-text-fill: white;
+                                  -fx-font-weight: bold; -fx-font-size: 11px;
+                                  -fx-background-radius: 4; -fx-padding: 3 8;
+                                  -fx-alignment: center;"/>
+                    <Label text="Fran&#xE7;ais" HBox.hgrow="ALWAYS"
+                           style="-fx-font-size: 13px; -fx-text-fill: #1a1f36;"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label text="A1" styleClass="badge-active"/>
+                </HBox>
+            </VBox>
+
+            <!-- Recent Notifications -->
+            <VBox styleClass="profile-card" HBox.hgrow="ALWAYS" spacing="12.0">
+                <HBox alignment="CENTER_LEFT">
+                    <Label text="Recent Notifications" styleClass="form-section-title"
+                           HBox.hgrow="ALWAYS"/>
+                    <Button text="View all &#x2192;" styleClass="btn-outline-muted, btn-sm"/>
+                </HBox>
+                <VBox fx:id="notificationsBox" spacing="8.0"/>
+            </VBox>
+        </HBox>
+
+        <!-- ── Quick Actions ────────────────────────────────────────────── -->
+        <VBox styleClass="profile-card" spacing="12.0">
+            <Label text="QUICK ACTIONS" styleClass="form-section-title"/>
+            <HBox spacing="12.0">
+                <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="8.0"
+                      onMouseClicked="#onBrowseCourses"
+                      style="-fx-cursor: hand;">
+                    <Label text="&#x1F4D6;" style="-fx-font-size: 24px;"/>
+                    <Label text="Browse Courses"
+                           style="-fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: #1a1f36;"/>
+                    <Label text="Explore all lessons" styleClass="stat-label"/>
+                </VBox>
+                <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="8.0"
+                      onMouseClicked="#onPracticeNow"
+                      style="-fx-cursor: hand;">
+                    <Label text="&#x1F3AF;" style="-fx-font-size: 24px;"/>
+                    <Label text="Practice Now"
+                           style="-fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: #1a1f36;"/>
+                    <Label text="Quick vocabulary drill" styleClass="stat-label"/>
+                </VBox>
+                <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="8.0"
+                      onMouseClicked="#onMockTest"
+                      style="-fx-cursor: hand;">
+                    <Label text="&#x1F4DD;" style="-fx-font-size: 24px;"/>
+                    <Label text="Mock Test"
+                           style="-fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: #1a1f36;"/>
+                    <Label text="Test your knowledge" styleClass="stat-label"/>
+                </VBox>
+                <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="8.0"
+                      onMouseClicked="#onEditProfile"
+                      style="-fx-cursor: hand;">
+                    <Label text="&#x1F464;" style="-fx-font-size: 24px;"/>
+                    <Label text="Edit Profile"
+                           style="-fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: #1a1f36;"/>
+                    <Label text="Update your info" styleClass="stat-label"/>
+                </VBox>
+            </HBox>
+        </VBox>
+
+        <!-- ── My Subscription + Account Info ──────────────────────────── -->
+        <HBox spacing="16.0">
+
+            <!-- My Subscription (filled by controller) -->
+            <VBox fx:id="subscriptionCard" styleClass="profile-card"
+                  HBox.hgrow="ALWAYS" spacing="12.0"/>
+
+            <!-- Account Info -->
+            <VBox styleClass="profile-card" HBox.hgrow="ALWAYS" spacing="10.0">
+                <Label text="Account Info" styleClass="form-section-title"/>
+                <VBox fx:id="accountInfoBox" spacing="10.0"/>
+            </VBox>
+        </HBox>
+
+    </VBox>
+</ScrollPane>
