@@ -32,17 +32,6 @@
             <version>0.4</version>
         </dependency>
 
-        <!--
-          Jakarta Persistence API (interfaces only — no Hibernate ORM runtime).
-          Kept so that controller classes that still import EntityManager / EntityManagerFactory
-          continue to compile. No JPA provider is wired at runtime.
-        -->
-        <dependency>
-            <groupId>jakarta.persistence</groupId>
-            <artifactId>jakarta.persistence-api</artifactId>
-            <version>3.1.0</version>
-        </dependency>
-
         <!-- Jakarta Validation API -->
         <dependency>
             <groupId>jakarta.validation</groupId>

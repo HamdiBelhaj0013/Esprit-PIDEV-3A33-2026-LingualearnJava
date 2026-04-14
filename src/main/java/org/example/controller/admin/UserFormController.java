@@ -1,7 +1,5 @@
 package org.example.controller.admin;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
 import org.example.entity.User;
 import org.example.service.UserService;
 import javafx.collections.FXCollections;
@@ -45,7 +43,6 @@ public class UserFormController {
     private enum Mode { CREATE, EDIT }
     private Mode               mode;
     private User               editTarget;
-    private EntityManagerFactory emf;
     private Runnable           onSaved;
 
     // ── Init ───────────────────────────────────────────────────────────────────
@@ -59,9 +56,8 @@ public class UserFormController {
         confirmField.textProperty().addListener((o, ov, nv)   -> clearFieldError(confirmError));
     }
 
-    public void initForCreate(EntityManagerFactory emf, Runnable onSaved) {
+    public void initForCreate(Runnable onSaved) {
         this.mode    = Mode.CREATE;
-        this.emf     = emf;
         this.onSaved = onSaved;
 
         dialogTitle.setText("Create User");
@@ -72,10 +68,9 @@ public class UserFormController {
         roleUser.setSelected(true);
     }
 
-    public void initForEdit(User user, EntityManagerFactory emf, Runnable onSaved) {
+    public void initForEdit(User user, Runnable onSaved) {
         this.mode       = Mode.EDIT;
         this.editTarget = user;
-        this.emf        = emf;
         this.onSaved    = onSaved;
 
         dialogTitle.setText("Edit User");
@@ -112,9 +107,8 @@ public class UserFormController {
         String password  = passwordField.getText();
         String confirm   = confirmField.getText();
 
-        EntityManager em = emf.createEntityManager();
         try {
-            UserService svc = new UserService(em);
+            UserService svc = new UserService();
 
             if (mode == Mode.CREATE) {
                 List<String> roles = buildRoles();
@@ -144,8 +138,6 @@ public class UserFormController {
 
         } catch (Exception ex) {
             showGlobalError(ex.getMessage());
-        } finally {
-            em.close();
         }
     }
 

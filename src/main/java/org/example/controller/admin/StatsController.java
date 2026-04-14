@@ -1,7 +1,5 @@
 package org.example.controller.admin;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
 import org.example.entity.LearningStats;
 import org.example.entity.User;
 import org.example.service.UserService;
@@ -24,13 +22,11 @@ public class StatsController {
     @FXML private Spinner<Integer> minutesSpinner;
     @FXML private Label   errorLabel;
 
-    private User                 user;
-    private EntityManagerFactory emf;
-    private Runnable             onSaved;
+    private User     user;
+    private Runnable onSaved;
 
-    public void setUser(User u, EntityManagerFactory emf, Runnable onSaved) {
+    public void setUser(User u, Runnable onSaved) {
         this.user    = u;
-        this.emf     = emf;
         this.onSaved = onSaved;
 
         userNameLabel.setText(u.getFullName());
@@ -59,9 +55,8 @@ public class StatsController {
         commitSpinner(wordsSpinner);
         commitSpinner(minutesSpinner);
 
-        EntityManager em = emf.createEntityManager();
         try {
-            UserService svc = new UserService(em);
+            UserService svc = new UserService();
 
             // Reload user to get fresh managed instance
             User managed = svc.findById(user.getId()).orElseThrow(
@@ -80,8 +75,6 @@ public class StatsController {
             if (onSaved != null) onSaved.run();
         } catch (Exception ex) {
             showError(ex.getMessage());
-        } finally {
-            em.close();
         }
     }
 
