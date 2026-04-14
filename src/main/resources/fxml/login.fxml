@@ -42,5 +42,9 @@
             </VBox.margin>
         </Button>
 
+        <!-- ── Register link ───────────────────── -->
+        <Button alignment="CENTER" maxWidth="Infinity" onAction="#handleGoToRegister"
+                styleClass="link-btn" text="Don't have an account? Register" />
+
     </VBox>
 </StackPane>

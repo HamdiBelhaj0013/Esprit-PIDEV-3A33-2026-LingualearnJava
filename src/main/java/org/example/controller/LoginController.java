@@ -1,7 +1,5 @@
 package org.example.controller;
 
-import org.example.App;
-import jakarta.persistence.EntityManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -15,14 +13,15 @@ import org.example.controller.admin.AdminMainController;
 import org.example.controller.user.UserMainController;
 import org.example.entity.User;
 import org.example.service.UserService;
+import org.example.util.StageManager;
 
 import java.io.IOException;
 
 public class LoginController {
 
-    @FXML private TextField emailField;
+    @FXML private TextField     emailField;
     @FXML private PasswordField passwordField;
-    @FXML private Label errorLabel;
+    @FXML private Label         errorLabel;
 
     @FXML
     private void handleLogin(ActionEvent event) {
@@ -34,9 +33,8 @@ public class LoginController {
             return;
         }
 
-        EntityManager em = App.getEmf().createEntityManager();
         try {
-            UserService userService = new UserService(em);
+            UserService userService = new UserService();
             var userOpt = userService.authenticate(email, password);
 
             if (userOpt.isEmpty()) {
@@ -44,15 +42,21 @@ public class LoginController {
                 return;
             }
 
-            User user = userOpt.get();
+            User user    = userOpt.get();
             boolean isAdmin = user.getRoles().contains("ROLE_ADMIN");
-
             navigateToDashboard(user, isAdmin);
 
         } catch (Exception e) {
             showError("Connection error. Please try again.");
-        } finally {
-            if (em.isOpen()) em.close();
+        }
+    }
+
+    @FXML
+    private void handleGoToRegister(ActionEvent event) {
+        try {
+            StageManager.switchScene("/fxml/Register.fxml");
+        } catch (IOException e) {
+            showError("Could not open registration page.");
         }
     }
 

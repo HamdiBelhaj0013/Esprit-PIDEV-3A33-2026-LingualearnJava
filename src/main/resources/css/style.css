@@ -84,6 +84,27 @@
     -fx-font-family: "Segoe UI", Arial, sans-serif;
 }
 
+.link-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: #1a237e;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+    -fx-padding: 4 0;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.link-btn:hover {
+    -fx-text-fill: #283593;
+    -fx-underline: true;
+}
+
+.success-label {
+    -fx-text-fill: #2e7d32;
+    -fx-font-size: 13px;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
 /* ═══════════════════════════════════════════════
    DASHBOARD — SHARED
    ═══════════════════════════════════════════════ */
