@@ -11,9 +11,6 @@ public class NotificationService {
 
     public NotificationService() {}
 
-    /** Backward-compatible constructor — EntityManager is no longer used. */
-    public NotificationService(Object ignoredEntityManager) {}
-
     private Connection conn() {
         return MyDataBase.getInstance().getConnection();
     }

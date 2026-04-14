@@ -32,4 +32,15 @@ public class MyDataBase {
     public Connection getConnection() {
         return connection;
     }
+
+    public void closeConnection() {
+        try {
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+                System.out.println("Connexion fermée !");
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 }
