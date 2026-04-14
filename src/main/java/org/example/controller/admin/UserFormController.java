@@ -1,7 +1,5 @@
 package org.example.controller.admin;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
 import org.example.entity.User;
 import org.example.service.UserService;
 import javafx.collections.FXCollections;
@@ -31,9 +29,9 @@ public class UserFormController {
     @FXML private PasswordField confirmField;
     @FXML private Label       confirmError;
 
-    @FXML private VBox        statusRow;
+    @FXML private VBox             statusRow;
     @FXML private ChoiceBox<String> statusChoice;
-    @FXML private Label       statusError;
+    @FXML private Label            statusError;
 
     @FXML private CheckBox    roleUser;
     @FXML private CheckBox    roleAdmin;
@@ -45,14 +43,21 @@ public class UserFormController {
     private enum Mode { CREATE, EDIT }
     private Mode               mode;
     private User               editTarget;
-    private EntityManagerFactory emf;
     private Runnable           onSaved;
 
     // ── Init ───────────────────────────────────────────────────────────────────
 
-    public void initForCreate(EntityManagerFactory emf, Runnable onSaved) {
+    @FXML
+    public void initialize() {
+        firstNameField.textProperty().addListener((o, ov, nv) -> clearFieldError(firstNameError));
+        lastNameField.textProperty().addListener((o, ov, nv)  -> clearFieldError(lastNameError));
+        emailField.textProperty().addListener((o, ov, nv)     -> clearFieldError(emailError));
+        passwordField.textProperty().addListener((o, ov, nv)  -> clearFieldError(passwordError));
+        confirmField.textProperty().addListener((o, ov, nv)   -> clearFieldError(confirmError));
+    }
+
+    public void initForCreate(Runnable onSaved) {
         this.mode    = Mode.CREATE;
-        this.emf     = emf;
         this.onSaved = onSaved;
 
         dialogTitle.setText("Create User");
@@ -63,10 +68,9 @@ public class UserFormController {
         roleUser.setSelected(true);
     }
 
-    public void initForEdit(User user, EntityManagerFactory emf, Runnable onSaved) {
+    public void initForEdit(User user, Runnable onSaved) {
         this.mode       = Mode.EDIT;
         this.editTarget = user;
-        this.emf        = emf;
         this.onSaved    = onSaved;
 
         dialogTitle.setText("Edit User");
@@ -103,9 +107,8 @@ public class UserFormController {
         String password  = passwordField.getText();
         String confirm   = confirmField.getText();
 
-        EntityManager em = emf.createEntityManager();
         try {
-            UserService svc = new UserService(em);
+            UserService svc = new UserService();
 
             if (mode == Mode.CREATE) {
                 List<String> roles = buildRoles();
@@ -135,8 +138,6 @@ public class UserFormController {
 
         } catch (Exception ex) {
             showGlobalError(ex.getMessage());
-        } finally {
-            em.close();
         }
     }
 
@@ -179,12 +180,23 @@ public class UserFormController {
         if (mode == Mode.CREATE && pwd.isBlank()) {
             showError(passwordError, "Password is required");
             ok = false;
-        } else if (!pwd.isBlank() && pwd.length() < 6) {
-            showError(passwordError, "Minimum 6 characters");
+        } else if (!pwd.isBlank() && pwd.length() < 8) {
+            showError(passwordError, "Minimum 8 characters");
             ok = false;
         } else if (!pwd.isBlank() && !pwd.equals(confirmField.getText())) {
             showError(confirmError, "Passwords do not match");
             ok = false;
+        }
+
+        if (mode == Mode.EDIT) {
+            String status = statusChoice.getValue();
+            if (status == null || status.isBlank()) {
+                showError(statusError, "Status is required");
+                ok = false;
+            } else if (!status.equals("active") && !status.equals("suspended") && !status.equals("deleted")) {
+                showError(statusError, "Status must be active, suspended, or deleted");
+                ok = false;
+            }
         }
 
         return ok;
@@ -202,10 +214,15 @@ public class UserFormController {
 
     private void clearErrors() {
         for (Label l : List.of(firstNameError, lastNameError, emailError,
-                               passwordError, confirmError, globalError)) {
+                               passwordError, confirmError, statusError, globalError)) {
             l.setVisible(false);
             l.setManaged(false);
         }
+    }
+
+    private void clearFieldError(Label label) {
+        label.setVisible(false);
+        label.setManaged(false);
     }
 
     private void showError(Label label, String msg) {

@@ -1,8 +1,7 @@
 package org.example.controller.admin;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
 import org.example.entity.User;
+import org.example.service.UserService;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -31,45 +30,38 @@ public class DashboardViewController {
     @FXML private TableColumn<User, String>    colPlan;
     @FXML private TableColumn<User, LocalDateTime> colJoined;
 
-    private EntityManagerFactory emf;
-
-    public void setEntityManagerFactory(EntityManagerFactory emf) {
-        this.emf = emf;
-    }
-
     public void load() {
-        EntityManager em = emf.createEntityManager();
-        try {
-            long total     = count(em, "SELECT COUNT(u) FROM User u");
-            long active    = count(em, "SELECT COUNT(u) FROM User u WHERE u.status = 'active'");
-            long suspended = count(em, "SELECT COUNT(u) FROM User u WHERE u.status = 'suspended'");
-            long premium   = count(em, "SELECT COUNT(u) FROM User u WHERE u.isPremium = true");
+        UserService svc = new UserService();
 
-            LocalDateTime start = LocalDateTime.now().withDayOfMonth(1)
-                                               .withHour(0).withMinute(0).withSecond(0).withNano(0);
-            long newMonth = em.createQuery(
-                "SELECT COUNT(u) FROM User u WHERE u.createdAt >= :s", Long.class)
-                .setParameter("s", start).getSingleResult();
+        long total     = svc.countAll();
+        long active    = svc.countByStatus("active");
+        long suspended = svc.countByStatus("suspended");
+        long premium   = svc.countPremium();
 
-            totalUsersLabel.setText(String.valueOf(total));
-            activeUsersLabel.setText(String.valueOf(active));
-            suspendedLabel.setText(String.valueOf(suspended));
-            premiumLabel.setText(String.valueOf(premium));
-            newThisMonthLabel.setText(String.valueOf(newMonth));
+        LocalDateTime start = LocalDateTime.now().withDayOfMonth(1)
+                                           .withHour(0).withMinute(0).withSecond(0).withNano(0);
+        List<User> allUsers = svc.getAllUsers();
+        long newMonth = allUsers.stream()
+            .filter(u -> u.getCreatedAt() != null && !u.getCreatedAt().isBefore(start))
+            .count();
 
-            List<User> recent = em.createQuery(
-                "SELECT u FROM User u ORDER BY u.createdAt DESC", User.class)
-                .setMaxResults(10).getResultList();
+        totalUsersLabel.setText(String.valueOf(total));
+        activeUsersLabel.setText(String.valueOf(active));
+        suspendedLabel.setText(String.valueOf(suspended));
+        premiumLabel.setText(String.valueOf(premium));
+        newThisMonthLabel.setText(String.valueOf(newMonth));
 
-            setupTable();
-            recentTable.setItems(FXCollections.observableArrayList(recent));
-        } finally {
-            em.close();
-        }
-    }
+        List<User> recent = allUsers.stream()
+            .sorted((a, b) -> {
+                if (a.getCreatedAt() == null) return 1;
+                if (b.getCreatedAt() == null) return -1;
+                return b.getCreatedAt().compareTo(a.getCreatedAt());
+            })
+            .limit(10)
+            .toList();
 
-    private long count(EntityManager em, String jpql) {
-        return em.createQuery(jpql, Long.class).getSingleResult();
+        setupTable();
+        recentTable.setItems(FXCollections.observableArrayList(recent));
     }
 
     private void setupTable() {

@@ -1,8 +1,5 @@
 package org.example.controller.user;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.TypedQuery;
 import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -19,8 +16,12 @@ import org.example.service.UserService;
 import org.example.util.SessionManager;
 
 import java.time.format.DateTimeFormatter;
+import java.util.regex.Pattern;
 
 public class UserProfileController {
+
+    private static final Pattern EMAIL_PATTERN =
+        Pattern.compile("^[\\w._%+\\-]+@[\\w.\\-]+\\.[a-zA-Z]{2,}$");
 
     // ── Card 1 — display mode ─────────────────────────────────────────────────
     @FXML private VBox   displayModeBox;
@@ -172,40 +173,31 @@ public class UserProfileController {
             showFieldError(lastNameError, "Last name must be at least 2 characters");
             valid = false;
         }
-        if (!email.contains("@") || !email.contains(".")) {
+        if (!EMAIL_PATTERN.matcher(email).matches()) {
             showFieldError(emailError, "Please enter a valid email address");
             valid = false;
         }
         if (!valid) return;
 
-        EntityManager em = SessionManager.getEntityManager();
         User currentUser = SessionManager.getCurrentUser();
+        UserService svc  = new UserService();
 
-        // Email uniqueness check (exclude this user)
-        TypedQuery<Long> q = em.createQuery(
-            "SELECT COUNT(u) FROM User u WHERE u.email = :email AND u.id != :id",
-            Long.class);
-        q.setParameter("email", email);
-        q.setParameter("id", currentUser.getId());
-        if (q.getSingleResult() > 0) {
+        // Email uniqueness check — ensure no other account uses this email
+        var existing = svc.findByEmail(email);
+        if (existing.isPresent() && !existing.get().getId().equals(currentUser.getId())) {
             showFieldError(emailError, "This email is already in use");
             return;
         }
 
-        EntityTransaction tx = em.getTransaction();
         try {
-            tx.begin();
-            currentUser.setFirstName(firstName);
-            currentUser.setLastName(lastName);
+            // Set email before calling updateName — save() persists all User fields at once
             currentUser.setEmail(email);
-            User merged = em.merge(currentUser);
-            tx.commit();
+            svc.updateName(currentUser, firstName, lastName);
 
-            SessionManager.setCurrentUser(merged);
+            SessionManager.setCurrentUser(currentUser);
             UserMainController.refreshUserInfo();
 
         } catch (Exception ex) {
-            if (tx.isActive()) tx.rollback();
             showBanner("Error saving profile: " + ex.getMessage(), false);
             return;
         }
@@ -259,7 +251,7 @@ public class UserProfileController {
         }
 
         User currentUser = SessionManager.getCurrentUser();
-        UserService svc  = new UserService(SessionManager.getEntityManager());
+        UserService svc  = new UserService();
 
         // 2. Verify current password
         if (!svc.verifyPassword(currentPw, currentUser.getPassword())) {
@@ -268,8 +260,8 @@ public class UserProfileController {
         }
 
         // 3. Minimum length
-        if (newPw.length() < 6) {
-            showBanner("New password must be at least 6 characters.", false);
+        if (newPw.length() < 8) {
+            showBanner("New password must be at least 8 characters.", false);
             return;
         }
 
@@ -286,16 +278,10 @@ public class UserProfileController {
         }
 
         // 6. Hash and persist
-        EntityManager em = SessionManager.getEntityManager();
-        EntityTransaction tx = em.getTransaction();
         try {
-            tx.begin();
-            currentUser.setPassword(svc.hashPassword(newPw));
-            User merged = em.merge(currentUser);
-            tx.commit();
-            SessionManager.setCurrentUser(merged);
+            svc.adminResetPassword(currentUser, newPw);  // hashes + saves via JDBC
+            SessionManager.setCurrentUser(currentUser);
         } catch (Exception ex) {
-            if (tx.isActive()) tx.rollback();
             showBanner("Error updating password: " + ex.getMessage(), false);
             return;
         }

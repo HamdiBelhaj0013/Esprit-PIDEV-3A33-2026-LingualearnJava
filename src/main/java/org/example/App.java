@@ -1,7 +1,7 @@
 package org.example;
 
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
+import org.example.util.MyDataBase;
+import org.example.util.StageManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -9,20 +9,15 @@ import javafx.stage.Stage;
 
 public class App extends Application {
 
-    private static EntityManagerFactory emf;
-
-    /** Called by all controllers to obtain an EntityManager. */
-    public static EntityManagerFactory getEmf() {
-        return emf;
-    }
-
     @Override
-    public void init() throws Exception {
-        emf = Persistence.createEntityManagerFactory("lingualearn");
+    public void init() {
+        // Eagerly open the singleton JDBC connection so any config error surfaces at startup.
+        MyDataBase.getInstance();
     }
 
     @Override
     public void start(Stage stage) throws Exception {
+        StageManager.setPrimaryStage(stage);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/login.fxml"));
         Scene scene = new Scene(loader.load());
         stage.setTitle("LinguaLearn");
@@ -34,8 +29,6 @@ public class App extends Application {
 
     @Override
     public void stop() {
-        if (emf != null && emf.isOpen()) {
-            emf.close();
-        }
+        // Connection lifecycle is managed by MyDataBase singleton.
     }
 }

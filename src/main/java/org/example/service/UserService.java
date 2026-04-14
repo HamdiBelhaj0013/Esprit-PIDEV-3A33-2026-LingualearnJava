@@ -4,36 +4,33 @@ import org.example.entity.LearningStats;
 import org.example.entity.User;
 import org.example.repository.UserRepository;
 import org.example.validation.ValidationService;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
 import org.mindrot.jbcrypt.BCrypt;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Port of Symfony's UserService.
- *
- * FIX: package was org.example.service — changed to com.lingualearn.service.
- * FIX: method names aligned with what AdminConsole / UserConsole call.
- * FIX: countPremium() now uses the COUNT query instead of loading all users.
- * FIX: adminUpdateUser() no longer double-begins a transaction.
- */
-public class UserService {
+public class UserService implements IUserService {
 
     private static final int BCRYPT_ROUNDS = 12;
 
     private final UserRepository    userRepository;
-    private final EntityManager     em;
     private final ValidationService validation;
 
-    public UserService(EntityManager em) {
-        this.em             = em;
-        this.userRepository = new UserRepository(em);
+    public UserService() {
+        this.userRepository = new UserRepository();
         this.validation     = new ValidationService();
     }
 
+    /**
+     * Backward-compatible constructor — controllers still call new UserService(em).
+     * The EntityManager is no longer used; all DB access goes through UserRepository / JDBC.
+     */
+    public UserService(Object ignoredEntityManager) {
+        this();
+    }
 
+    // ── Password ──────────────────────────────────────────────────────────────
 
     public String hashPassword(String plain) {
         return BCrypt.hashpw(plain, BCrypt.gensalt(BCRYPT_ROUNDS));
@@ -46,6 +43,51 @@ public class UserService {
         return BCrypt.checkpw(plain, hash);
     }
 
+    // ── REGISTRATION ─────────────────────────────────────────────────────────
+
+    /**
+     * Public-facing user self-registration.
+     * Validates inputs, hashes the password, then delegates to
+     * {@link org.example.repository.UserRepository#register(User)}
+     * which enforces the unique-email constraint at the DB level.
+     */
+    @Override
+    public void registerUser(String firstName, String lastName, String email, String password) {
+        ValidationService.requireNonBlank(firstName, "First name");
+        ValidationService.requireNonBlank(lastName,  "Last name");
+        ValidationService.requireMinLength(firstName, "First name", 2);
+        ValidationService.requireMinLength(lastName,  "Last name",  2);
+        ValidationService.requireValidEmail(email);
+        ValidationService.requireMinLength(password, "Password", 6);
+
+        User user = new User();
+        user.setEmail(email.trim().toLowerCase());
+        user.setFirstName(firstName.trim());
+        user.setLastName(lastName.trim());
+        user.setPassword(BCrypt.hashpw(password, BCrypt.gensalt(BCRYPT_ROUNDS)));
+        user.setRoles(List.of("ROLE_USER"));
+        user.setStatus("active");
+        user.setSubscriptionPlan("FREE");
+        user.setVerified(false);
+
+        userRepository.register(user);
+    }
+
+    // ── IUserService aliases ──────────────────────────────────────────────────
+
+    /** Alias for {@link #authenticate(String, String)} — satisfies {@link IUserService}. */
+    @Override
+    public Optional<User> login(String email, String password) {
+        return authenticate(email, password);
+    }
+
+    /** Alias for {@link #findAll()} — satisfies {@link IUserService}. */
+    @Override
+    public List<User> getAllUsers() {
+        return findAll();
+    }
+
+    // ── CREATE ────────────────────────────────────────────────────────────────
 
     public User createUser(String email, String plainPassword, String confirmPassword,
                            String firstName, String lastName, List<String> roles) {
@@ -73,20 +115,11 @@ public class UserService {
         validation.validateOrThrow(user);
 
         LearningStats stats = new LearningStats();
-        stats.setUser(user);
-        user.setLearningStats(stats);
-
-        EntityTransaction tx = em.getTransaction();
-        tx.begin();
         try {
-            em.persist(user);
-            em.persist(stats);
-            tx.commit();
+            userRepository.saveWithStats(user, stats);
         } catch (Exception e) {
-            if (tx.isActive()) tx.rollback();
             throw new RuntimeException("Could not create user: " + e.getMessage(), e);
         }
-
         return user;
     }
 
@@ -114,20 +147,10 @@ public class UserService {
 
     public long countAll()              { return userRepository.countAll(); }
     public long countByStatus(String s) { return userRepository.countByStatus(s); }
-
-    /**
-     * FIX: was calling findPremiumUsers().size() — loaded every user into memory.
-     * Now delegates to the COUNT query in the repository.
-     */
-    public long countPremium() { return userRepository.countPremium(); }
+    public long countPremium()          { return userRepository.countPremium(); }
 
     // ── UPDATE ────────────────────────────────────────────────────────────────
 
-    /**
-     * Update first + last name.
-     * Called "updateName" by the consoles — aliased here.
-     * FIX: consoles called svc.updateName() but service only had updateProfile().
-     */
     public void updateName(User user, String firstName, String lastName) {
         ValidationService.requireNonBlank(firstName, "First name");
         ValidationService.requireNonBlank(lastName,  "Last name");
@@ -158,7 +181,7 @@ public class UserService {
             user.setPassword(hashPassword(newPassword));
         }
 
-        saveAndFlush(user);   // single transaction for the whole update
+        saveAndFlush(user);
     }
 
     public void activate(User user)  { activateUser(user); }
@@ -176,13 +199,9 @@ public class UserService {
     }
 
     public void deleteUser(User user) {
-        EntityTransaction tx = em.getTransaction();
-        tx.begin();
         try {
             userRepository.delete(user);
-            tx.commit();
         } catch (Exception e) {
-            if (tx.isActive()) tx.rollback();
             throw new RuntimeException("Could not delete user: " + e.getMessage(), e);
         }
     }
@@ -197,8 +216,8 @@ public class UserService {
 
     public void upgradeToPremium(User user, String plan, LocalDateTime expiry) {
         ValidationService.requireValidPlan(plan);
-        user.setSubscriptionExpiry(expiry);   // set expiry FIRST (updatePremiumStatus needs it)
-        user.setSubscriptionPlan(plan);       // triggers updatePremiumStatus()
+        user.setSubscriptionExpiry(expiry);
+        user.setSubscriptionPlan(plan);
         user.setLastPaymentStatus("success");
         saveAndFlush(user);
     }
@@ -209,9 +228,7 @@ public class UserService {
         saveAndFlush(user);
     }
 
-    public int downgradeExpired() {
-        return checkExpiredSubscriptions();
-    }
+    public int downgradeExpired()          { return checkExpiredSubscriptions(); }
 
     public int checkExpiredSubscriptions() {
         List<User> expired = userRepository.findExpiringSubscriptions(LocalDateTime.now());
@@ -250,28 +267,18 @@ public class UserService {
         LearningStats stats = new LearningStats();
         stats.setUser(user);
         user.setLearningStats(stats);
-        EntityTransaction tx = em.getTransaction();
-        tx.begin();
         try {
-            em.persist(stats);
-            tx.commit();
+            userRepository.saveLearningStats(stats);
         } catch (Exception e) {
-            if (tx.isActive()) tx.rollback();
             throw new RuntimeException(e);
         }
         return stats;
     }
 
-    // ── LEARNING STATS UPDATE ────────────────────────────────────────────────
-
     public void updateLearningStats(LearningStats stats) {
-        EntityTransaction tx = em.getTransaction();
-        tx.begin();
         try {
-            em.merge(stats);
-            tx.commit();
+            userRepository.saveLearningStats(stats);
         } catch (Exception e) {
-            if (tx.isActive()) tx.rollback();
             throw new RuntimeException("Could not update learning stats: " + e.getMessage(), e);
         }
     }
@@ -286,9 +293,7 @@ public class UserService {
 
     // ── STATISTICS ────────────────────────────────────────────────────────────
 
-    public void printStats() {
-        printStatistics();
-    }
+    public void printStats()      { printStatistics(); }
 
     public void printStatistics() {
         System.out.println("  Total users  : " + countAll());
@@ -299,14 +304,11 @@ public class UserService {
     }
 
     // ── Internal helper ───────────────────────────────────────────────────────
+
     private void saveAndFlush(User user) {
-        EntityTransaction tx = em.getTransaction();
-        tx.begin();
         try {
             userRepository.save(user);
-            tx.commit();
         } catch (Exception e) {
-            if (tx.isActive()) tx.rollback();
             throw new RuntimeException("Save failed: " + e.getMessage(), e);
         }
     }
