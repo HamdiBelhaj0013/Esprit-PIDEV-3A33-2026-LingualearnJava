@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(rm -f src/main/java/org/example/Main.java src/main/java/org/example/controller/AdminDashboardController.java src/main/java/org/example/controller/UserDashboardController.java src/main/resources/fxml/AdminDashboard.fxml src/main/resources/fxml/UserDashboard.fxml)",
-      "Bash(rm -rf src/main/java/org/example/console/)"
-    ]
-  }
-}
