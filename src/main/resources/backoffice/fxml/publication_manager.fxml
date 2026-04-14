@@ -3,7 +3,7 @@
 <?import javafx.scene.layout.*?>
 
 <VBox xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="controllers.backoffice.PublicationBackofficeController"
+      fx:controller="org.example.controllers.backoffice.PublicationBackofficeController"
       stylesheets="@../css/style.css"
       spacing="12" style="-fx-background-color: #f8fafc; -fx-padding: 0 8 0 8;">
 
@@ -93,6 +93,8 @@
                     style="-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-padding: 10 24; -fx-background-radius: 8; -fx-cursor: hand;"/>
             <Button text="✏️ Modifier" onAction="#openEditPage"
                     style="-fx-background-color: #f59e0b; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-padding: 10 24; -fx-background-radius: 8; -fx-cursor: hand;"/>
+            <Button text="💬 Commentaires" onAction="#openCommentairesPage"
+                    style="-fx-background-color: #0ea5e9; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-padding: 10 24; -fx-background-radius: 8; -fx-cursor: hand;"/>
             <Button text="🗑️ Supprimer" onAction="#deletePublication"
                     style="-fx-background-color: #ef4444; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-padding: 10 24; -fx-background-radius: 8; -fx-cursor: hand;"/>
             <Button text="🧹 Désélectionner" onAction="#clearSelection"

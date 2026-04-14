@@ -8,7 +8,7 @@
       prefWidth="400"
       xmlns:fx="http://javafx.com/fxml/1"
       xmlns="http://javafx.com/javafx/25"
-      fx:controller="controllers.frontoffice.NotificationController">
+      fx:controller="org.example.controllers.frontoffice.NotificationController">
 
     <padding><Insets top="20" left="20" right="20" bottom="20"/></padding>
 

@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.*?>
 
 <HBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="controllers.backoffice.DashboardController"
+      fx:controller="org.example.controllers.backoffice.DashboardController"
       stylesheets="@../css/style.css"
       prefWidth="1400" prefHeight="800">
 
@@ -33,9 +33,6 @@
                     onAction="#showPublications"
                     styleClass="sidebar-nav-btn"/>
 
-            <Button fx:id="btnCommentaires" text="💬 Commentaires" maxWidth="Infinity"
-                    onAction="#showCommentaires"
-                    styleClass="sidebar-nav-btn"/>
 
             <Separator styleClass="sidebar-separator"/>
 

@@ -3,7 +3,7 @@
 <?import javafx.scene.layout.*?>
 
 <VBox xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="controllers.backoffice.CommentaireNewController"
+      fx:controller="org.example.controllers.backoffice.CommentaireNewController"
       spacing="10" style="-fx-padding: 16; -fx-background-color: #f8fafc;" prefWidth="500">
 
     <Label text="Ajouter Commentaire" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2563eb;"/>

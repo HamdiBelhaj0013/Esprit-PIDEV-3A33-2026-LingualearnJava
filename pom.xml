@@ -14,11 +14,8 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-<<<<<<< Updated upstream
-=======
         <javafx.version>17.0.2</javafx.version>
         <app.mainClass>MainApp</app.mainClass>
->>>>>>> Stashed changes
     </properties>
 
     <dependencies>
@@ -56,7 +53,6 @@
             <version>5.10.2</version>
             <scope>test</scope>
         </dependency>
-<<<<<<< Updated upstream
 
         <!-- Jakarta Validation API -->
         <dependency>
@@ -90,7 +86,7 @@
             <version>21</version>
         </dependency>
 
-=======
+
         <!-- iText7 pour PDF -->
         <dependency>
             <groupId>com.itextpdf</groupId>
@@ -108,7 +104,6 @@
             <artifactId>poi-ooxml</artifactId>
             <version>5.0.0</version>
         </dependency>
->>>>>>> Stashed changes
     </dependencies>
     <build>
         <plugins>
@@ -118,11 +113,8 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-<<<<<<< Updated upstream
                     <mainClass>org.example.App</mainClass>
-=======
                     <mainClass>${app.mainClass}</mainClass>
->>>>>>> Stashed changes
                 </configuration>
             </plugin>
 
@@ -152,8 +144,7 @@
         </plugins>
     </build>
 
-<<<<<<< Updated upstream
-=======
+
     <profiles>
         <profile>
             <id>backoffice</id>
@@ -162,5 +153,4 @@
             </properties>
         </profile>
     </profiles>
->>>>>>> Stashed changes
 </project>

@@ -9,7 +9,7 @@
       stylesheets="@../css/style.css"
       xmlns:fx="http://javafx.com/fxml/1"
       xmlns="http://javafx.com/javafx/25"
-      fx:controller="controllers.frontoffice.PublicationController">
+      fx:controller="org.example.controllers.frontoffice.PublicationController">
 
     <padding><Insets top="20" left="0" right="0" bottom="20"/></padding>
 

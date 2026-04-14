@@ -3,7 +3,7 @@
 <?import javafx.scene.layout.*?>
 
 <VBox xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="controllers.backoffice.CommentaireBackofficeController"
+      fx:controller="org.example.controllers.backoffice.CommentaireBackofficeController"
       stylesheets="@../css/style.css"
       spacing="12" style="-fx-background-color: #f8fafc; -fx-padding: 0 8 0 8;">
 

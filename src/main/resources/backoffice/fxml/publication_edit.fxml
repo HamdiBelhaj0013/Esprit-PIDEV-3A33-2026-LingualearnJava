@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 
 <VBox xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="controllers.backoffice.PublicationEditController"
+      fx:controller="org.example.controllers.backoffice.PublicationEditController"
       spacing="10" style="-fx-padding: 16; -fx-background-color: #f8fafc;" prefWidth="520">
 
     <Label text="Modifier Publication" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #f59e0b;"/>

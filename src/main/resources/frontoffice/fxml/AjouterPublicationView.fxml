@@ -9,7 +9,7 @@
       prefWidth="500"
       xmlns:fx="http://javafx.com/fxml/1"
       xmlns="http://javafx.com/javafx/25"
-      fx:controller="controllers.frontoffice.AjouterPublicationController">
+      fx:controller="org.example.controllers.frontoffice.AjouterPublicationController">
     <padding><Insets top="30" left="40" right="40" bottom="30"/></padding>
 
     <Label text="Ajouter une publication" styleClass="view-title"/>
