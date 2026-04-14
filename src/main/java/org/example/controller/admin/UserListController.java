@@ -71,19 +71,19 @@ public class UserListController {
 
     private void initFilters() {
         statusFilter.setItems(FXCollections.observableArrayList(
-            "All", "active", "suspended", "deleted"));
+                "All Statuses", "active", "suspended", "deleted"));
         statusFilter.getSelectionModel().selectFirst();
 
         roleFilter.setItems(FXCollections.observableArrayList(
-            "All", "ROLE_USER", "ROLE_ADMIN", "ROLE_TEACHER"));
+                "All Roles", "ROLE_USER", "ROLE_ADMIN", "ROLE_TEACHER"));
         roleFilter.getSelectionModel().selectFirst();
 
         planFilter.setItems(FXCollections.observableArrayList(
-            "All", "FREE", "MONTHLY", "YEARLY"));
+                "All Plans", "FREE", "MONTHLY", "YEARLY"));
         planFilter.getSelectionModel().selectFirst();
 
         sortCombo.setItems(FXCollections.observableArrayList(
-            "Recent", "Name A→Z", "Email A→Z", "Status", "Premium first"));
+                "Sort: Recent", "Sort: Name A→Z", "Sort: Email A→Z", "Sort: Status", "Sort: Premium first"));
         sortCombo.getSelectionModel().selectFirst();
     }
 
@@ -108,19 +108,19 @@ public class UserListController {
 
         // ID
         colId.setCellValueFactory(c ->
-            new javafx.beans.property.SimpleLongProperty(c.getValue().getId()).asObject());
+                new javafx.beans.property.SimpleLongProperty(c.getValue().getId()).asObject());
 
         // Full name
         colName.setCellValueFactory(c ->
-            new SimpleStringProperty(c.getValue().getFullName()));
+                new SimpleStringProperty(c.getValue().getFullName()));
 
         // Email
         colEmail.setCellValueFactory(c ->
-            new SimpleStringProperty(c.getValue().getEmail()));
+                new SimpleStringProperty(c.getValue().getEmail()));
 
         // Status badge
         colStatus.setCellValueFactory(c ->
-            new SimpleStringProperty(c.getValue().getStatus()));
+                new SimpleStringProperty(c.getValue().getStatus()));
         colStatus.setCellFactory(col -> new TableCell<>() {
             @Override protected void updateItem(String s, boolean empty) {
                 super.updateItem(s, empty);
@@ -134,7 +134,7 @@ public class UserListController {
 
         // Plan
         colPlan.setCellValueFactory(c ->
-            new SimpleStringProperty(c.getValue().getSubscriptionPlan()));
+                new SimpleStringProperty(c.getValue().getSubscriptionPlan()));
         colPlan.setCellFactory(col -> new TableCell<>() {
             @Override protected void updateItem(String s, boolean empty) {
                 super.updateItem(s, empty);
@@ -148,21 +148,21 @@ public class UserListController {
 
         // Premium
         colPremium.setCellValueFactory(c ->
-            new SimpleBooleanProperty(c.getValue().isPremium()).asObject());
+                new SimpleBooleanProperty(c.getValue().isPremium()).asObject());
         colPremium.setCellFactory(col -> new TableCell<>() {
             @Override protected void updateItem(Boolean b, boolean empty) {
                 super.updateItem(b, empty);
                 if (empty || b == null) { setText(null); return; }
                 setText(b ? "★ Yes" : "—");
                 setStyle(b ? "-fx-text-fill: #856404; -fx-font-weight: bold;"
-                           : "-fx-text-fill: #adb5bd;");
+                        : "-fx-text-fill: #adb5bd;");
             }
         });
 
         // Joined date
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         colJoined.setCellValueFactory(c ->
-            new javafx.beans.property.SimpleObjectProperty<>(c.getValue().getCreatedAt()));
+                new javafx.beans.property.SimpleObjectProperty<>(c.getValue().getCreatedAt()));
         colJoined.setCellFactory(col -> new TableCell<>() {
             @Override protected void updateItem(LocalDateTime dt, boolean empty) {
                 super.updateItem(dt, empty);
@@ -225,18 +225,19 @@ public class UserListController {
 
     private String filterValue(ComboBox<String> cb) {
         String v = cb.getValue();
-        return (v == null || v.equals("All")) ? null : v;
+        if (v == null || v.startsWith("All")) return null;
+        return v;
     }
 
     private String sortKey() {
         String s = sortCombo.getValue();
         if (s == null) return null;
         return switch (s) {
-            case "Name A→Z"     -> "name";
-            case "Email A→Z"    -> "email";
-            case "Status"       -> "status";
-            case "Premium first"-> "premium";
-            default             -> null;
+            case "Sort: Name A→Z"      -> "name";
+            case "Sort: Email A→Z"     -> "email";
+            case "Sort: Status"        -> "status";
+            case "Sort: Premium first" -> "premium";
+            default                    -> null;
         };
     }
 
@@ -295,8 +296,8 @@ public class UserListController {
 
     private void handleDeleteUser(User user) {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
-            "Delete " + user.getFullName() + "?\nThis cannot be undone.",
-            ButtonType.OK, ButtonType.CANCEL);
+                "Delete " + user.getFullName() + "?\nThis cannot be undone.",
+                ButtonType.OK, ButtonType.CANCEL);
         confirm.setHeaderText("Confirm Deletion");
         confirm.showAndWait().ifPresent(btn -> {
             if (btn == ButtonType.OK) {
@@ -322,8 +323,8 @@ public class UserListController {
 
     @FXML private void handleBulkDelete(ActionEvent e) {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
-            "Delete " + selected.size() + " selected user(s)? This cannot be undone.",
-            ButtonType.OK, ButtonType.CANCEL);
+                "Delete " + selected.size() + " selected user(s)? This cannot be undone.",
+                ButtonType.OK, ButtonType.CANCEL);
         confirm.setHeaderText("Confirm Bulk Delete");
         confirm.showAndWait().ifPresent(btn -> {
             if (btn == ButtonType.OK) {

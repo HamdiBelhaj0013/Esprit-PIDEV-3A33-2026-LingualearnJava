@@ -68,9 +68,9 @@
             <!-- Roles -->
             <VBox spacing="6.0">
                 <Label styleClass="form-label" text="Roles" />
-                <CheckBox fx:id="roleUser" disable="true" text="ROLE_USER (always included)" />
+                <CheckBox fx:id="roleUser" text="ROLE_USER (always included)" mouseTransparent="true" />
                 <CheckBox fx:id="roleAdmin" text="ROLE_ADMIN" />
-                <CheckBox fx:id="roleTeacher" text="ROLE_TEACHER" textFill="RED" />
+                <CheckBox fx:id="roleTeacher" text="ROLE_TEACHER" />
             </VBox>
 
             <!-- Global error -->

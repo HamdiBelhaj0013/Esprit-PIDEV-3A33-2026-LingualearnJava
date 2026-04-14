@@ -11,7 +11,10 @@
     -fx-background-color: #f8fafc;
     -fx-font-family: "Segoe UI", Arial, sans-serif;
 }
-
+/* ── Checkbox text fix ── */
+.check-box .text {
+    -fx-fill: #212529;
+}
 /* ═══════════════════════════════════════════════
    SIDEBAR
 ═══════════════════════════════════════════════ */
