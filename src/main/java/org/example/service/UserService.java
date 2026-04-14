@@ -22,14 +22,6 @@ public class UserService implements IUserService {
         this.validation     = new ValidationService();
     }
 
-    /**
-     * Backward-compatible constructor — controllers still call new UserService(em).
-     * The EntityManager is no longer used; all DB access goes through UserRepository / JDBC.
-     */
-    public UserService(Object ignoredEntityManager) {
-        this();
-    }
-
     // ── Password ──────────────────────────────────────────────────────────────
 
     public String hashPassword(String plain) {
