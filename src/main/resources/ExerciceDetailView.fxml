@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="org.example.controllers.ExerciceDetailController"
+           style="-fx-background-color: #f8fafc;" stylesheets="@styles.css"
+           prefWidth="1200" prefHeight="800">
+
+    <VBox alignment="TOP_CENTER" spacing="20" style="-fx-padding: 40;">
+        
+        <!-- Top Navigation -->
+        <HBox alignment="CENTER_LEFT" maxWidth="800">
+            <Button onAction="#goBack" styleClass="btn-outline" style="-fx-border-color: transparent; -fx-padding: 10;">
+                <graphic>
+                    <HBox spacing="8" alignment="CENTER">
+                        <FontIcon iconLiteral="fas-arrow-left" iconSize="16" iconColor="#64748b"/>
+                        <Label text="Back to Catalog" style="-fx-text-fill: #64748b; -fx-font-weight: bold;"/>
+                    </HBox>
+                </graphic>
+            </Button>
+        </HBox>
+
+        <!-- Main Card -->
+        <VBox styleClass="card" maxWidth="800" spacing="0" style="-fx-background-radius: 16;">
+            <!-- Header Banner -->
+            <VBox spacing="10" style="-fx-padding: 40; -fx-background-color: #0ea5e9; -fx-background-radius: 16 16 0 0;">
+                <HBox spacing="15" alignment="CENTER_LEFT">
+                    <StackPane style="-fx-background-color: rgba(255, 255, 255, 0.2); -fx-background-radius: 12; -fx-padding: 15;">
+                        <FontIcon iconLiteral="fas-pen-fancy" iconSize="28" iconColor="white"/>
+                    </StackPane>
+                    <VBox>
+                        <Label fx:id="typeLabel" text="Multiple Choice" style="-fx-font-size: 12px; -fx-text-fill: #e0f2fe; -fx-font-weight: bold;"/>
+                        <Label fx:id="questionLabel" text="Question goes here" style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: white;" wrapText="true"/>
+                    </VBox>
+                </HBox>
+            </VBox>
+
+            <!-- Content Area -->
+            <VBox spacing="30" style="-fx-padding: 40;">
+
+                <HBox spacing="20">
+                    <!-- Correct Answer -->
+                    <VBox spacing="10" HBox.hgrow="ALWAYS" style="-fx-background-color: rgba(34, 197, 94, 0.05); -fx-padding: 20; -fx-background-radius: 8; -fx-border-color: rgba(34, 197, 94, 0.2); -fx-border-radius: 8;">
+                        <Label text="CORRECT ANSWER" style="-fx-font-weight: bold; -fx-text-fill: #16a34a; -fx-font-size: 11px;"/>
+                        <Label fx:id="answerLabel" text="Correct answer" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #15803d;"/>
+                    </VBox>
+                    <VBox spacing="10" HBox.hgrow="ALWAYS" style="-fx-background-color: #f8fafc; -fx-padding: 20; -fx-background-radius: 8;">
+                        <Label text="LINKED QUIZ" style="-fx-font-weight: bold; -fx-text-fill: #94a3b8; -fx-font-size: 11px;"/>
+                        <Label fx:id="quizLabel" text="No Linked Quiz" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #334155;"/>
+                    </VBox>
+                </HBox>
+
+                <!-- Grid Stats -->
+                <GridPane hgap="40" vgap="20">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="50"/>
+                        <ColumnConstraints percentWidth="50"/>
+                    </columnConstraints>
+
+                    <!-- Difficulty -->
+                    <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <Label text="DIFFICULTY LEVEL" style="-fx-font-weight: bold; -fx-text-fill: #94a3b8; -fx-font-size: 11px;"/>
+                        <Label fx:id="diffLabel" text="⭐⭐⭐☆☆" style="-fx-font-size: 18px; -fx-text-fill: #f59e0b;"/>
+                    </VBox>
+
+                    <!-- Status -->
+                    <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <Label text="STATUS" style="-fx-font-weight: bold; -fx-text-fill: #94a3b8; -fx-font-size: 11px;"/>
+                        <Label fx:id="statusLabel" text="Active" style="-fx-background-color: rgba(34, 197, 94, 0.1); -fx-text-fill: #16a34a; -fx-padding: 4 12; -fx-background-radius: 20; -fx-font-weight: bold;"/>
+                    </VBox>
+
+                    <!-- AI Generated -->
+                    <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                        <Label text="GENERATION" style="-fx-font-weight: bold; -fx-text-fill: #94a3b8; -fx-font-size: 11px;"/>
+                        <Label fx:id="aiLabel" text="Human Created" style="-fx-font-size: 14px; -fx-text-fill: #64748b;"/>
+                    </VBox>
+                </GridPane>
+                
+                <Region VBox.vgrow="ALWAYS" prefHeight="20"/>
+            </VBox>
+        </VBox>
+    </VBox>
+</StackPane>
