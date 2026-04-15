@@ -96,7 +96,7 @@
                 <HBox alignment="CENTER_LEFT">
                     <Label text="Recent Notifications" styleClass="form-section-title"
                            HBox.hgrow="ALWAYS"/>
-                    <Button text="View all &#x2192;" styleClass="btn-outline-muted, btn-sm"/>
+                    <Button text="View all &#x2192;" styleClass="btn-outline-muted, btn-sm" onAction="#onViewAllNotifications"/>
                 </HBox>
                 <VBox fx:id="notificationsBox" spacing="8.0"/>
             </VBox>

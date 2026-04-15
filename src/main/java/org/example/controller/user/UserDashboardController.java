@@ -230,8 +230,8 @@ public class UserDashboardController {
 
         int words = stats != null ? stats.getWordsLearned() : 0;
         int xp    = stats != null ? stats.getTotalXP()      : 0;
-        addProgressRow("Words Learned", words, Math.max(words, 100));
-        addProgressRow("Total XP",      xp,    Math.max(xp, 100));
+        addProgressRow("Words Learned", words, 500,  "#2fb344");
+        addProgressRow("Total XP",      xp,    1000, "#3b5bdb");
     }
 
     private void addInfoRow(String key, String value) {
@@ -256,7 +256,7 @@ public class UserDashboardController {
         return lbl;
     }
 
-    private void addProgressRow(String label, int value, int max) {
+    private void addProgressRow(String label, int value, int max, String accentColor) {
         VBox wrapper = new VBox(4);
 
         HBox header = new HBox(4);
@@ -268,9 +268,11 @@ public class UserDashboardController {
         val.setStyle("-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #1a1f36;");
         header.getChildren().addAll(lbl, spacer, val);
 
-        ProgressBar bar = new ProgressBar(max > 0 ? (double) value / max : 0);
+        double progress = (max > 0 && value > 0) ? Math.min(1.0, (double) value / max) : 0.0;
+        ProgressBar bar = new ProgressBar(progress);
         bar.setMaxWidth(Double.MAX_VALUE);
-        bar.setPrefHeight(6);
+        bar.setPrefHeight(8);
+        bar.setStyle("-fx-accent: " + accentColor + ";");
 
         wrapper.getChildren().addAll(header, bar);
         accountInfoBox.getChildren().add(wrapper);
@@ -282,6 +284,10 @@ public class UserDashboardController {
     }
 
     // ── Quick action handlers ────────────────────────────────────────────────
+
+    @FXML private void onViewAllNotifications() {
+        if (parentController != null) parentController.navigateToNotifications();
+    }
 
     @FXML private void onBrowseCourses() {
         if (parentController != null) parentController.showComingSoonFor("My Courses");

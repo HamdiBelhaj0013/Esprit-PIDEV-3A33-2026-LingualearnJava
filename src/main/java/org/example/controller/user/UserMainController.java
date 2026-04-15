@@ -33,6 +33,7 @@ public class UserMainController {
     @FXML private StackPane contentArea;
     @FXML private Button    btnDashboard;
     @FXML private Button    btnProfile;
+    @FXML private Button    btnNotifications;
 
     private Button activeButton;
 
@@ -139,17 +140,16 @@ public class UserMainController {
         showComingSoonContent();
     }
 
-    @FXML private void showNotifications(ActionEvent e) {
-        setActive((Button) e.getSource(), "Notifications");
+    @FXML
+    private void showNotifications(ActionEvent event) {
+        setActive(btnNotifications, "Notifications");
 
         User user = SessionManager.getCurrentUser();
-        if (user == null) { showComingSoonContent(); return; }
-
-        VBox page = new VBox(12);
-        page.setPadding(new Insets(24));
+        VBox page = new VBox(16);
+        page.setPadding(new javafx.geometry.Insets(24));
 
         Label title = new Label("Notifications");
-        title.getStyleClass().add("form-section-title");
+        title.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1a1f36;");
         page.getChildren().add(title);
 
         try {
@@ -157,45 +157,49 @@ public class UserMainController {
                 new NotificationService().getRecentForUser(user.getId());
 
             if (notifs.isEmpty()) {
-                Label empty = new Label("No notifications yet");
-                empty.getStyleClass().add("page-subtitle");
-                empty.setMaxWidth(Double.MAX_VALUE);
-                empty.setAlignment(Pos.CENTER);
-                VBox.setMargin(empty, new Insets(32, 0, 0, 0));
+                Label empty = new Label("No notifications yet.");
+                empty.setStyle("-fx-text-fill: #6c7a99; -fx-font-size: 14px;");
                 page.getChildren().add(empty);
             } else {
                 for (NotificationService.NotifRow n : notifs) {
-                    HBox row = new HBox(12);
-                    row.getStyleClass().add("notif-row");
-                    row.setAlignment(Pos.CENTER_LEFT);
+                    VBox row = new VBox(4);
+                    row.setStyle("-fx-background-color: #f8fafc; -fx-background-radius: 8; " +
+                                 "-fx-border-color: #e3e8f0; -fx-border-radius: 8; " +
+                                 "-fx-border-width: 1; -fx-padding: 10 14;");
 
-                    Label type = new Label(n.type);
-                    type.getStyleClass().add("notif-type");
+                    Label typeLbl = new Label(n.type.toUpperCase());
+                    typeLbl.setStyle("-fx-font-size: 11px; -fx-font-weight: bold; " +
+                                     "-fx-text-fill: #3b5bdb; -fx-background-color: #eef2ff; " +
+                                     "-fx-background-radius: 4; -fx-padding: 2 6;");
 
-                    Label message = new Label(n.message);
-                    message.getStyleClass().add("notif-message");
-                    message.setMaxWidth(Double.MAX_VALUE);
-                    HBox.setHgrow(message, Priority.ALWAYS);
+                    Label msgLbl = new Label(n.message);
+                    msgLbl.setStyle("-fx-font-size: 13px; -fx-text-fill: #374151;");
+                    msgLbl.setWrapText(true);
 
-                    String dateStr = n.createdAt != null && n.createdAt.length() >= 10
-                        ? n.createdAt.substring(0, 10) : (n.createdAt != null ? n.createdAt : "");
-                    Label date = new Label(dateStr);
-                    date.getStyleClass().add("notif-date");
+                    Label dateLbl = new Label(n.createdAt + (n.isRead ? " · Read" : " · Unread"));
+                    dateLbl.setStyle("-fx-font-size: 11px; -fx-text-fill: #6c7a99;");
 
-                    row.getChildren().addAll(type, message, date);
+                    row.getChildren().addAll(typeLbl, msgLbl, dateLbl);
                     page.getChildren().add(row);
                 }
             }
-        } catch (Exception ex) {
-            Label err = new Label("Could not load notifications: " + ex.getMessage());
-            err.setStyle("-fx-text-fill: #d63939; -fx-font-size: 12px;");
+        } catch (Exception e) {
+            Label err = new Label("Could not load notifications: " + e.getMessage());
+            err.setStyle("-fx-text-fill: #d63939;");
             page.getChildren().add(err);
         }
 
         ScrollPane scroll = new ScrollPane(page);
         scroll.setFitToWidth(true);
-        scroll.getStyleClass().add("scroll-pane");
+        scroll.setStyle("-fx-background-color: transparent; -fx-background: transparent; " +
+                        "-fx-border-width: 0;");
+        VBox.setVgrow(scroll, javafx.scene.layout.Priority.ALWAYS);
+
         contentArea.getChildren().setAll(scroll);
+    }
+
+    public void navigateToNotifications() {
+        showNotifications(null);
     }
 
     @FXML private void showBilling(ActionEvent e) {

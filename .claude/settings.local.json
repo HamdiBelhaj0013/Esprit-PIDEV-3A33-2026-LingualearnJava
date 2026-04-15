@@ -1,7 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(JAVA_HOME=\"/c/Program Files/Java/jdk-17\" \"/c/Users/belha/.m2/wrapper/dists/apache-maven-3.8.5-bin/5i5jha092a3i37g0paqnfr15e0/apache-maven-3.8.5/bin/mvn\" compile -Dmaven.compiler.source=17 -Dmaven.compiler.target=17)"
-    ]
-  }
-}
