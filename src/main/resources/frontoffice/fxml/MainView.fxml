@@ -22,7 +22,7 @@
             <Button fx:id="btnNotifications"
                     text="🔔 Notifications (0)"
                     styleClass="btn-notifications"
-                    onAction="#showNotifications"/>
+                    onAction="#toggleNotificationPanel"/>
         </HBox>
 
         <!-- CONTENT AREA -->
@@ -32,7 +32,40 @@
 
     </VBox>
 
-    <!-- POPUP NOTIFICATIONS EN HAUT A DROITE -->
+    <!-- DROPDOWN PANEL NOTIFICATIONS (style Facebook) -->
+    <VBox fx:id="notificationDropdown"
+          spacing="0"
+          maxWidth="380"
+          visible="false"
+          managed="false"
+          StackPane.alignment="TOP_RIGHT"
+          style="-fx-background-color: white; -fx-background-radius: 12; -fx-border-color: #e4e6eb; -fx-border-radius: 12; -fx-border-width: 1; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 20, 0, 0, 6);">
+        <padding><Insets top="68" right="20"/></padding>
+
+        <!-- Contenu du dropdown -->
+        <VBox style="-fx-background-color: white; -fx-background-radius: 12;" maxWidth="380" minWidth="340">
+
+            <!-- Header -->
+            <HBox alignment="CENTER_LEFT" spacing="10"
+                  style="-fx-padding: 14 16 10 16; -fx-border-color: #f0f2f5; -fx-border-width: 0 0 1 0;">
+                <Label text="🔔 Notifications" style="-fx-font-size: 17px; -fx-font-weight: bold; -fx-text-fill: #1c1e21;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="Tout marquer lu"
+                        onAction="#handleMarquerLues"
+                        style="-fx-background-color: transparent; -fx-text-fill: #3b5bdb; -fx-font-size: 12px; -fx-cursor: hand; -fx-border-width: 0; -fx-padding: 4 8; -fx-background-radius: 6;"/>
+            </HBox>
+
+            <!-- Liste notifications -->
+            <ScrollPane fitToWidth="true" maxHeight="420" minHeight="80"
+                        style="-fx-background: transparent; -fx-background-color: transparent; -fx-border-color: transparent;" hbarPolicy="NEVER">
+                <VBox fx:id="notificationDropdownList" spacing="2"
+                      style="-fx-padding: 6 8 8 8; -fx-background-color: white;"/>
+            </ScrollPane>
+
+        </VBox>
+    </VBox>
+
+    <!-- POPUP TOAST NOTIFICATIONS EN HAUT A DROITE -->
     <VBox fx:id="notificationPopupContainer"
           spacing="8"
           alignment="TOP_RIGHT"
