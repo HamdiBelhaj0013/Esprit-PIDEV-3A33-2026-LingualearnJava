@@ -2,6 +2,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.collections.*?>
 
 <VBox xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="org.example.controllers.backoffice.PublicationNewController"
@@ -9,8 +10,9 @@
 
     <Label text="Ajouter Publication" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2563eb;"/>
 
-    <TextField fx:id="titreField" promptText="Titre"/>
-    <TextField fx:id="typeField" promptText="Type (post/story)"/>
+    <TextField fx:id="titreField" promptText="Titre *"/>
+    <Label text="Type *" style="-fx-font-size: 13px; -fx-text-fill: #374151;"/>
+    <ComboBox fx:id="typeCombo" maxWidth="Infinity" promptText="Choisir un type..."/>
 
     <HBox spacing="10" alignment="CENTER_LEFT">
         <TextField fx:id="imagePathField" promptText="Aucune image selectionnee..." editable="false" HBox.hgrow="ALWAYS"/>

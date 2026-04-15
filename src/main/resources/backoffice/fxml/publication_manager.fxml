@@ -1,18 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.image.ImageView?>
 
 <VBox xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="org.example.controllers.backoffice.PublicationBackofficeController"
       stylesheets="@../css/style.css"
       spacing="12" style="-fx-background-color: #f8fafc; -fx-padding: 0 8 0 8;">
-
-    <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 8 4 4 4;">
-        <Button text="← Dashboard" onAction="#goToDashboard"
-                style="-fx-background-color: #4f46e5; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold; -fx-padding: 8 16; -fx-background-radius: 6; -fx-cursor: hand;"/>
-        <Region HBox.hgrow="ALWAYS"/>
-        <Label text="📝 Publications Manager" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
-    </HBox>
 
     <VBox alignment="CENTER" style="-fx-padding: 8 0 2 0;">
         <Label text="Publications"
@@ -62,8 +56,8 @@
                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
             </columnResizePolicy>
             <columns>
-                <TableColumn fx:id="colId" text="ID" prefWidth="70" maxWidth="80"/>
-                <TableColumn fx:id="colTitre" text="Titre" prefWidth="360"/>
+                <TableColumn fx:id="colImage" text="Image" prefWidth="90" maxWidth="100" sortable="false"/>
+                <TableColumn fx:id="colTitre" text="Titre" prefWidth="390"/>
                 <TableColumn fx:id="colType" text="Type" prefWidth="120"/>
                 <TableColumn fx:id="colLikes" text="Likes" prefWidth="100"/>
                 <TableColumn fx:id="colDislikes" text="Dislikes" prefWidth="100"/>

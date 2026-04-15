@@ -1,8 +1,10 @@
 package org.example.controllers.backoffice;
 
 import org.example.entities.Publication;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -17,7 +19,7 @@ import java.time.LocalDateTime;
 
 public class PublicationNewController {
     @FXML private TextField titreField;
-    @FXML private TextField typeField;
+    @FXML private ComboBox<String> typeCombo;
     @FXML private TextField imagePathField;
     @FXML private ImageView imagePreview;
     @FXML private TextArea contenuField;
@@ -28,12 +30,18 @@ public class PublicationNewController {
 
     @FXML
     public void initialize() {
+        typeCombo.setItems(FXCollections.observableArrayList("post", "story"));
+        typeCombo.getSelectionModel().selectFirst();
     }
 
     @FXML
     public void save() {
         if (titreField.getText() == null || titreField.getText().isBlank()) {
             setStatus("Le titre est obligatoire.", true);
+            return;
+        }
+        if (typeCombo.getValue() == null) {
+            setStatus("Le type est obligatoire (post ou story).", true);
             return;
         }
         if (contenuField.getText() == null || contenuField.getText().isBlank()) {
@@ -44,7 +52,7 @@ public class PublicationNewController {
         try {
             Publication p = new Publication();
             p.setTitrePub(titreField.getText().trim());
-            p.setTypePub(typeField.getText() == null || typeField.getText().isBlank() ? "post" : typeField.getText().trim());
+            p.setTypePub(typeCombo.getValue());
             p.setLienPub(selectedImagePath);
             p.setContenuPub(contenuField.getText());
             p.setDatePub(LocalDateTime.now());

@@ -10,6 +10,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.example.services.ServicePublication;
@@ -21,7 +23,7 @@ import java.util.stream.Collectors;
 
 public class PublicationBackofficeController {
     @FXML private TableView<Publication> publicationTable;
-    @FXML private TableColumn<Publication, Integer> colId;
+    @FXML private TableColumn<Publication, Void> colImage;
     @FXML private TableColumn<Publication, String> colTitre;
     @FXML private TableColumn<Publication, String> colType;
     @FXML private TableColumn<Publication, Integer> colLikes;
@@ -48,13 +50,55 @@ public class PublicationBackofficeController {
 
     @FXML
     public void initialize() {
-        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
+        // Colonne image (lienPub)
+        colImage.setCellFactory(col -> new TableCell<>() {
+            private final ImageView imageView = new ImageView();
+            {
+                imageView.setFitWidth(72);
+                imageView.setFitHeight(54);
+                imageView.setPreserveRatio(true);
+                imageView.setSmooth(true);
+            }
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || getTableRow() == null || getTableRow().getItem() == null) {
+                    setGraphic(null);
+                    return;
+                }
+                Publication pub = (Publication) getTableRow().getItem();
+                String lien = pub.getLienPub();
+                if (lien != null && !lien.isBlank()) {
+                    try {
+                        Image img;
+                        if (lien.startsWith("http://") || lien.startsWith("https://") || lien.startsWith("file:")) {
+                            img = new Image(lien, 72, 54, true, true, true);
+                        } else {
+                            img = new Image("file:///" + lien.replace("\\", "/"), 72, 54, true, true, true);
+                        }
+                        imageView.setImage(img);
+                        setGraphic(imageView);
+                    } catch (Exception e) {
+                        setGraphic(null);
+                    }
+                } else {
+                    setGraphic(null);
+                }
+            }
+        });
+
         colTitre.setCellValueFactory(new PropertyValueFactory<>("titrePub"));
         colType.setCellValueFactory(new PropertyValueFactory<>("typePub"));
         colLikes.setCellValueFactory(new PropertyValueFactory<>("likes"));
         colDislikes.setCellValueFactory(new PropertyValueFactory<>("dislikes"));
 
-        filterTypeCombo.setItems(FXCollections.observableArrayList("Tous", "post", "story", "Article"));
+        publicationTable.setRowFactory(tv -> {
+            TableRow<Publication> row = new TableRow<>();
+            row.setPrefHeight(64);
+            return row;
+        });
+
+        filterTypeCombo.setItems(FXCollections.observableArrayList("Tous", "post", "story"));
         filterTypeCombo.getSelectionModel().selectFirst();
 
         pageSizeComboBox.setItems(FXCollections.observableArrayList(5, 10, 15, 20));

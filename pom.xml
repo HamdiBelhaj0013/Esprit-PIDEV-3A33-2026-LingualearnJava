@@ -15,7 +15,6 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <javafx.version>17.0.2</javafx.version>
-        <app.mainClass>MainApp</app.mainClass>
     </properties>
 
     <dependencies>
@@ -113,8 +112,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <mainClass>org.example.App</mainClass>
-                    <mainClass>${app.mainClass}</mainClass>
+                    <mainClass>MainApp</mainClass>
                 </configuration>
             </plugin>
 
@@ -144,13 +142,4 @@
         </plugins>
     </build>
 
-
-    <profiles>
-        <profile>
-            <id>backoffice</id>
-            <properties>
-                <app.mainClass>MainBackoffice</app.mainClass>
-            </properties>
-        </profile>
-    </profiles>
 </project>
