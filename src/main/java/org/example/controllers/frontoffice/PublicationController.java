@@ -43,7 +43,10 @@ public class PublicationController {
     public void loadPublications() {
         publicationsContainer.getChildren().clear();
         try {
-            toutesPublications = servicePublication.getAll();
+            // Charger uniquement les publications de type "post" (les stories restent dans la section stories)
+            toutesPublications = servicePublication.getAll().stream()
+                    .filter(p -> p.getTypePub() == null || !p.getTypePub().equalsIgnoreCase("story"))
+                    .collect(java.util.stream.Collectors.toList());
             if (triCroissant) {
                 toutesPublications.sort((a, b) -> a.getDatePub().compareTo(b.getDatePub()));
             } else {
@@ -354,9 +357,13 @@ public class PublicationController {
     private void handleSearch() {
         String keyword = searchField.getText();
         try {
-            toutesPublications = keyword.isEmpty()
+            java.util.List<Publication> all = keyword.isEmpty()
                     ? servicePublication.getAll()
                     : servicePublication.search(keyword);
+            // Exclure les stories du feed principal
+            toutesPublications = all.stream()
+                    .filter(p -> p.getTypePub() == null || !p.getTypePub().equalsIgnoreCase("story"))
+                    .collect(java.util.stream.Collectors.toList());
             if (triCroissant) {
                 toutesPublications.sort((a, b) -> a.getDatePub().compareTo(b.getDatePub()));
             } else {

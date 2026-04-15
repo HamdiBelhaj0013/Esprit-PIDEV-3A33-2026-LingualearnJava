@@ -10,7 +10,7 @@ public class MainApp extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/backoffice/fxml/dashboard.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/frontoffice/fxml/MainView.fxml"));
         Parent root = loader.load();
         Scene scene = new Scene(root, 900, 600);
         scene.getStylesheets().add(
