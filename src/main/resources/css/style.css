@@ -1,0 +1,119 @@
+.root-pane {
+    -fx-background-color: #f4f6fb;
+}
+
+.header-bar {
+    -fx-background-color: linear-gradient(to right, #1d9e75, #178563);
+    -fx-padding: 12 20;
+}
+
+.header-bar.secondary {
+    -fx-background-color: linear-gradient(to right, #534ab7, #3f3795);
+}
+
+.header-title {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: 700;
+}
+
+.page-content {
+    -fx-padding: 14;
+}
+
+.card {
+    -fx-background-color: white;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 14;
+}
+
+.section-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #334155;
+}
+
+.input-field {
+    -fx-background-color: white;
+    -fx-border-color: #d5dce8;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 8;
+}
+
+.btn-primary, .btn-secondary, .btn-danger, .btn-light {
+    -fx-font-weight: 700;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 8 14;
+}
+
+.btn-primary {
+    -fx-background-color: #4f46e5;
+    -fx-text-fill: white;
+}
+
+.btn-secondary {
+    -fx-background-color: #e6f1fb;
+    -fx-text-fill: #185fa5;
+}
+
+.btn-danger {
+    -fx-background-color: #fcebeb;
+    -fx-text-fill: #a32d2d;
+}
+
+.btn-light {
+    -fx-background-color: #eef2f7;
+    -fx-text-fill: #475569;
+}
+
+.hint-label {
+    -fx-text-fill: #94a3b8;
+    -fx-font-size: 11px;
+}
+
+.clean-table, .clean-list {
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+}
+
+.stats-row {
+    -fx-padding: 12 16;
+    -fx-background-color: white;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 0 0 0.5 0;
+}
+
+.stat-card {
+    -fx-background-color: #eef2ff;
+    -fx-background-radius: 8;
+    -fx-padding: 10 16;
+}
+
+.stat-card.warning {
+    -fx-background-color: #fff7ed;
+}
+
+.stat-card.success {
+    -fx-background-color: #ecfdf5;
+}
+
+.stat-label {
+    -fx-font-size: 11px;
+    -fx-text-fill: #64748b;
+}
+
+.stat-value {
+    -fx-font-size: 22px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #1f2937;
+}
+
+.toolbar-row {
+    -fx-padding: 10 12;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 0.5 0 0 0;
+}

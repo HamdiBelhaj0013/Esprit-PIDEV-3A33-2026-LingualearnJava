@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.AdminFAQController"
+      spacing="0" style="-fx-background-color:#f5f5f5;">
+
+  <HBox style="-fx-background-color:#534AB7;-fx-padding:12 20;" alignment="CENTER_LEFT">
+    <Label text="Gestion des FAQ" style="-fx-text-fill:white;-fx-font-size:15;-fx-font-weight:bold;"/>
+    <Region HBox.hgrow="ALWAYS"/>
+    <Label fx:id="statTotal" text="" style="-fx-text-fill:#AFA9EC;-fx-font-size:12;"/>
+  </HBox>
+
+  <VBox spacing="12" style="-fx-padding:14;">
+
+    <VBox style="-fx-background-color:white;-fx-border-color:#e0e0e0;-fx-border-width:0.5;-fx-border-radius:8;-fx-background-radius:8;-fx-padding:14;" spacing="8">
+      <Label text="Ajouter / Modifier une FAQ" style="-fx-font-weight:bold;-fx-text-fill:#555;"/>
+      <TextField fx:id="faqQuestion" promptText="Question * (obligatoire, max 255 caractères)"
+                 style="-fx-border-radius:6;-fx-background-radius:6;-fx-border-color:#ddd;-fx-padding:8;"/>
+      <TextArea fx:id="faqAnswer" promptText="Réponse * (obligatoire)"
+                prefHeight="80" wrapText="true"
+                style="-fx-border-radius:6;-fx-background-radius:6;-fx-border-color:#ddd;-fx-padding:8;"/>
+      <HBox spacing="10">
+        <TextField fx:id="faqSubject" promptText="Sujet (optionnel)" prefWidth="220"
+                   style="-fx-border-radius:6;-fx-background-radius:6;-fx-border-color:#ddd;-fx-padding:8;"/>
+        <TextField fx:id="faqCategory" promptText="Catégorie (optionnel)" prefWidth="220"
+                   style="-fx-border-radius:6;-fx-background-radius:6;-fx-border-color:#ddd;-fx-padding:8;"/>
+      </HBox>
+      <HBox spacing="8">
+        <Button text="Ajouter" onAction="#ajouter"
+                style="-fx-background-color:#EAF3DE;-fx-text-fill:#3B6D11;-fx-font-weight:bold;-fx-border-radius:6;-fx-background-radius:6;-fx-padding:8 18;"/>
+        <Button text="Modifier" onAction="#modifier"
+                style="-fx-background-color:#E6F1FB;-fx-text-fill:#185FA5;-fx-font-weight:bold;-fx-border-radius:6;-fx-background-radius:6;-fx-padding:8 18;"/>
+        <Button text="Supprimer" onAction="#supprimer"
+                style="-fx-background-color:#FCEBEB;-fx-text-fill:#A32D2D;-fx-font-weight:bold;-fx-border-radius:6;-fx-background-radius:6;-fx-padding:8 18;"/>
+        <Button text="Effacer" onAction="#clearForm"
+                style="-fx-background-color:#f0f0f0;-fx-text-fill:#555;-fx-border-radius:6;-fx-background-radius:6;-fx-padding:8 14;"/>
+      </HBox>
+      <Label fx:id="msgLabel"/>
+    </VBox>
+
+    <HBox spacing="8" alignment="CENTER_LEFT">
+      <TextField fx:id="searchField" promptText="Rechercher une FAQ..." prefWidth="260"
+                 style="-fx-border-radius:6;-fx-background-radius:6;-fx-border-color:#ddd;-fx-padding:8;"/>
+      <Button text="Rechercher" onAction="#rechercher"
+              style="-fx-background-color:#534AB7;-fx-text-fill:white;-fx-border-radius:6;-fx-background-radius:6;-fx-padding:8 14;"/>
+      <Button text="Tout voir" onAction="#charger"
+              style="-fx-background-color:#f0f0f0;-fx-text-fill:#555;-fx-border-radius:6;-fx-background-radius:6;-fx-padding:8 12;"/>
+    </HBox>
+
+    <VBox style="-fx-background-color:white;-fx-border-color:#e0e0e0;-fx-border-width:0.5;-fx-border-radius:8;-fx-background-radius:8;">
+      <TableView fx:id="faqTable" prefHeight="340" style="-fx-border-color:transparent;">
+        <columns>
+          <TableColumn fx:id="colId" text="ID" prefWidth="45"/>
+          <TableColumn fx:id="colQuestion" text="Question" prefWidth="280"/>
+          <TableColumn fx:id="colCategory" text="Catégorie" prefWidth="130"/>
+          <TableColumn fx:id="colSubject" text="Sujet" prefWidth="130"/>
+        </columns>
+        <placeholder><Label text="Aucune FAQ." style="-fx-text-fill:#aaa;"/></placeholder>
+      </TableView>
+    </VBox>
+
+  </VBox>
+</VBox>

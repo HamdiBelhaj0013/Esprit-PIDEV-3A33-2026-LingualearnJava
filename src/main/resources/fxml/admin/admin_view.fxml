@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.controller.AdminController"
+      spacing="0"
+      styleClass="root-pane"
+      stylesheets="@../../css/style.css">
+
+  <HBox styleClass="header-bar secondary" alignment="CENTER_LEFT">
+    <Label text="LinguaLearn - Administration" styleClass="header-title"/>
+    <Region HBox.hgrow="ALWAYS"/>
+    <Button text="Gerer les FAQ" onAction="#ouvrirGestionFAQ" styleClass="btn-light"/>
+  </HBox>
+
+  <HBox spacing="10" styleClass="stats-row">
+    <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+      <Label text="Total" styleClass="stat-label"/>
+      <Label fx:id="statTotal" text="-" styleClass="stat-value"/>
+    </VBox>
+    <VBox styleClass="stat-card warning" HBox.hgrow="ALWAYS">
+      <Label text="En attente" styleClass="stat-label"/>
+      <Label fx:id="statPending" text="-" styleClass="stat-value"/>
+    </VBox>
+    <VBox styleClass="stat-card success" HBox.hgrow="ALWAYS">
+      <Label text="Resolues" styleClass="stat-label"/>
+      <Label fx:id="statResolved" text="-" styleClass="stat-value"/>
+    </VBox>
+  </HBox>
+
+  <VBox spacing="12" styleClass="page-content" VBox.vgrow="ALWAYS">
+
+    <HBox spacing="8" alignment="CENTER_LEFT">
+      <TextField fx:id="searchReclamation" promptText="Rechercher reclamation..." prefWidth="220" styleClass="input-field"/>
+      <ComboBox fx:id="filtreStatut" promptText="Filtrer par statut" prefWidth="160"/>
+      <ComboBox fx:id="filtrePriorite" promptText="Priorite" prefWidth="130"/>
+      <ComboBox fx:id="reclSortBox" promptText="Tri" prefWidth="130" onAction="#trier"/>
+      <Button text="Rechercher" onAction="#rechercher" styleClass="btn-secondary"/>
+      <Button text="Filtrer" onAction="#filtrer" styleClass="btn-primary"/>
+      <Button text="Tout voir" onAction="#charger" styleClass="btn-light"/>
+    </HBox>
+
+    <VBox styleClass="card">
+      <TableView fx:id="reclTable" prefHeight="190" styleClass="clean-table">
+        <columns>
+          <TableColumn fx:id="rColSubject" text="Sujet" prefWidth="185"/>
+          <TableColumn fx:id="rColStatus" text="Statut" prefWidth="115"/>
+          <TableColumn fx:id="rColPriority" text="Priorite" prefWidth="85"/>
+          <TableColumn fx:id="rColDate" text="Date" prefWidth="145"/>
+        </columns>
+        <placeholder><Label text="Aucune reclamation." styleClass="hint-label"/></placeholder>
+      </TableView>
+      <HBox spacing="8" styleClass="toolbar-row">
+        <ComboBox fx:id="statutBox" promptText="Nouveau statut" prefWidth="155"/>
+        <Button text="Changer statut" onAction="#changerStatut" styleClass="btn-secondary"/>
+        <Button text="Supprimer" onAction="#supprimer" styleClass="btn-danger"/>
+      </HBox>
+    </VBox>
+
+    <VBox styleClass="card" spacing="8">
+      <Label text="Repondre a la reclamation selectionnee" styleClass="section-title"/>
+      <TextArea fx:id="reponseField" promptText="Votre reponse..." prefHeight="65" wrapText="true"
+                styleClass="input-field"/>
+      <Button text="Envoyer" onAction="#envoyerReponse" styleClass="btn-primary"/>
+      <Label fx:id="reponseMsg"/>
+      <Label text="Historique" styleClass="hint-label"/>
+      <ListView fx:id="reponsesList" prefHeight="80" styleClass="clean-list"/>
+    </VBox>
+
+  </VBox>
+</VBox>
+

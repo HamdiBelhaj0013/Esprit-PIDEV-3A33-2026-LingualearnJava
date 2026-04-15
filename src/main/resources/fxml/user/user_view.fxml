@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.controller.UserController"
+      spacing="0"
+      styleClass="root-pane"
+      stylesheets="@../../css/style.css">
+
+  <HBox styleClass="header-bar" alignment="CENTER_LEFT">
+    <Label text="LinguaLearn - Mon espace" styleClass="header-title"/>
+  </HBox>
+
+  <TabPane VBox.vgrow="ALWAYS">
+
+    <Tab text="Mes Reclamations" closable="false">
+      <VBox spacing="12" styleClass="page-content">
+
+        <VBox styleClass="card" spacing="8">
+          <Label text="Nouvelle reclamation" styleClass="section-title"/>
+          <HBox spacing="10">
+            <TextField fx:id="subjectField" promptText="Sujet *" HBox.hgrow="ALWAYS"
+                       styleClass="input-field"/>
+            <ComboBox fx:id="priorityBox" promptText="Priorite *" prefWidth="130"/>
+          </HBox>
+          <TextArea fx:id="messageField" promptText="Votre message *" prefHeight="75" wrapText="true"
+                    styleClass="input-field"/>
+          <HBox spacing="8">
+            <Button text="Soumettre" onAction="#soumettre" styleClass="btn-primary"/>
+            <Button text="Charger pour modifier" onAction="#chargerPourModif" styleClass="btn-secondary"/>
+            <Button text="Enregistrer modif" onAction="#modifier" styleClass="btn-secondary"/>
+            <Button text="Supprimer" onAction="#supprimer" styleClass="btn-danger"/>
+            <Button text="Actualiser" onAction="#chargerReclamations" styleClass="btn-light"/>
+          </HBox>
+          <Label fx:id="reclMsg"/>
+          <Label text="* Modifier / Supprimer uniquement si statut = PENDING" styleClass="hint-label"/>
+        </VBox>
+
+        <VBox styleClass="card">
+          <HBox spacing="8" alignment="CENTER_LEFT" style="-fx-padding:0 0 8 0;">
+            <TextField fx:id="reclSearch" promptText="Rechercher reclamation..." HBox.hgrow="ALWAYS" styleClass="input-field"/>
+            <ComboBox fx:id="reclStatusFilter" promptText="Statut" prefWidth="140"/>
+            <ComboBox fx:id="reclSortBox" promptText="Tri" prefWidth="140" onAction="#trierReclamations"/>
+            <Button text="Appliquer" onAction="#filtrerReclamations" styleClass="btn-light"/>
+          </HBox>
+          <TableView fx:id="reclTable" prefHeight="230" styleClass="clean-table">
+            <columns>
+              <TableColumn fx:id="rColSubject" text="Sujet" prefWidth="200"/>
+              <TableColumn fx:id="rColStatus" text="Statut" prefWidth="120"/>
+              <TableColumn fx:id="rColPriority" text="Priorite" prefWidth="90"/>
+              <TableColumn fx:id="rColDate" text="Date" prefWidth="160"/>
+            </columns>
+            <placeholder><Label text="Aucune reclamation." styleClass="hint-label"/></placeholder>
+          </TableView>
+        </VBox>
+
+        <VBox styleClass="card" spacing="8">
+          <Label text="Reponses de l'administration" styleClass="section-title"/>
+          <ListView fx:id="userResponsesList" prefHeight="120" styleClass="clean-list"/>
+        </VBox>
+      </VBox>
+    </Tab>
+
+    <Tab text="FAQ" closable="false">
+      <VBox spacing="10" styleClass="page-content">
+        <HBox spacing="8" alignment="CENTER_LEFT">
+          <Label text="Questions frequentes" styleClass="section-title"/>
+          <Region HBox.hgrow="ALWAYS"/>
+          <TextField fx:id="faqSearch" promptText="Rechercher..." prefWidth="200"
+                     styleClass="input-field"/>
+          <TextField fx:id="faqCategoryFilter" promptText="Categorie..." prefWidth="160"
+                     styleClass="input-field"/>
+          <ComboBox fx:id="faqSortBox" promptText="Tri" prefWidth="130" onAction="#trierFAQ"/>
+          <Button text="Rechercher" onAction="#rechercherFAQ" styleClass="btn-primary"/>
+          <Button text="Filtrer" onAction="#filtrerFAQ" styleClass="btn-secondary"/>
+          <Button text="Tout voir" onAction="#chargerFAQ" styleClass="btn-light"/>
+        </HBox>
+        <VBox styleClass="card">
+          <TableView fx:id="faqTable" prefHeight="380" styleClass="clean-table">
+            <columns>
+              <TableColumn fx:id="fColQuestion" text="Question" prefWidth="280"/>
+              <TableColumn fx:id="fColAnswer" text="Reponse" prefWidth="300"/>
+              <TableColumn fx:id="fColCategory" text="Categorie" prefWidth="120"/>
+            </columns>
+            <placeholder><Label text="Aucune FAQ." styleClass="hint-label"/></placeholder>
+          </TableView>
+        </VBox>
+      </VBox>
+    </Tab>
+
+  </TabPane>
+</VBox>
+

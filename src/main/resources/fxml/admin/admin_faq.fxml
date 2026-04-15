@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.controller.AdminFAQController"
+      spacing="0"
+      styleClass="root-pane"
+      stylesheets="@../../css/style.css">
+
+  <HBox styleClass="header-bar secondary" alignment="CENTER_LEFT">
+    <Label text="Gestion des FAQ" styleClass="header-title"/>
+    <Region HBox.hgrow="ALWAYS"/>
+    <Label fx:id="statTotal" text="" styleClass="hint-label"/>
+  </HBox>
+
+  <VBox spacing="12" styleClass="page-content">
+
+    <VBox styleClass="card" spacing="8">
+      <Label text="Ajouter / Modifier une FAQ" styleClass="section-title"/>
+      <TextField fx:id="faqQuestion" promptText="Question * (obligatoire, max 255 caracteres)"
+                 styleClass="input-field"/>
+      <TextArea fx:id="faqAnswer" promptText="Reponse * (obligatoire)"
+                prefHeight="80" wrapText="true"
+                styleClass="input-field"/>
+      <HBox spacing="10">
+        <TextField fx:id="faqSubject" promptText="Sujet (optionnel)" prefWidth="220"
+                   styleClass="input-field"/>
+        <TextField fx:id="faqCategory" promptText="Categorie (optionnel)" prefWidth="220"
+                   styleClass="input-field"/>
+      </HBox>
+      <HBox spacing="8">
+        <Button text="Ajouter" onAction="#ajouter" styleClass="btn-primary"/>
+        <Button text="Modifier" onAction="#modifier" styleClass="btn-secondary"/>
+        <Button text="Supprimer" onAction="#supprimer" styleClass="btn-danger"/>
+        <Button text="Effacer" onAction="#clearForm" styleClass="btn-light"/>
+      </HBox>
+      <Label fx:id="msgLabel"/>
+    </VBox>
+
+    <HBox spacing="8" alignment="CENTER_LEFT">
+      <TextField fx:id="searchField" promptText="Rechercher une FAQ..." prefWidth="260"
+                 styleClass="input-field"/>
+      <TextField fx:id="filterCategoryField" promptText="Filtrer categorie..." prefWidth="180"
+                 styleClass="input-field"/>
+      <ComboBox fx:id="faqSortBox" promptText="Tri" prefWidth="130" onAction="#trierFAQ"/>
+      <Button text="Rechercher" onAction="#rechercher" styleClass="btn-primary"/>
+      <Button text="Filtrer" onAction="#filtrerCategorie" styleClass="btn-secondary"/>
+      <Button text="Tout voir" onAction="#charger" styleClass="btn-light"/>
+    </HBox>
+
+    <VBox styleClass="card">
+      <TableView fx:id="faqTable" prefHeight="340" styleClass="clean-table">
+        <columns>
+          <TableColumn fx:id="colQuestion" text="Question" prefWidth="280"/>
+          <TableColumn fx:id="colCategory" text="Categorie" prefWidth="130"/>
+          <TableColumn fx:id="colSubject" text="Sujet" prefWidth="130"/>
+        </columns>
+        <placeholder><Label text="Aucune FAQ." styleClass="hint-label"/></placeholder>
+      </TableView>
+    </VBox>
+
+  </VBox>
+</VBox>
+
