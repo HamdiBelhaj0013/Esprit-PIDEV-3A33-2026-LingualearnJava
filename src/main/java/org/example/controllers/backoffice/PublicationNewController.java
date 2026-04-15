@@ -21,7 +21,6 @@ public class PublicationNewController {
     @FXML private TextField imagePathField;
     @FXML private ImageView imagePreview;
     @FXML private TextArea contenuField;
-    @FXML private TextField utilisateurIdField;
     @FXML private Label statusLabel;
 
     private final ServicePublication servicePublication = new ServicePublication();
@@ -29,9 +28,6 @@ public class PublicationNewController {
 
     @FXML
     public void initialize() {
-        if (utilisateurIdField != null) {
-            utilisateurIdField.setText("1");
-        }
     }
 
     @FXML
@@ -52,7 +48,7 @@ public class PublicationNewController {
             p.setLienPub(selectedImagePath);
             p.setContenuPub(contenuField.getText());
             p.setDatePub(LocalDateTime.now());
-            p.setUtilisateurId(parseIntOrDefault(utilisateurIdField.getText(), 1));
+            p.setUtilisateurId(1);
             servicePublication.add(p);
             closeWindow();
         } catch (Exception e) {

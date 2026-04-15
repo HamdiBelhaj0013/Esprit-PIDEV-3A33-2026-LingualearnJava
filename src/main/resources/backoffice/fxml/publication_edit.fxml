@@ -9,7 +9,6 @@
 
     <Label text="Modifier Publication" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #f59e0b;"/>
 
-    <TextField fx:id="idField" promptText="ID" editable="false"/>
     <TextField fx:id="titreField" promptText="Titre"/>
     <TextField fx:id="typeField" promptText="Type (post/story)"/>
 
@@ -20,7 +19,6 @@
     <ImageView fx:id="imagePreview" fitWidth="220" fitHeight="130" preserveRatio="true" visible="false"/>
 
     <TextArea fx:id="contenuField" promptText="Contenu publication..." prefRowCount="4" wrapText="true"/>
-    <TextField fx:id="utilisateurIdField" promptText="User ID"/>
 
     <Label fx:id="statusLabel" text=""/>
 

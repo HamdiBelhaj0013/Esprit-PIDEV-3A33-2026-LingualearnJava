@@ -15,13 +15,11 @@ import org.example.services.ServicePublication;
 import java.io.File;
 
 public class PublicationEditController {
-    @FXML private TextField idField;
     @FXML private TextField titreField;
     @FXML private TextField typeField;
     @FXML private TextField imagePathField;
     @FXML private ImageView imagePreview;
     @FXML private TextArea contenuField;
-    @FXML private TextField utilisateurIdField;
     @FXML private Label statusLabel;
 
     private final ServicePublication servicePublication = new ServicePublication();
@@ -30,11 +28,9 @@ public class PublicationEditController {
 
     public void setPublication(Publication publication) {
         this.publication = publication;
-        idField.setText(String.valueOf(publication.getId()));
         titreField.setText(publication.getTitrePub());
         typeField.setText(publication.getTypePub());
         contenuField.setText(publication.getContenuPub());
-        utilisateurIdField.setText(String.valueOf(publication.getUtilisateurId()));
 
         if (publication.getLienPub() != null && !publication.getLienPub().isBlank()) {
             selectedImagePath = publication.getLienPub();
@@ -69,7 +65,7 @@ public class PublicationEditController {
             p.setTypePub(typeField.getText());
             p.setLienPub(selectedImagePath);
             p.setContenuPub(contenuField.getText());
-            p.setUtilisateurId(parseIntOrDefault(utilisateurIdField.getText(), publication.getUtilisateurId()));
+            p.setUtilisateurId(publication.getUtilisateurId());
             servicePublication.update(p);
             closeWindow();
         } catch (Exception e) {
