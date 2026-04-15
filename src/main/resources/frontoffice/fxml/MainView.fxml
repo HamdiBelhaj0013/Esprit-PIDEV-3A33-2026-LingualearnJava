@@ -15,8 +15,6 @@
             <Label text="🗺 LinguaLearn" styleClass="navbar-logo"/>
             <Region HBox.hgrow="ALWAYS"/>
             <Button text="Accueil"            styleClass="nav-link" onAction="#showAccueil"/>
-            <Button text="Domaines"           styleClass="nav-link" onAction="#showDomaines"/>
-            <Button text="Quiz d'orientation" styleClass="nav-link" onAction="#showQuiz"/>
             <Button text="S'inscrire"         styleClass="nav-link" onAction="#showInscrire"/>
             <Button text="Se connecter"       styleClass="nav-link" onAction="#showConnecter"/>
             <Button text="Ressources"         styleClass="nav-link-active" onAction="#showRessources"/>

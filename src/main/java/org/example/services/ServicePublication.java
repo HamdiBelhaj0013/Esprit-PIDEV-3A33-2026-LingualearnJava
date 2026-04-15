@@ -21,14 +21,13 @@ public class ServicePublication implements IServices<Publication> {
     private List<Publication> toutesPublications = new ArrayList<>();
     @Override
     public void add(Publication p) throws Exception {
-        String sql = "INSERT INTO publication (titre_pub, type_pub, lien_pub, contenu_pub, date_pub, likes, dislikes, utilisateur_id) VALUES (?, ?, ?, ?, ?, 0, 0, ?)";
+        String sql = "INSERT INTO publication (titre_pub, type_pub, lien_pub, contenu_pub, date_pub, likes, dislikes, user_id) VALUES (?, ?, ?, ?, ?, 0, 0, 1)";
         PreparedStatement ps = cnx.prepareStatement(sql);
         ps.setString(1, p.getTitrePub());
         ps.setString(2, p.getTypePub());
         ps.setString(3, p.getLienPub());
         ps.setString(4, p.getContenuPub());
         ps.setTimestamp(5, Timestamp.valueOf(p.getDatePub()));
-        ps.setInt(6, p.getUtilisateurId());
         ps.executeUpdate();
         System.out.println("✅ Publication ajoutée !");
     }
@@ -69,17 +68,7 @@ public class ServicePublication implements IServices<Publication> {
         Statement st = cnx.createStatement();
         ResultSet rs = st.executeQuery(sql);
         while (rs.next()) {
-            Publication p = new Publication();
-            p.setId(rs.getInt("id"));
-            p.setTitrePub(rs.getString("titre_pub"));
-            p.setTypePub(rs.getString("type_pub"));
-            p.setLienPub(rs.getString("lien_pub"));
-            p.setContenuPub(rs.getString("contenu_pub"));
-            p.setDatePub(rs.getTimestamp("date_pub").toLocalDateTime());
-            p.setLikes(rs.getInt("likes"));
-            p.setDislikes(rs.getInt("dislikes"));
-            p.setUtilisateurId(rs.getInt("utilisateur_id"));
-            list.add(p);
+            list.add(mapResultSet(rs));
         }
         return list;
     }
@@ -90,19 +79,7 @@ public class ServicePublication implements IServices<Publication> {
         PreparedStatement ps = cnx.prepareStatement(sql);
         ps.setInt(1, id);
         ResultSet rs = ps.executeQuery();
-        if (rs.next()) {
-            Publication p = new Publication();
-            p.setId(rs.getInt("id"));
-            p.setTitrePub(rs.getString("titre_pub"));
-            p.setTypePub(rs.getString("type_pub"));
-            p.setLienPub(rs.getString("lien_pub"));
-            p.setContenuPub(rs.getString("contenu_pub"));
-            p.setDatePub(rs.getTimestamp("date_pub").toLocalDateTime());
-            p.setLikes(rs.getInt("likes"));
-            p.setDislikes(rs.getInt("dislikes"));
-            p.setUtilisateurId(rs.getInt("utilisateur_id"));
-            return p;
-        }
+        if (rs.next()) return mapResultSet(rs);
         return null;
     }
 
@@ -115,17 +92,7 @@ public class ServicePublication implements IServices<Publication> {
         ps.setString(2, "%" + keyword + "%");
         ResultSet rs = ps.executeQuery();
         while (rs.next()) {
-            Publication p = new Publication();
-            p.setId(rs.getInt("id"));
-            p.setTitrePub(rs.getString("titre_pub"));
-            p.setTypePub(rs.getString("type_pub"));
-            p.setLienPub(rs.getString("lien_pub"));
-            p.setContenuPub(rs.getString("contenu_pub"));
-            p.setDatePub(rs.getTimestamp("date_pub").toLocalDateTime());
-            p.setLikes(rs.getInt("likes"));
-            p.setDislikes(rs.getInt("dislikes"));
-            p.setUtilisateurId(rs.getInt("utilisateur_id"));
-            list.add(p);
+            list.add(mapResultSet(rs));
         }
         return list;
     }
@@ -164,18 +131,23 @@ public class ServicePublication implements IServices<Publication> {
         Statement st = cnx.createStatement();
         ResultSet rs = st.executeQuery(sql);
         while (rs.next()) {
-            Publication p = new Publication();
-            p.setId(rs.getInt("id"));
-            p.setTitrePub(rs.getString("titre_pub"));
-            p.setTypePub(rs.getString("type_pub"));
-            p.setLienPub(rs.getString("lien_pub"));
-            p.setContenuPub(rs.getString("contenu_pub"));
-            p.setDatePub(rs.getTimestamp("date_pub").toLocalDateTime());
-            p.setLikes(rs.getInt("likes"));
-            p.setDislikes(rs.getInt("dislikes"));
-            p.setUtilisateurId(rs.getInt("utilisateur_id"));
-            list.add(p);
+            list.add(mapResultSet(rs));
         }
         return list;
+    }
+
+    private Publication mapResultSet(ResultSet rs) throws Exception {
+        Publication p = new Publication();
+        p.setId(rs.getInt("id"));
+        p.setTitrePub(rs.getString("titre_pub"));
+        p.setTypePub(rs.getString("type_pub"));
+        p.setLienPub(rs.getString("lien_pub"));
+        p.setContenuPub(rs.getString("contenu_pub"));
+        p.setDatePub(rs.getTimestamp("date_pub").toLocalDateTime());
+        p.setLikes(rs.getInt("likes"));
+        p.setDislikes(rs.getInt("dislikes"));
+        p.setUtilisateurId(1); // statique jusqu'à implémentation auth
+        try { p.setReportPub(rs.getInt("report_pub")); } catch (Exception ignored) {}
+        return p;
     }
 }
