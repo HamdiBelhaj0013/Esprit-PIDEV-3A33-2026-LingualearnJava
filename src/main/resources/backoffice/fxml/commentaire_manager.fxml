@@ -7,13 +7,6 @@
       stylesheets="@../css/style.css"
       spacing="12" style="-fx-background-color: #f8fafc; -fx-padding: 0 8 0 8;">
 
-    <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 8 4 4 4;">
-        <Button text="← Dashboard" onAction="#goToDashboard"
-                style="-fx-background-color: #4f46e5; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold; -fx-padding: 8 16; -fx-background-radius: 6; -fx-cursor: hand;"/>
-        <Region HBox.hgrow="ALWAYS"/>
-        <Label text="💬 Commentaires Manager" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
-    </HBox>
-
     <VBox alignment="CENTER" style="-fx-padding: 8 0 2 0;">
         <Label text="Commentaires"
                style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #2563eb;"/>

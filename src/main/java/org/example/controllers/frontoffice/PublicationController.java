@@ -183,112 +183,122 @@ public class PublicationController {
         Region separator = new Region();
         separator.setStyle("-fx-background-color: #e4e6eb; -fx-pref-height: 1;");
 
-        // REACTIONS
-        HBox reactions = new HBox(20);
-        reactions.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
-        reactions.setPadding(new Insets(5, 0, 0, 0));
-
-// État du vote : 0 = rien, 1 = liked, -1 = disliked
+        // ── REACTIONS ────────────────────────────────────────────────────────
+        // État du vote : 0 = rien, 1 = liked, -1 = disliked
         final int[] etatVote = {0};
 
-// LIKES
-        Label likes = new Label("👍 " + p.getLikes());
-        likes.setStyle("-fx-font-size: 13px; -fx-text-fill: #65676b; -fx-cursor: hand;");
+        // Styles
+        final String LIKE_DEFAULT    = "-fx-font-size: 14px; -fx-text-fill: #65676b; -fx-cursor: hand; -fx-padding: 6 14; -fx-background-radius: 20; -fx-background-color: #f0f2f5;";
+        final String LIKE_ACTIVE     = "-fx-font-size: 14px; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 6 14; -fx-background-radius: 20; -fx-background-color: #3b5bdb; -fx-font-weight: bold;";
+        final String LIKE_HOVER      = "-fx-font-size: 14px; -fx-text-fill: #3b5bdb; -fx-cursor: hand; -fx-padding: 6 14; -fx-background-radius: 20; -fx-background-color: #dde4ff;";
+        final String DISLIKE_DEFAULT = "-fx-font-size: 14px; -fx-text-fill: #65676b; -fx-cursor: hand; -fx-padding: 6 14; -fx-background-radius: 20; -fx-background-color: #f0f2f5;";
+        final String DISLIKE_ACTIVE  = "-fx-font-size: 14px; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 6 14; -fx-background-radius: 20; -fx-background-color: #e74c3c; -fx-font-weight: bold;";
+        final String DISLIKE_HOVER   = "-fx-font-size: 14px; -fx-text-fill: #e74c3c; -fx-cursor: hand; -fx-padding: 6 14; -fx-background-radius: 20; -fx-background-color: #fdecea;";
 
-// DISLIKES
-        Label dislikes = new Label("👎 " + p.getDislikes());
-        dislikes.setStyle("-fx-font-size: 13px; -fx-text-fill: #65676b; -fx-cursor: hand;");
+        Label likes = new Label("👍  " + p.getLikes());
+        likes.setStyle(LIKE_DEFAULT);
 
+        Label dislikes = new Label("👎  " + p.getDislikes());
+        dislikes.setStyle(DISLIKE_DEFAULT);
+
+        // Barre ratio likes / dislikes
+        int totalVotes = p.getLikes() + p.getDislikes();
+        double ratioLikes = totalVotes > 0 ? (double) p.getLikes() / totalVotes : 0.5;
+
+        javafx.scene.layout.StackPane ratioBar = buildRatioBar(ratioLikes, 200, 6);
+
+        // ── Like click ───────────────────────────────────────────────────────
         likes.setOnMouseClicked(e -> {
             try {
                 if (etatVote[0] == 1) {
-                    // Déjà liké → annuler le like
+                    // Annuler le like
                     servicePublication.unlikePublication(p.getId());
                     p.setLikes(p.getLikes() - 1);
-                    likes.setText("👍 " + p.getLikes());
-                    likes.setStyle("-fx-font-size: 13px; -fx-text-fill: #65676b; -fx-cursor: hand;");
+                    likes.setText("👍  " + p.getLikes());
+                    likes.setStyle(LIKE_DEFAULT);
                     etatVote[0] = 0;
                 } else {
-                    // Liker
+                    // Si disliké → annuler d'abord
                     if (etatVote[0] == -1) {
-                        // Annuler le dislike d'abord
                         servicePublication.undislikePublication(p.getId());
                         p.setDislikes(p.getDislikes() - 1);
-                        dislikes.setText("👎 " + p.getDislikes());
-                        dislikes.setStyle("-fx-font-size: 13px; -fx-text-fill: #65676b; -fx-cursor: hand;");
+                        dislikes.setText("👎  " + p.getDislikes());
+                        dislikes.setStyle(DISLIKE_DEFAULT);
                     }
                     servicePublication.like(p.getId());
-                    // Après servicePublication.like(p.getId());
+                    p.setLikes(p.getLikes() + 1);
+                    likes.setText("👍  " + p.getLikes());
+                    likes.setStyle(LIKE_ACTIVE);
+                    etatVote[0] = 1;
                     NotificationManager.getInstance().ajouterNotification(
                             "👍 Quelqu'un a aimé votre publication : \"" + p.getTitrePub() + "\"",
-                            "like",
-                            p.getId()
+                            "like", p.getId()
                     );
-                    p.setLikes(p.getLikes() + 1);
-                    likes.setText("👍 " + p.getLikes());
-                    likes.setStyle("-fx-font-size: 13px; -fx-text-fill: #3b5bdb; -fx-cursor: hand; -fx-font-weight: bold;");
-                    etatVote[0] = 1;
                 }
+                // Mettre à jour la barre ratio
+                updateRatioBar(ratioBar, p.getLikes(), p.getDislikes());
             } catch (Exception ex) {
                 System.out.println("Erreur like : " + ex.getMessage());
             }
         });
 
+        // ── Dislike click ────────────────────────────────────────────────────
         dislikes.setOnMouseClicked(e -> {
             try {
                 if (etatVote[0] == -1) {
-                    // Déjà disliké → annuler le dislike
+                    // Annuler le dislike
                     servicePublication.undislikePublication(p.getId());
                     p.setDislikes(p.getDislikes() - 1);
-                    dislikes.setText("👎 " + p.getDislikes());
-                    dislikes.setStyle("-fx-font-size: 13px; -fx-text-fill: #65676b; -fx-cursor: hand;");
+                    dislikes.setText("👎  " + p.getDislikes());
+                    dislikes.setStyle(DISLIKE_DEFAULT);
                     etatVote[0] = 0;
                 } else {
-                    // Disliker
+                    // Si liké → annuler d'abord
                     if (etatVote[0] == 1) {
-                        // Annuler le like d'abord
                         servicePublication.unlikePublication(p.getId());
                         p.setLikes(p.getLikes() - 1);
-                        likes.setText("👍 " + p.getLikes());
-                        likes.setStyle("-fx-font-size: 13px; -fx-text-fill: #65676b; -fx-cursor: hand;");
+                        likes.setText("👍  " + p.getLikes());
+                        likes.setStyle(LIKE_DEFAULT);
                     }
                     servicePublication.dislike(p.getId());
                     p.setDislikes(p.getDislikes() + 1);
-                    dislikes.setText("👎 " + p.getDislikes());
-                    dislikes.setStyle("-fx-font-size: 13px; -fx-text-fill: #e74c3c; -fx-cursor: hand; -fx-font-weight: bold;");
+                    dislikes.setText("👎  " + p.getDislikes());
+                    dislikes.setStyle(DISLIKE_ACTIVE);
                     etatVote[0] = -1;
+                    NotificationManager.getInstance().ajouterNotification(
+                            "👎 Quelqu'un a disliké votre publication : \"" + p.getTitrePub() + "\"",
+                            "dislike", p.getId()
+                    );
                 }
+                updateRatioBar(ratioBar, p.getLikes(), p.getDislikes());
             } catch (Exception ex) {
                 System.out.println("Erreur dislike : " + ex.getMessage());
             }
         });
 
-        likes.setOnMouseEntered(e -> {
-            if (etatVote[0] != 1)
-                likes.setStyle("-fx-font-size: 13px; -fx-text-fill: #3b5bdb; -fx-cursor: hand;");
-        });
-        likes.setOnMouseExited(e -> {
-            if (etatVote[0] != 1)
-                likes.setStyle("-fx-font-size: 13px; -fx-text-fill: #65676b; -fx-cursor: hand;");
-        });
-        dislikes.setOnMouseEntered(e -> {
-            if (etatVote[0] != -1)
-                dislikes.setStyle("-fx-font-size: 13px; -fx-text-fill: #e74c3c; -fx-cursor: hand;");
-        });
-        dislikes.setOnMouseExited(e -> {
-            if (etatVote[0] != -1)
-                dislikes.setStyle("-fx-font-size: 13px; -fx-text-fill: #65676b; -fx-cursor: hand;");
-        });
-        // TOGGLE COMMENTAIRES
+        // ── Hover effects ────────────────────────────────────────────────────
+        likes.setOnMouseEntered(e -> { if (etatVote[0] != 1)  likes.setStyle(LIKE_HOVER); });
+        likes.setOnMouseExited(e  -> { if (etatVote[0] != 1)  likes.setStyle(LIKE_DEFAULT); });
+        dislikes.setOnMouseEntered(e -> { if (etatVote[0] != -1) dislikes.setStyle(DISLIKE_HOVER); });
+        dislikes.setOnMouseExited(e  -> { if (etatVote[0] != -1) dislikes.setStyle(DISLIKE_DEFAULT); });
+
+        // ── TOGGLE COMMENTAIRES ──────────────────────────────────────────────
         Label toggleCommentaires = new Label("💬 Commenter");
-        toggleCommentaires.setStyle("-fx-font-size: 13px; -fx-text-fill: #65676b; -fx-cursor: hand;");
+        toggleCommentaires.setStyle("-fx-font-size: 13px; -fx-text-fill: #65676b; -fx-cursor: hand; -fx-padding: 6 14; -fx-background-radius: 20; -fx-background-color: #f0f2f5;");
+        toggleCommentaires.setOnMouseEntered(e -> toggleCommentaires.setStyle("-fx-font-size: 13px; -fx-text-fill: #1c1e21; -fx-cursor: hand; -fx-padding: 6 14; -fx-background-radius: 20; -fx-background-color: #e4e6eb;"));
+        toggleCommentaires.setOnMouseExited(e  -> toggleCommentaires.setStyle("-fx-font-size: 13px; -fx-text-fill: #65676b; -fx-cursor: hand; -fx-padding: 6 14; -fx-background-radius: 20; -fx-background-color: #f0f2f5;"));
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Label partager = new Label("↗ Partager");
-        partager.setStyle("-fx-font-size: 13px; -fx-text-fill: #65676b; -fx-cursor: hand;");
+        partager.setStyle("-fx-font-size: 13px; -fx-text-fill: #65676b; -fx-cursor: hand; -fx-padding: 6 14; -fx-background-radius: 20; -fx-background-color: #f0f2f5;");
+        partager.setOnMouseEntered(e -> partager.setStyle("-fx-font-size: 13px; -fx-text-fill: #1c1e21; -fx-cursor: hand; -fx-padding: 6 14; -fx-background-radius: 20; -fx-background-color: #e4e6eb;"));
+        partager.setOnMouseExited(e  -> partager.setStyle("-fx-font-size: 13px; -fx-text-fill: #65676b; -fx-cursor: hand; -fx-padding: 6 14; -fx-background-radius: 20; -fx-background-color: #f0f2f5;"));
 
+        HBox reactions = new HBox(10);
+        reactions.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        reactions.setPadding(new Insets(6, 0, 0, 0));
         reactions.getChildren().addAll(likes, dislikes, toggleCommentaires, spacer, partager);
 
         // SECTION COMMENTAIRES
@@ -303,9 +313,41 @@ public class PublicationController {
             toggleCommentaires.setText(visible ? "💬 Commenter" : "💬 Masquer");
         });
 
-        card.getChildren().addAll(separator, reactions, commentairesSection);
+        card.getChildren().addAll(separator, ratioBar, reactions, commentairesSection);
 
         return card;
+    }
+
+    /** Construit une barre horizontale verte/rouge montrant le ratio likes/dislikes */
+    private javafx.scene.layout.StackPane buildRatioBar(double ratioLikes, double width, double height) {
+        javafx.scene.layout.StackPane bar = new javafx.scene.layout.StackPane();
+        bar.setMaxWidth(width);
+        bar.setPrefWidth(width);
+        bar.setPrefHeight(height);
+        bar.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        bar.setStyle("-fx-background-color: #fde8e8; -fx-background-radius: 6;");
+
+        javafx.scene.layout.Region fill = new javafx.scene.layout.Region();
+        fill.setPrefHeight(height);
+        fill.setPrefWidth(width * ratioLikes);
+        fill.setStyle("-fx-background-color: linear-gradient(to right, #40c057, #2f9e44); -fx-background-radius: 6;");
+        fill.setId("ratio-fill");
+
+        javafx.scene.layout.StackPane.setAlignment(fill, javafx.geometry.Pos.CENTER_LEFT);
+        bar.getChildren().add(fill);
+        return bar;
+    }
+
+    /** Met à jour la largeur de la barre ratio après un vote */
+    private void updateRatioBar(javafx.scene.layout.StackPane bar, int newLikes, int newDislikes) {
+        int total = newLikes + newDislikes;
+        double ratio = total > 0 ? (double) newLikes / total : 0.5;
+        double barWidth = bar.getPrefWidth();
+        bar.getChildren().stream()
+                .filter(n -> "ratio-fill".equals(n.getId()))
+                .map(n -> (javafx.scene.layout.Region) n)
+                .findFirst()
+                .ifPresent(fill -> fill.setPrefWidth(barWidth * ratio));
     }
 
     @FXML
@@ -576,39 +618,55 @@ public class PublicationController {
             // REACTIONS
             final int[] etatVote = {0};
 
-            HBox reactions = new HBox(20);
+            final String S_LIKE_DEFAULT    = "-fx-font-size: 14px; -fx-text-fill: #aaa; -fx-cursor: hand; -fx-padding: 5 12; -fx-background-radius: 20; -fx-background-color: rgba(255,255,255,0.08);";
+            final String S_LIKE_ACTIVE     = "-fx-font-size: 14px; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 5 12; -fx-background-radius: 20; -fx-background-color: #3b5bdb; -fx-font-weight: bold;";
+            final String S_LIKE_HOVER      = "-fx-font-size: 14px; -fx-text-fill: #748ffc; -fx-cursor: hand; -fx-padding: 5 12; -fx-background-radius: 20; -fx-background-color: rgba(59,91,219,0.18);";
+            final String S_DISLIKE_DEFAULT = "-fx-font-size: 14px; -fx-text-fill: #aaa; -fx-cursor: hand; -fx-padding: 5 12; -fx-background-radius: 20; -fx-background-color: rgba(255,255,255,0.08);";
+            final String S_DISLIKE_ACTIVE  = "-fx-font-size: 14px; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 5 12; -fx-background-radius: 20; -fx-background-color: #e74c3c; -fx-font-weight: bold;";
+            final String S_DISLIKE_HOVER   = "-fx-font-size: 14px; -fx-text-fill: #ff6b6b; -fx-cursor: hand; -fx-padding: 5 12; -fx-background-radius: 20; -fx-background-color: rgba(231,76,60,0.18);";
+
+            HBox reactions = new HBox(10);
             reactions.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
             reactions.setPadding(new Insets(5, 0, 0, 0));
 
-            Label likes = new Label("👍 " + current.getLikes());
-            likes.setStyle("-fx-font-size: 14px; -fx-text-fill: #aaa; -fx-cursor: hand;");
+            Label likes = new Label("👍  " + current.getLikes());
+            likes.setStyle(S_LIKE_DEFAULT);
 
-            Label dislikes = new Label("👎 " + current.getDislikes());
-            dislikes.setStyle("-fx-font-size: 14px; -fx-text-fill: #aaa; -fx-cursor: hand;");
+            Label dislikes = new Label("👎  " + current.getDislikes());
+            dislikes.setStyle(S_DISLIKE_DEFAULT);
+
+            int stTotal = current.getLikes() + current.getDislikes();
+            double stRatio = stTotal > 0 ? (double) current.getLikes() / stTotal : 0.5;
+            javafx.scene.layout.StackPane storyRatioBar = buildRatioBar(stRatio, 180, 5);
 
             likes.setOnMouseClicked(e -> {
                 try {
                     if (etatVote[0] == 1) {
                         servicePublication.unlikePublication(current.getId());
                         current.setLikes(current.getLikes() - 1);
-                        likes.setText("👍 " + current.getLikes());
-                        likes.setStyle("-fx-font-size: 14px; -fx-text-fill: #aaa; -fx-cursor: hand;");
+                        likes.setText("👍  " + current.getLikes());
+                        likes.setStyle(S_LIKE_DEFAULT);
                         etatVote[0] = 0;
                     } else {
                         if (etatVote[0] == -1) {
                             servicePublication.undislikePublication(current.getId());
                             current.setDislikes(current.getDislikes() - 1);
-                            dislikes.setText("👎 " + current.getDislikes());
-                            dislikes.setStyle("-fx-font-size: 14px; -fx-text-fill: #aaa; -fx-cursor: hand;");
+                            dislikes.setText("👎  " + current.getDislikes());
+                            dislikes.setStyle(S_DISLIKE_DEFAULT);
                         }
                         servicePublication.like(current.getId());
                         current.setLikes(current.getLikes() + 1);
-                        likes.setText("👍 " + current.getLikes());
-                        likes.setStyle("-fx-font-size: 14px; -fx-text-fill: #3b5bdb; -fx-cursor: hand; -fx-font-weight: bold;");
+                        likes.setText("👍  " + current.getLikes());
+                        likes.setStyle(S_LIKE_ACTIVE);
                         etatVote[0] = 1;
+                        NotificationManager.getInstance().ajouterNotification(
+                                "👍 Quelqu'un a aimé votre story : \"" + current.getTitrePub() + "\"",
+                                "like", current.getId()
+                        );
                     }
+                    updateRatioBar(storyRatioBar, current.getLikes(), current.getDislikes());
                 } catch (Exception ex) {
-                    System.out.println("Erreur like : " + ex.getMessage());
+                    System.out.println("Erreur like story : " + ex.getMessage());
                 }
             });
 
@@ -617,29 +675,41 @@ public class PublicationController {
                     if (etatVote[0] == -1) {
                         servicePublication.undislikePublication(current.getId());
                         current.setDislikes(current.getDislikes() - 1);
-                        dislikes.setText("👎 " + current.getDislikes());
-                        dislikes.setStyle("-fx-font-size: 14px; -fx-text-fill: #aaa; -fx-cursor: hand;");
+                        dislikes.setText("👎  " + current.getDislikes());
+                        dislikes.setStyle(S_DISLIKE_DEFAULT);
                         etatVote[0] = 0;
                     } else {
                         if (etatVote[0] == 1) {
                             servicePublication.unlikePublication(current.getId());
                             current.setLikes(current.getLikes() - 1);
-                            likes.setText("👍 " + current.getLikes());
-                            likes.setStyle("-fx-font-size: 14px; -fx-text-fill: #aaa; -fx-cursor: hand;");
+                            likes.setText("👍  " + current.getLikes());
+                            likes.setStyle(S_LIKE_DEFAULT);
                         }
                         servicePublication.dislike(current.getId());
                         current.setDislikes(current.getDislikes() + 1);
-                        dislikes.setText("👎 " + current.getDislikes());
-                        dislikes.setStyle("-fx-font-size: 14px; -fx-text-fill: #e74c3c; -fx-cursor: hand; -fx-font-weight: bold;");
+                        dislikes.setText("👎  " + current.getDislikes());
+                        dislikes.setStyle(S_DISLIKE_ACTIVE);
                         etatVote[0] = -1;
+                        NotificationManager.getInstance().ajouterNotification(
+                                "👎 Quelqu'un a disliké votre story : \"" + current.getTitrePub() + "\"",
+                                "dislike", current.getId()
+                        );
                     }
+                    updateRatioBar(storyRatioBar, current.getLikes(), current.getDislikes());
                 } catch (Exception ex) {
-                    System.out.println("Erreur dislike : " + ex.getMessage());
+                    System.out.println("Erreur dislike story : " + ex.getMessage());
                 }
             });
 
+            likes.setOnMouseEntered(e    -> { if (etatVote[0] != 1)  likes.setStyle(S_LIKE_HOVER); });
+            likes.setOnMouseExited(e     -> { if (etatVote[0] != 1)  likes.setStyle(S_LIKE_DEFAULT); });
+            dislikes.setOnMouseEntered(e -> { if (etatVote[0] != -1) dislikes.setStyle(S_DISLIKE_HOVER); });
+            dislikes.setOnMouseExited(e  -> { if (etatVote[0] != -1) dislikes.setStyle(S_DISLIKE_DEFAULT); });
+
             Label toggleComment = new Label("💬 Commenter");
-            toggleComment.setStyle("-fx-font-size: 14px; -fx-text-fill: #aaa; -fx-cursor: hand;");
+            toggleComment.setStyle("-fx-font-size: 14px; -fx-text-fill: #aaa; -fx-cursor: hand; -fx-padding: 5 12; -fx-background-radius: 20; -fx-background-color: rgba(255,255,255,0.08);");
+            toggleComment.setOnMouseEntered(e -> toggleComment.setStyle("-fx-font-size: 14px; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 5 12; -fx-background-radius: 20; -fx-background-color: rgba(255,255,255,0.15);"));
+            toggleComment.setOnMouseExited(e  -> toggleComment.setStyle("-fx-font-size: 14px; -fx-text-fill: #aaa; -fx-cursor: hand; -fx-padding: 5 12; -fx-background-radius: 20; -fx-background-color: rgba(255,255,255,0.08);"));
             reactions.getChildren().addAll(likes, dislikes, toggleComment);
 
             // COMMENTAIRES
@@ -659,7 +729,7 @@ public class PublicationController {
                 toggleComment.setText(visible ? "💬 Commenter" : "💬 Masquer");
             });
 
-            content.getChildren().addAll(titre, contenu, sep, reactions, commentairesSection);
+            content.getChildren().addAll(titre, contenu, sep, storyRatioBar, reactions, commentairesSection);
             root.getChildren().addAll(header, content);
 
             stage.sizeToScene();
