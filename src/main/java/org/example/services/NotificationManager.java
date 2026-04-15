@@ -8,14 +8,13 @@ public class NotificationManager {
 
     private static NotificationManager instance;
     private List<Notification> notifications = new ArrayList<>();
-    private Runnable onNewNotification; // callback pour mettre à jour le badge
+    private Runnable onNewNotification;
+    private Runnable onBadgeUpdate; // callback léger, juste pour le badge
 
     private NotificationManager() {}
 
     public static NotificationManager getInstance() {
-        if (instance == null) {
-            instance = new NotificationManager();
-        }
+        if (instance == null) instance = new NotificationManager();
         return instance;
     }
 
@@ -26,9 +25,7 @@ public class NotificationManager {
         }
     }
 
-    public List<Notification> getAll() {
-        return notifications;
-    }
+    public List<Notification> getAll() { return notifications; }
 
     public List<Notification> getNonLues() {
         List<Notification> nonLues = new ArrayList<>();
@@ -38,20 +35,19 @@ public class NotificationManager {
         return nonLues;
     }
 
-    public int getNombreNonLues() {
-        return getNonLues().size();
-    }
+    public int getNombreNonLues() { return getNonLues().size(); }
 
+    /** Marque toutes lues SANS déclencher le callback onNewNotification */
     public void marquerToutesLues() {
-        for (Notification n : notifications) {
-            n.setLue(true);
-        }
-        if (onNewNotification != null) {
-            javafx.application.Platform.runLater(onNewNotification);
+        for (Notification n : notifications) n.setLue(true);
+        // Mettre à jour uniquement le badge, pas le toast
+        if (onBadgeUpdate != null) {
+            javafx.application.Platform.runLater(onBadgeUpdate);
         }
     }
 
-    public void setOnNewNotification(Runnable callback) {
-        this.onNewNotification = callback;
-    }
+    public void setOnNewNotification(Runnable callback) { this.onNewNotification = callback; }
+
+    /** Callback appelé uniquement lors d'un changement de badge (marquer lues) */
+    public void setOnBadgeUpdate(Runnable callback) { this.onBadgeUpdate = callback; }
 }
