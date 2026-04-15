@@ -404,3 +404,42 @@
     -fx-font-weight: bold;
     -fx-text-fill: #1e293b;
 }
+
+/* ===== PUBLICATION CARDS ===== */
+.pub-card {
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 16;
+    -fx-border-width: 2;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 10, 0, 0, 3);
+    -fx-cursor: hand;
+}
+
+.pub-card:hover {
+    -fx-border-color: #a5b4fc;
+    -fx-effect: dropshadow(gaussian, rgba(79,70,229,0.18), 16, 0, 0, 6);
+    -fx-translate-y: -2;
+}
+
+.pub-card-selected {
+    -fx-background-color: #eef2ff;
+    -fx-background-radius: 16;
+    -fx-border-color: #4f46e5;
+    -fx-border-radius: 16;
+    -fx-border-width: 2.5;
+    -fx-effect: dropshadow(gaussian, rgba(79,70,229,0.22), 14, 0, 0, 5);
+    -fx-cursor: hand;
+}
+
+.pub-card-action-btn:hover {
+    -fx-opacity: 0.88;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 6, 0, 0, 2);
+}
+
+.pub-card-image-placeholder {
+    -fx-background-color: linear-gradient(to bottom right, #e2e8f0, #cbd5e1);
+    -fx-background-radius: 14 14 0 0;
+}
+
+
