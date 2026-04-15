@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.controllers.FrontLanguagesController"
+            fitToWidth="true"
+            hbarPolicy="NEVER"
+            styleClass="front-page-root">
+
+    <content>
+        <VBox spacing="32">
+            <padding>
+                <Insets top="0" right="0" bottom="40" left="0"/>
+            </padding>
+
+            <!-- ===== HERO BANNER ===== -->
+            <VBox styleClass="front-hero-section" alignment="CENTER" spacing="14">
+                <padding>
+                    <Insets top="44" right="48" bottom="44" left="48"/>
+                </padding>
+                <Label text="START LEARNING" styleClass="front-hero-tag"/>
+                <Label text="What do you want to learn today?" styleClass="front-hero-title"/>
+                <Label text="Choose a language below to enroll and access all its courses and lessons."
+                       maxWidth="560"
+                       wrapText="true"
+                       styleClass="front-hero-subtitle"/>
+            </VBox>
+
+            <!-- ===== SECTION HEADER ===== -->
+            <VBox spacing="6" alignment="CENTER_LEFT">
+                <padding><Insets left="36" right="36"/></padding>
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label text="Available Languages" styleClass="front-page-title"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="langCountLabel" text="" styleClass="front-page-subtitle"/>
+                </HBox>
+                <Label text="Click on a language card to explore its courses" styleClass="front-page-subtitle"/>
+            </VBox>
+
+            <!-- ===== LANGUAGE CARDS ===== -->
+            <VBox alignment="CENTER">
+                <padding><Insets left="36" right="36"/></padding>
+                <FlowPane fx:id="languagesContainer"
+                          hgap="20"
+                          vgap="20"
+                          prefWrapLength="900"
+                          alignment="TOP_LEFT"/>
+            </VBox>
+
+        </VBox>
+    </content>
+</ScrollPane>
