@@ -5,9 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c62684bd-7db6-4266-8409-2a36624f041e" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/user/UserMainController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/user/UserMainController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/user/UserProfileController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/user/UserProfileController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/user/UserMain.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/user/UserMain.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/App.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/AdminMainController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user-managment/AdminMainController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/DashboardViewController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user-managment/DashboardViewController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/NotificationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user-managment/NotificationController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/StatsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user-managment/StatsController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/UserDetailController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user-managment/UserDetailController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/UserFormController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user-managment/UserFormController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/UserListController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user-managment/UserListController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/entity/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/validation/ValidationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/validation/ValidationService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,7 +66,7 @@
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;module/user-management&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
@@ -83,11 +91,11 @@
       <recent name="C:\Users\belha\OneDrive\Bureau\LingualearnJava" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\belha\OneDrive\Bureau\LingualearnJava\src\main\java\org\example\controller\admin\user-managment" />
       <recent name="C:\Users\belha\OneDrive\Bureau\LingualearnJava\src\main\resources\META-INF" />
       <recent name="C:\Users\belha\OneDrive\Bureau\LingualearnJava\src\main\java\org\example\validation" />
       <recent name="C:\Users\belha\OneDrive\Bureau\LingualearnJava\src\main\java\org\example\entity" />
       <recent name="C:\Users\belha\OneDrive\Bureau\LingualearnJava\src\main\java\org\example" />
-      <recent name="C:\Users\belha\OneDrive\Bureau\LingualearnJava\src\main\java\org\example\console" />
     </key>
   </component>
   <component name="RunManager">
@@ -154,6 +162,8 @@
       <workItem from="1776174498962" duration="1102000" />
       <workItem from="1776176935922" duration="3780000" />
       <workItem from="1776189049286" duration="10956000" />
+      <workItem from="1776326742308" duration="3160000" />
+      <workItem from="1776330047821" duration="104000" />
     </task>
     <servers />
   </component>

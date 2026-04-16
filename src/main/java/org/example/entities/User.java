@@ -40,12 +40,9 @@ public class User {
     public String getPassword()       { return password; }
     public void setPassword(String p) { this.password = p; }
 
-    // ── Roles (stored as Symfony JSON array: ["ROLE_USER","ROLE_ADMIN"]) ──────
 
-    /** Set raw JSON string directly (used by repository when loading from DB). */
     public void setRolesJson(String json) { this.roles = json; }
 
-    /** Parse Symfony JSON array: ["ROLE_USER","ROLE_ADMIN"] */
     public List<String> getRoles() {
         if (roles == null || roles.isBlank()) return new ArrayList<>(List.of("ROLE_USER"));
         String t = roles.trim();
@@ -61,7 +58,7 @@ public class User {
         return new ArrayList<>(List.of(t.split(",")));
     }
 
-    /** Write Symfony JSON array format: ["ROLE_USER","ROLE_ADMIN"] */
+
     public void setRoles(List<String> r) {
         List<String> list = new ArrayList<>(r.stream().distinct().toList());
         if (!list.contains("ROLE_USER")) list.add(0, "ROLE_USER");
@@ -115,11 +112,7 @@ public class User {
     public String getLastPaymentStatus()         { return lastPaymentStatus; }
     public void   setLastPaymentStatus(String v) { this.lastPaymentStatus = v; }
 
-    /**
-     * Recalculates isPremium — mirrors Symfony's updatePremiumStatus().
-     * Called by setSubscriptionPlan/setSubscriptionExpiry setters and
-     * explicitly by the repository after loading all fields from the DB.
-     */
+
     public void updatePremiumStatus() {
         this.isPremium =
                 ("MONTHLY".equals(subscriptionPlan) || "YEARLY".equals(subscriptionPlan))
