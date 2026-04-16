@@ -11,7 +11,6 @@ public class App extends Application {
 
     @Override
     public void init() {
-        // Eagerly open the singleton JDBC connection so any config error surfaces at startup.
         MyDataBase.getInstance();
     }
 
