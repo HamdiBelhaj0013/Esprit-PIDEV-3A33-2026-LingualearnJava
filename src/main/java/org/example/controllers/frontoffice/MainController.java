@@ -27,9 +27,11 @@ public class MainController {
     @FXML private VBox notificationPopupContainer;
     @FXML private VBox notificationDropdown;
     @FXML private VBox notificationDropdownList;
+    @FXML private StackPane chatbotContainer;
 
     private boolean dropdownOpen = false;
     private Timeline closeAnim = null;
+    private javafx.event.EventHandler<javafx.scene.input.MouseEvent> sceneClickHandler;
 
     @FXML
     public void initialize() {
@@ -43,6 +45,13 @@ public class MainController {
 
         // Mise à jour badge uniquement (après marquerToutesLues)
         NotificationManager.getInstance().setOnBadgeUpdate(this::updateBadge);
+
+        // Init sceneClickHandler as a stable field reference (fixes remove bug)
+        sceneClickHandler = this::onSceneClick;
+
+        // Init chatbot widget
+        ChatbotController chatbot = new ChatbotController();
+        chatbotContainer.getChildren().add(chatbot.buildWidget());
 
         loadView("/frontoffice/fxml/PublicationView.fxml");
     }
@@ -98,7 +107,7 @@ public class MainController {
             if (contentArea.getScene() != null) {
                 contentArea.getScene().addEventFilter(
                     javafx.scene.input.MouseEvent.MOUSE_PRESSED,
-                    this::onSceneClick
+                    sceneClickHandler
                 );
             }
         });
@@ -111,7 +120,7 @@ public class MainController {
         if (contentArea.getScene() != null) {
             contentArea.getScene().removeEventFilter(
                 javafx.scene.input.MouseEvent.MOUSE_PRESSED,
-                this::onSceneClick
+                sceneClickHandler
             );
         }
     }
@@ -124,7 +133,7 @@ public class MainController {
         if (contentArea.getScene() != null) {
             contentArea.getScene().removeEventFilter(
                 javafx.scene.input.MouseEvent.MOUSE_PRESSED,
-                this::onSceneClick
+                sceneClickHandler
             );
         }
 

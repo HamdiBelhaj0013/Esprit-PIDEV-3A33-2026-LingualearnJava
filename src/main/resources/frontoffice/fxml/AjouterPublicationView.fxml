@@ -25,6 +25,17 @@
               prefHeight="120" wrapText="true"/>
     <Label fx:id="contenuError" text="" styleClass="error-label"/>
 
+    <!-- BOUTON AMÉLIORATION IA -->
+    <HBox alignment="CENTER_RIGHT">
+        <Button fx:id="ameliorerBtn" text="✨ Améliorer avec l'IA"
+                styleClass="btn-secondary"
+                onAction="#handleAmeliorer"
+                style="-fx-background-color: linear-gradient(to right,#6d28d9,#3b5bdb);
+                       -fx-text-fill: white; -fx-background-radius: 20;
+                       -fx-cursor: hand; -fx-padding: 7 16; -fx-font-size: 12px;"/>
+    </HBox>
+    <Label fx:id="ameliorerStatus" text="" style="-fx-font-size: 11px; -fx-text-fill: #6d28d9;"/>
+
     <!-- IMAGE -->
     <Label text="Image (optionnel)"/>
     <HBox spacing="10" alignment="CENTER_LEFT">

@@ -74,4 +74,10 @@
         <padding><Insets top="70" right="20"/></padding>
     </VBox>
 
+    <!-- CHATBOT WIDGET (coin bas droit) -->
+    <StackPane fx:id="chatbotContainer"
+               StackPane.alignment="BOTTOM_RIGHT"
+               pickOnBounds="false"
+               mouseTransparent="false"/>
+
 </StackPane>

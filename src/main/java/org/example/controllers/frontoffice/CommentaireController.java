@@ -1,8 +1,12 @@
 package org.example.controllers.frontoffice;
 
 import org.example.entities.Commentaire;
+import org.example.entities.Publication;
+import org.example.services.BadWordChecker;
+import org.example.services.EmailService;
 import org.example.services.NotificationManager;
 import org.example.services.ServiceCommentaire;
+import org.example.services.ServicePublication;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -16,12 +20,20 @@ import java.util.List;
 public class CommentaireController {
 
     private ServiceCommentaire serviceCommentaire = new ServiceCommentaire();
+    private ServicePublication servicePublication = new ServicePublication();
+    private BadWordChecker badWordChecker = new BadWordChecker();
     private int publicationId;
+    private String publicationTitre = "Publication inconnue";
     private VBox listeCommentaires = new VBox(6);
 
     public void init(int publicationId, VBox container) {
         this.publicationId = publicationId;
         this.listeCommentaires = container;
+        // Try to get publication title for email context
+        try {
+            Publication pub = servicePublication.getById(publicationId);
+            if (pub != null) publicationTitre = pub.getTitrePub();
+        } catch (Exception ignored) {}
         loadCommentaires();
     }
 
@@ -73,6 +85,19 @@ public class CommentaireController {
         envoyerBtn.setOnAction(e -> {
             String contenu = commentField.getText().trim();
             if (!contenu.isEmpty()) {
+                // ── Bad word check ─────────────────────────────────────────────────
+                if (badWordChecker.containsBadWords(contenu)) {
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setTitle("Commentaire inapproprié");
+                    alert.setHeaderText("⚠️ Votre commentaire a été bloqué");
+                    alert.setContentText("Votre commentaire contient des mots inappropriés et n'a pas été publié. Merci de respecter les règles de la communauté.");
+                    alert.showAndWait();
+                    // Envoyer email à l'admin
+                    EmailService.sendBadWordWarning(contenu, publicationTitre);
+                    commentField.clear();
+                    return;
+                }
+                // ──────────────────────────────────────────────────────────────────
                 try {
                     // ✅ Sauvegarde dans la DB
                     Commentaire c = new Commentaire();
@@ -81,7 +106,7 @@ public class CommentaireController {
                     c.setPublicationId(publicationId);
                     serviceCommentaire.add(c);
                     NotificationManager.getInstance().ajouterNotification(
-                            "💬 Nouveau commentaire sur : \"" + contenu + "\"",
+                            "💬 Nouveau commentaire sur : \"" + publicationTitre + "\"",
                             "commentaire",
                             publicationId
                     );
