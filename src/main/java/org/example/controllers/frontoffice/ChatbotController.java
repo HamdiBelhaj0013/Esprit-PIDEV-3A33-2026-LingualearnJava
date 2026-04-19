@@ -19,10 +19,12 @@ import java.util.List;
 public class ChatbotController {
 
     private static final String SYSTEM_PROMPT =
-        "Tu es LinguaBot, l'assistant intelligent de LinguaLearn. " +
-        "Tu aides les utilisateurs à apprendre des langues, comprendre des publications, " +
-        "rédiger des commentaires, et naviguer sur la plateforme. " +
-        "Réponds toujours en français, de façon concise, amicale et utile.";
+        "Tu es LinguaBot, l'assistant de la partie forum de LinguaLearn. " +
+        "LinguaLearn est une plateforme de cours et d'apprentissage des langues. " +
+        "Tu aides les utilisateurs a comprendre les publications, rediger des commentaires, " +
+        "et participer aux discussions du forum. " +
+        "Tu reponds dans la meme langue que la question (francais, anglais, ou autre), " +
+        "de facon claire, utile et concise.";
 
     private final GroqService groqService = new GroqService();
 
@@ -276,4 +278,3 @@ public class ChatbotController {
         Platform.runLater(() -> scrollPane.setVvalue(1.0));
     }
 }
-
