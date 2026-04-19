@@ -221,20 +221,13 @@ public class ChatbotController {
         scrollToBottom();
 
         // Appel API en thread séparé
+        // Appel API en thread séparé
         new Thread(() -> {
-            try {
-                // Construire le message avec historique
-                String response = groqService.chat(SYSTEM_PROMPT, text);
-                Platform.runLater(() -> {
-                    messageList.getChildren().remove(typing);
-                    addBotMessage(response);
-                });
-            } catch (Exception e) {
-                Platform.runLater(() -> {
-                    messageList.getChildren().remove(typing);
-                    addBotMessage("❌ Désolé, une erreur s'est produite. Veuillez réessayer.\n(" + e.getMessage() + ")");
-                });
-            }
+            String response = groqService.chat(SYSTEM_PROMPT, text);
+            Platform.runLater(() -> {
+                messageList.getChildren().remove(typing);
+                addBotMessage(response);
+            });
         }).start();
     }
 

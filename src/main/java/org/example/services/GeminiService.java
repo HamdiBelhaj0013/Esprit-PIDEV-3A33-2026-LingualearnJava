@@ -1,77 +1,50 @@
 package org.example.services;
 
-import org.example.util.AppConfig;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-
 /**
- * Service d'appel à l'API Google Gemini pour l'amélioration de publications.
+ * Service d'amélioration de publications via GROQ (LLaMA 3).
+ * Utilise la même clé API et service que le chatbot pour la cohérence.
  */
 public class GeminiService {
 
-    private static final String API_URL =
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
-
-    private final HttpClient client = HttpClient.newHttpClient();
+    private final GroqService groqService = new GroqService();
 
     /**
-     * Améliore le titre et le contenu d'une publication via Gemini.
-     * Retourne un tableau [newTitre, newContenu].
+     * Améliore le titre et le contenu d'une publication via GROQ.
+     * Retourne [nouveauTitre, nouveauContenu].
      */
     public String[] ameliorerPublication(String titre, String contenu) throws Exception {
-        String apiKey = AppConfig.get("gemini.api.key").trim();
-        if (apiKey.isEmpty() || apiKey.equals("VOTRE_CLE_GEMINI_ICI")) {
-            throw new Exception("Clé Gemini non configurée. Éditez src/main/resources/config.properties");
-        }
+        String systemPrompt = "Tu es un expert en rédaction. Améliore le titre et le contenu pour qu'ils soient clairs, engageants et professionnels. "
+                + "Réponds UNIQUEMENT en JSON valide avec les clés 'titre' et 'contenu'. Aucun texte avant ou après le JSON.";
 
-        String prompt = String.format(
-            "Améliore ce titre et ce contenu pour qu'ils soient clairs, engageants et professionnels. " +
-            "Répond UNIQUEMENT en JSON valide avec les clés 'titre' et 'contenu'. " +
-            "Aucun texte avant ou après le JSON.%n%n" +
-            "Titre : %s%nContenu : %s",
-            titre, contenu
-        );
+        String userMessage = "Titre : " + titre + "\nContenu : " + contenu;
 
-        // Build request body
-        JSONObject part = new JSONObject().put("text", prompt);
-        JSONObject contentObj = new JSONObject().put("parts", new JSONArray().put(part));
-        JSONObject body = new JSONObject().put("contents", new JSONArray().put(contentObj));
+        String rawText = groqService.chat(systemPrompt, userMessage);
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(API_URL))
-                .header("Content-Type", "application/json")
-                .header("x-goog-api-key", apiKey)
-                .POST(HttpRequest.BodyPublishers.ofString(body.toString()))
-                .build();
-
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-        if (response.statusCode() != 200) {
-            throw new Exception("Gemini API Error " + response.statusCode() + ": " + response.body());
-        }
-
-        String rawText = new JSONObject(response.body())
-                .getJSONArray("candidates")
-                .getJSONObject(0)
-                .getJSONObject("content")
-                .getJSONArray("parts")
-                .getJSONObject(0)
-                .getString("text");
-
-        // Clean markdown if present
+        // Nettoyer le markdown si présent
         rawText = rawText.replaceAll("(?s)```json\\s*", "")
                          .replaceAll("(?s)```\\s*", "")
                          .trim();
 
-        JSONObject result = new JSONObject(rawText);
-        return new String[]{
-            result.optString("titre", titre),
-            result.optString("contenu", contenu)
-        };
+        System.out.println("🔍 Réponse IA brute : " + rawText);
+
+        // Parser le JSON avec org.json (déjà dans pom.xml)
+        try {
+            JSONObject json = new JSONObject(rawText);
+            String newTitre = json.optString("titre", titre);
+            String newContenu = json.optString("contenu", contenu);
+
+            System.out.println("✅ Amélioration appliquée");
+            System.out.println("  Titre : " + newTitre);
+            System.out.println("  Contenu : " + newContenu);
+
+            return new String[]{newTitre, newContenu};
+
+        } catch (Exception e) {
+            System.out.println("⚠️ Erreur parsing JSON: " + e.getMessage());
+            System.out.println("  Texte non valide: " + rawText);
+            throw new Exception("Impossible de parser la réponse IA. Vérifiez le format JSON.");
+        }
     }
 }
