@@ -16,7 +16,7 @@ public class EmailService {
     private static final String SMTP_PORT  = "587";
     private static final String FROM_EMAIL = "benali.mohamedzh@gmail.com";
     private static final String FROM_PASS  = "rpgebnxdjqonnkcq";
-    private static final String ADMIN_EMAIL = "saaharhamraoui@gmail.com";
+    private static final String ADMIN_EMAIL = "asma.rhayem@esprit.tn";
 
     public static void sendBadWordWarning(String commentContent, String publicationTitle) {
         new Thread(() -> {
