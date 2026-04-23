@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane prefHeight="520.0" prefWidth="600.0" styleClass="root-pane"
+           stylesheets="@../css/style.css"
+           xmlns="http://javafx.com/javafx/21"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="org.example.controller.VerifyOTPController">
+
+    <VBox alignment="TOP_CENTER" maxWidth="652.0" prefHeight="520.0" prefWidth="652.0"
+          spacing="18.0" styleClass="login-card">
+
+        <padding>
+            <Insets bottom="44.0" left="44.0" right="44.0" top="44.0" />
+        </padding>
+
+        <!-- ── Title ───────────────────────────────── -->
+        <Label styleClass="app-title" text="Enter Reset Code" />
+        <Label fx:id="subtitleLabel" styleClass="subtitle"
+               text="We sent a 6-digit code to your email" />
+
+        <!-- ── OTP field ────────────────────────────── -->
+        <VBox alignment="CENTER" spacing="4.0">
+            <Label styleClass="field-label" text="6-Digit Code" />
+            <TextField fx:id="otpField" maxWidth="160.0" promptText="000000"
+                       styleClass="input-field" style="-fx-alignment: center;" />
+        </VBox>
+
+        <!-- ── Error message ───────────────────────── -->
+        <Label fx:id="errorLabel" managed="false" maxWidth="400.0"
+               styleClass="error-label" visible="false" wrapText="true" />
+
+        <!-- ── Success message (resend) ───────────── -->
+        <Label fx:id="successLabel" managed="false" maxWidth="400.0"
+               styleClass="success-label" visible="false" wrapText="true" />
+
+        <!-- ── Verify button ────────────────────────── -->
+        <Button defaultButton="true" maxWidth="Infinity"
+                onAction="#handleVerify" styleClass="login-btn" text="Verify Code">
+            <VBox.margin>
+                <Insets top="6.0" />
+            </VBox.margin>
+        </Button>
+
+        <!-- ── Resend / Back ───────────────────────── -->
+        <Button alignment="CENTER" maxWidth="Infinity" onAction="#handleResend"
+                styleClass="link-btn" text="Resend Code" />
+        <Button alignment="CENTER" maxWidth="Infinity" onAction="#handleBackToLogin"
+                styleClass="link-btn" text="Back to Login" />
+
+    </VBox>
+</StackPane>

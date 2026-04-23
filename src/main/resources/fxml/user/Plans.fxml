@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane fx:id="rootPane"
+            fitToWidth="true"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.controller.user.PlansController"
+            style="-fx-background-color: transparent; -fx-background: transparent; -fx-border-width: 0;">
+
+    <VBox spacing="20">
+        <padding><Insets top="28" right="28" bottom="28" left="28"/></padding>
+
+        <!-- ── Section 1: Active Plan Banner (shown only when premium) ─── -->
+        <HBox fx:id="activePlanBanner"
+              visible="false" managed="false"
+              spacing="16" alignment="CENTER_LEFT"
+              style="-fx-background-color: #fffbeb; -fx-border-color: #f59f00;
+                     -fx-border-radius: 12; -fx-background-radius: 12;
+                     -fx-border-width: 1; -fx-padding: 20;">
+            <VBox spacing="4">
+                <Label text="ACTIVE PLAN"
+                       style="-fx-font-size: 10px; -fx-text-fill: #b45309; -fx-font-weight: bold;"/>
+                <Label fx:id="activePlanName" text="Monthly Premium"
+                       style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1a1f36;"/>
+                <Label fx:id="activePlanExpiry" text="Renews April 22, 2027"
+                       style="-fx-font-size: 12px; -fx-text-fill: #6c7a99;"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label text="Full access to all premium content."
+                   style="-fx-font-size: 13px; -fx-text-fill: #6c7a99;"/>
+        </HBox>
+
+        <!-- ── Section 2: Three plan cards ──────────────────────────────── -->
+        <HBox spacing="16">
+
+            <!-- FREE card -->
+            <VBox styleClass="profile-card" spacing="8" HBox.hgrow="ALWAYS" prefWidth="280">
+                <Label text="Free"
+                       style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #1a1f36;"/>
+                <HBox spacing="2" alignment="BOTTOM_LEFT">
+                    <Label text="$$"
+                           style="-fx-font-size: 14px; -fx-text-fill: #374151;"/>
+                    <Label text="0"
+                           style="-fx-font-size: 48px; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+                    <Label text=" /forever free"
+                           style="-fx-font-size: 12px; -fx-text-fill: #6c7a99;"/>
+                </HBox>
+                <Separator/>
+                <Label text="+ Access to beginner courses"
+                       style="-fx-font-size: 13px; -fx-text-fill: #2fb344;"/>
+                <Label text="+ Basic exercises and quizzes"
+                       style="-fx-font-size: 13px; -fx-text-fill: #2fb344;"/>
+                <Label text="+ Community forum access"
+                       style="-fx-font-size: 13px; -fx-text-fill: #2fb344;"/>
+                <Label text="- Advanced courses"
+                       style="-fx-font-size: 13px; -fx-text-fill: #adb5bd;"/>
+                <Label text="- Mock tests"
+                       style="-fx-font-size: 13px; -fx-text-fill: #adb5bd;"/>
+                <Label text="- Priority support"
+                       style="-fx-font-size: 13px; -fx-text-fill: #adb5bd;"/>
+                <Region VBox.vgrow="ALWAYS"/>
+                <Button fx:id="freeBtn" text="Free Tier" maxWidth="Infinity"
+                        onAction="#handleSelectFree"
+                        style="-fx-background-color: white; -fx-text-fill: #6c7a99;
+                               -fx-border-color: #d0d5dd; -fx-border-width: 1;
+                               -fx-border-radius: 6; -fx-background-radius: 6;
+                               -fx-padding: 10 18; -fx-font-size: 13px;">
+                    <VBox.margin><Insets top="8"/></VBox.margin>
+                </Button>
+            </VBox>
+
+            <!-- MONTHLY card -->
+            <VBox styleClass="profile-card" spacing="8" HBox.hgrow="ALWAYS" prefWidth="280"
+                  style="-fx-border-color: #3b5bdb; -fx-border-width: 2;
+                         -fx-border-radius: 8; -fx-background-radius: 8;">
+                <Label text="Monthly"
+                       style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #1a1f36;"/>
+                <HBox spacing="2" alignment="BOTTOM_LEFT">
+                    <Label text="$$"
+                           style="-fx-font-size: 14px; -fx-text-fill: #374151;"/>
+                    <Label text="9"
+                           style="-fx-font-size: 48px; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+                    <Label text=".99"
+                           style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+                    <Label text=" /per month"
+                           style="-fx-font-size: 12px; -fx-text-fill: #6c7a99;"/>
+                </HBox>
+                <Separator/>
+                <Label text="+ Everything in Free"
+                       style="-fx-font-size: 13px; -fx-text-fill: #2fb344;"/>
+                <Label text="+ All courses unlocked"
+                       style="-fx-font-size: 13px; -fx-text-fill: #2fb344;"/>
+                <Label text="+ Unlimited exercises"
+                       style="-fx-font-size: 13px; -fx-text-fill: #2fb344;"/>
+                <Label text="+ Mock test access"
+                       style="-fx-font-size: 13px; -fx-text-fill: #2fb344;"/>
+                <Label text="+ Priority support"
+                       style="-fx-font-size: 13px; -fx-text-fill: #2fb344;"/>
+                <Label text="+ Cancel anytime"
+                       style="-fx-font-size: 13px; -fx-text-fill: #2fb344;"/>
+                <Region VBox.vgrow="ALWAYS"/>
+                <Button fx:id="monthlyBtn" text="Subscribe Monthly" maxWidth="Infinity"
+                        styleClass="btn-primary"
+                        onAction="#handleSubscribeMonthly">
+                    <VBox.margin><Insets top="8"/></VBox.margin>
+                </Button>
+            </VBox>
+
+            <!-- YEARLY card -->
+            <VBox styleClass="profile-card" spacing="8" HBox.hgrow="ALWAYS" prefWidth="280"
+                  style="-fx-border-color: #f59f00; -fx-border-width: 2;
+                         -fx-border-radius: 8; -fx-background-radius: 8;">
+                <Label text="* BEST VALUE - SAVE 17%"
+                       style="-fx-background-color: #f59f00; -fx-text-fill: white;
+                              -fx-font-size: 10px; -fx-font-weight: bold;
+                              -fx-background-radius: 4; -fx-padding: 3 8;"/>
+                <Label text="Yearly"
+                       style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #1a1f36;"/>
+                <HBox spacing="2" alignment="BOTTOM_LEFT">
+                    <Label text="$$"
+                           style="-fx-font-size: 14px; -fx-text-fill: #374151;"/>
+                    <Label text="99"
+                           style="-fx-font-size: 48px; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+                    <Label text=".99"
+                           style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+                    <Label text=" /per year"
+                           style="-fx-font-size: 12px; -fx-text-fill: #6c7a99;"/>
+                </HBox>
+                <Label text="approx. 2 months free vs monthly"
+                       style="-fx-background-color: #d3f9d8; -fx-text-fill: #1a6130;
+                              -fx-font-size: 11px; -fx-background-radius: 4;
+                              -fx-padding: 3 8;"/>
+                <Separator/>
+                <Label text="+ Everything in Monthly"
+                       style="-fx-font-size: 13px; -fx-text-fill: #2fb344;"/>
+                <Label text="+ 2 months free"
+                       style="-fx-font-size: 13px; -fx-text-fill: #2fb344;"/>
+                <Label text="+ Early access to new content"
+                       style="-fx-font-size: 13px; -fx-text-fill: #2fb344;"/>
+                <Label text="+ Dedicated support"
+                       style="-fx-font-size: 13px; -fx-text-fill: #2fb344;"/>
+                <Label text="+ Downloadable resources"
+                       style="-fx-font-size: 13px; -fx-text-fill: #2fb344;"/>
+                <Label text="+ Cancel anytime"
+                       style="-fx-font-size: 13px; -fx-text-fill: #2fb344;"/>
+                <Region VBox.vgrow="ALWAYS"/>
+                <Button fx:id="yearlyBtn" text="Subscribe Yearly -&gt;" maxWidth="Infinity"
+                        onAction="#handleSubscribeYearly"
+                        style="-fx-background-color: #f59f00; -fx-text-fill: white;
+                               -fx-font-weight: bold; -fx-background-radius: 6;
+                               -fx-padding: 10 18;">
+                    <VBox.margin><Insets top="8"/></VBox.margin>
+                </Button>
+            </VBox>
+
+        </HBox>
+
+        <!-- ── Section 3: Manage subscription card ───────────────────────── -->
+        <HBox styleClass="profile-card" alignment="CENTER_LEFT" spacing="16">
+            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                <Label text="Manage your subscription"
+                       style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1a1f36;"/>
+                <Label text="Update payment method, download invoices, or cancel."
+                       styleClass="page-subtitle" wrapText="true"/>
+                <Label fx:id="cancelNoteLabel"
+                       text="Cancelling keeps access until period end."
+                       visible="false" managed="false" wrapText="true"
+                       style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #6c7a99;"/>
+            </VBox>
+            <Button fx:id="cancelBtn" text="Cancel Subscription"
+                    onAction="#handleCancel"
+                    visible="false" managed="false"
+                    style="-fx-background-color: white; -fx-text-fill: #d63939;
+                           -fx-border-color: #d63939; -fx-border-width: 1;
+                           -fx-border-radius: 6; -fx-background-radius: 6;
+                           -fx-padding: 8 16;"/>
+        </HBox>
+
+        <!-- ── Status elements ───────────────────────────────────────────── -->
+        <VBox spacing="8" alignment="CENTER">
+            <ProgressIndicator fx:id="loadingIndicator"
+                               visible="false" managed="false"
+                               maxWidth="32" maxHeight="32"/>
+            <Label fx:id="statusLabel"
+                   visible="false" managed="false"
+                   wrapText="true"
+                   styleClass="page-subtitle"/>
+        </VBox>
+
+    </VBox>
+</ScrollPane>

@@ -1,5 +1,6 @@
 package org.example.controller.user;
 
+import org.example.controller.user.PlansController;
 import org.example.entity.User;
 import org.example.service.NotificationService;
 import org.example.service.UserService;
@@ -34,6 +35,7 @@ public class UserMainController {
     @FXML private Button    btnDashboard;
     @FXML private Button    btnProfile;
     @FXML private Button    btnNotifications;
+    @FXML private Button    btnBilling;
 
     private Button activeButton;
 
@@ -202,9 +204,25 @@ public class UserMainController {
         showNotifications(null);
     }
 
-    @FXML private void showBilling(ActionEvent e) {
-        setActive((Button) e.getSource(), "Plans & Billing");
-        showComingSoonContent();
+    @FXML
+    private void showBilling(ActionEvent event) {
+        setActive(btnBilling, "Plans & Billing");
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                getClass().getResource("/fxml/user/Plans.fxml"));
+            Node view = loader.load();
+            PlansController ctrl = loader.getController();
+            ctrl.loadData();
+            contentArea.getChildren().setAll(view);
+        } catch (IOException e) {
+            Label err = new Label("Failed to load billing page: " + e.getMessage());
+            err.setStyle("-fx-text-fill: #d63939;");
+            contentArea.getChildren().setAll(err);
+        }
+    }
+
+    public void navigateToBilling() {
+        showBilling(null);
     }
 
     // ── Logout ────────────────────────────────────────────────────────────────

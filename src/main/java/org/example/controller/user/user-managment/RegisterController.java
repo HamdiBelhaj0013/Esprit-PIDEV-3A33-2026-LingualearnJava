@@ -1,13 +1,21 @@
 package org.example.controller;
 
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
+import org.example.service.EmailVerificationService;
 import org.example.service.UserService;
 import org.example.util.StageManager;
 
+import java.io.IOException;
 import java.util.regex.Pattern;
 
 public class RegisterController {
@@ -102,8 +110,42 @@ public class RegisterController {
 
         try {
             new UserService().registerUser(firstName, lastName, email, password);
-            // Registration succeeded — navigate back to login
-            StageManager.switchScene("/fxml/login.fxml");
+
+            // Registration succeeded — send verification email
+            String regEmail = emailField.getText().trim();
+
+            Task<Void> emailTask = new Task<>() {
+                @Override
+                protected Void call() {
+                    new EmailVerificationService().generateAndSendCode(regEmail);
+                    return null;
+                }
+            };
+
+            emailTask.setOnSucceeded(e -> {
+                try {
+                    FXMLLoader loader = new FXMLLoader(
+                        getClass().getResource("/fxml/VerifyEmail.fxml"));
+                    Parent root = loader.load();
+                    VerifyEmailController ctrl = loader.getController();
+                    ctrl.setEmail(regEmail);
+                    ctrl.setMode("REGISTRATION");
+                    Stage stage = (Stage) firstNameField.getScene().getWindow();
+                    stage.setScene(new Scene(root));
+                } catch (IOException ex) {
+                    Platform.runLater(() ->
+                        showError(generalError,
+                            "Account created but could not open verification screen."));
+                }
+            });
+
+            emailTask.setOnFailed(e ->
+                Platform.runLater(() ->
+                    showError(generalError,
+                        "Account created but verification email failed: "
+                            + emailTask.getException().getMessage())));
+
+            new Thread(emailTask).start();
 
         } catch (IllegalArgumentException e) {
             // Duplicate email or other validation errors from the service

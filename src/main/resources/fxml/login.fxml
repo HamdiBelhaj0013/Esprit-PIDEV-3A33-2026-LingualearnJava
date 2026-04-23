@@ -34,8 +34,22 @@
             <Label fx:id="passwordError" managed="false" styleClass="error-label" visible="false" />
         </VBox>
 
+        <!-- ── Forgot password link ───────────── -->
+        <Button alignment="CENTER_RIGHT" maxWidth="Infinity"
+                onAction="#handleForgotPassword"
+                styleClass="link-btn" text="Forgot your password?" />
+
         <!-- ── General error message ───────────── -->
         <Label fx:id="errorLabel" managed="false" maxWidth="292.0" styleClass="error-label" visible="false" wrapText="true" />
+
+        <!-- ── Resend verification (shown when email unverified) ── -->
+        <Button fx:id="resendVerificationBtn"
+                text="Resend verification email"
+                onAction="#handleResendVerification"
+                styleClass="link-btn"
+                maxWidth="Infinity"
+                visible="false"
+                managed="false"/>
 
         <!-- ── Login button ────────────────────── -->
         <Button defaultButton="true" maxWidth="Infinity" onAction="#handleLogin" styleClass="login-btn" text="Login">

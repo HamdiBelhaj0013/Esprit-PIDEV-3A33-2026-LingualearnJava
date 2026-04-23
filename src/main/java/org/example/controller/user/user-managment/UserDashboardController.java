@@ -200,6 +200,9 @@ public class UserDashboardController {
         Button manage = new Button("Manage Subscription");
         manage.getStyleClass().addAll("btn-outline", "btn-sm");
         VBox.setMargin(manage, new Insets(12, 0, 0, 0));
+        manage.setOnAction(e -> {
+            if (parentController != null) parentController.navigateToBilling();
+        });
         subscriptionCard.getChildren().add(manage);
     }
 
