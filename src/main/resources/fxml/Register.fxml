@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane prefHeight="680.0" prefWidth="600.0" styleClass="root-pane"
+           stylesheets="@../css/style.css"
+           xmlns="http://javafx.com/javafx/21"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="org.example.controller.RegisterController">
+
+    <VBox alignment="TOP_CENTER" maxWidth="500.0" prefHeight="680.0" prefWidth="500.0"
+          spacing="10.0" styleClass="login-card">
+
+        <padding>
+            <Insets bottom="36.0" left="44.0" right="44.0" top="36.0" />
+        </padding>
+
+        <!-- ── Brand ──────────────────────────────── -->
+        <Label styleClass="app-title" text="LinguaLearn" />
+        <Label styleClass="subtitle"  text="Create your account" />
+
+        <!-- ── First Name ──────────────────────────── -->
+        <VBox spacing="4.0">
+            <Label styleClass="field-label" text="First Name" />
+            <TextField fx:id="firstNameField" promptText="First name"
+                       styleClass="input-field" />
+            <Label fx:id="firstNameError" managed="false"
+                   styleClass="error-label" visible="false" />
+        </VBox>
+
+        <!-- ── Last Name ───────────────────────────── -->
+        <VBox spacing="4.0">
+            <Label styleClass="field-label" text="Last Name" />
+            <TextField fx:id="lastNameField" promptText="Last name"
+                       styleClass="input-field" />
+            <Label fx:id="lastNameError" managed="false"
+                   styleClass="error-label" visible="false" />
+        </VBox>
+
+        <!-- ── Email ───────────────────────────────── -->
+        <VBox spacing="4.0">
+            <Label styleClass="field-label" text="Email" />
+            <TextField fx:id="emailField" promptText="your@email.com"
+                       styleClass="input-field" />
+            <Label fx:id="emailError" managed="false"
+                   styleClass="error-label" visible="false" />
+        </VBox>
+
+        <!-- ── Password ────────────────────────────── -->
+        <VBox spacing="4.0">
+            <Label styleClass="field-label" text="Password" />
+            <PasswordField fx:id="passwordField" promptText="••••••••"
+                           styleClass="input-field" />
+            <Label fx:id="passwordError" managed="false"
+                   styleClass="error-label" visible="false" />
+        </VBox>
+
+        <!-- ── Confirm Password ────────────────────── -->
+        <VBox spacing="4.0">
+            <Label styleClass="field-label" text="Confirm Password" />
+            <PasswordField fx:id="confirmPasswordField" promptText="••••••••"
+                           styleClass="input-field" />
+            <Label fx:id="confirmPasswordError" managed="false"
+                   styleClass="error-label" visible="false" />
+        </VBox>
+
+        <!-- ── General error / success ─────────────── -->
+        <Label fx:id="generalError" managed="false" maxWidth="412.0"
+               styleClass="error-label" visible="false" wrapText="true" />
+
+        <!-- ── Register button ─────────────────────── -->
+        <Button defaultButton="true" maxWidth="Infinity" onAction="#handleRegister"
+                styleClass="login-btn" text="Create Account">
+            <VBox.margin>
+                <Insets top="6.0" />
+            </VBox.margin>
+        </Button>
+
+        <!-- ── Login link ───────────────────────────── -->
+        <Button alignment="CENTER" maxWidth="Infinity" onAction="#handleGoToLogin"
+                styleClass="link-btn" text="Already have an account? Sign in" />
+
+    </VBox>
+</StackPane>

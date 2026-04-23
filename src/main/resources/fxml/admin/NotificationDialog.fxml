@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.controller.admin.NotificationController"
+      styleClass="dialog-root"
+      stylesheets="@../../css/admin.css"
+      minWidth="400.0" spacing="0.0">
+
+    <!-- Header -->
+    <VBox spacing="4.0">
+        <padding>
+            <Insets top="20.0" right="24.0" bottom="14.0" left="24.0"/>
+        </padding>
+        <Label text="Send Notification" styleClass="dialog-title"/>
+        <Label fx:id="userNameLabel" text="" styleClass="page-subtitle"/>
+    </VBox>
+    <Separator/>
+
+    <!-- Body -->
+    <VBox spacing="14.0">
+        <padding>
+            <Insets top="20.0" right="24.0" bottom="20.0" left="24.0"/>
+        </padding>
+
+        <!-- Type -->
+        <VBox spacing="4.0">
+            <Label text="Notification Type" styleClass="form-label"/>
+            <ChoiceBox fx:id="typeChoice" prefWidth="220.0" maxWidth="Infinity"/>
+        </VBox>
+
+        <!-- Message -->
+        <VBox spacing="4.0">
+            <Label text="Message *" styleClass="form-label"/>
+            <TextArea fx:id="messageArea"
+                      promptText="Enter your message here…"
+                      prefRowCount="4"
+                      wrapText="true"
+                      styleClass="form-input"
+                      maxWidth="Infinity"/>
+        </VBox>
+
+        <Label fx:id="errorLabel" styleClass="form-error" visible="false" managed="false"/>
+    </VBox>
+
+    <Separator/>
+
+    <!-- Footer -->
+    <HBox styleClass="dialog-footer" alignment="CENTER_RIGHT" spacing="10.0">
+        <Button text="Cancel" styleClass="btn-outline-muted" onAction="#handleCancel"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Send" styleClass="btn-primary" onAction="#handleSend"
+                defaultButton="true"/>
+    </HBox>
+</VBox>
