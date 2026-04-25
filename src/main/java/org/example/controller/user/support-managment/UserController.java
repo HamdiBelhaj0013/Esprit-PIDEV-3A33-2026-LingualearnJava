@@ -1,9 +1,9 @@
-package org.example.controller;
+package org.example.controller.user.supportmanagement;
 
 import org.example.entity.SupportResponse;
-import org.example.repository.FAQDAO;
-import org.example.repository.ReclamationDAO;
-import org.example.repository.SupportResponseDAO;
+import org.example.repository.supportmanagement.FAQDAO;
+import org.example.repository.supportmanagement.ReclamationDAO;
+import org.example.repository.supportmanagement.SupportResponseDAO;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -11,7 +11,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.example.entity.FAQ;
 import org.example.entity.Reclamation;
-import org.example.util.Session;
+import org.example.util.SessionManager;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -85,7 +85,7 @@ public class UserController implements Initializable {
     }
 
     @FXML public void chargerReclamations() {
-        reclamationCache = reclDao.getByUserId(Session.getCurrentUserId());
+        reclamationCache = reclDao.getByUserId(SessionManager.getCurrentUser().getId().intValue());
         appliquerFiltresReclamations();
         userResponsesList.getItems().clear();
     }
@@ -116,7 +116,7 @@ public class UserController implements Initializable {
         if (message.length() < 5) { reclErreur("Le message doit contenir au moins 5 caracteres."); return; }
         if (priority == null) { reclErreur("Choisis une priorite."); return; }
 
-        Reclamation r = new Reclamation(Session.getCurrentUserId(), subject, message, priority);
+        Reclamation r = new Reclamation(SessionManager.getCurrentUser().getId().intValue(), subject, message, priority);
         if (reclDao.ajouter(r)) {
             reclSucces("Reclamation soumise.");
             subjectField.clear();

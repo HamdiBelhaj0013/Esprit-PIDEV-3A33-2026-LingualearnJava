@@ -2,7 +2,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
 <VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="org.example.controller.AdminFAQController"
+      fx:controller="org.example.controller.admin.supportmanagement.AdminFAQController"
       spacing="0"
       styleClass="root-pane"
       stylesheets="@../../css/style.css">

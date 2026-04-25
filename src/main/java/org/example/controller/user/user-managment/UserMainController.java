@@ -127,12 +127,12 @@ public class UserMainController {
 
     @FXML private void showFAQ(ActionEvent e) {
         setActive((Button) e.getSource(), "FAQ");
-        showComingSoonContent();
+        loadView("/fxml/user/user_view.fxml");
     }
 
     @FXML private void showReclamations(ActionEvent e) {
         setActive((Button) e.getSource(), "Mes réclamations");
-        showComingSoonContent();
+        loadView("/fxml/user/user_view.fxml");
     }
 
     @FXML private void showMockTests(ActionEvent e) {

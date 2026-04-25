@@ -5,24 +5,15 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.example.util.Session;
 
 public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-
-        Session.setCurrentUser(1, "ROLE_USER");
-
-        Parent userRoot = FXMLLoader.load(getClass().getResource("/fxml/user/user_view.fxml"));
-        Stage userStage = new Stage();
-        userStage.setTitle("LinguaLearn - Mon espace");
-        userStage.setScene(new Scene(userRoot, 820, 640));
-        userStage.show();
-
-        Parent adminRoot = FXMLLoader.load(getClass().getResource("/fxml/admin/admin_view.fxml"));
-        stage.setTitle("LinguaLearn - Administration");
-        stage.setScene(new Scene(adminRoot, 900, 680));
+        org.example.util.StageManager.setPrimaryStage(stage);
+        Parent root = FXMLLoader.load(getClass().getResource("/fxml/login.fxml"));
+        stage.setTitle("LinguaLearn - Login");
+        stage.setScene(new Scene(root, 800, 500));
         stage.show();
     }
 
@@ -30,4 +21,3 @@ public class Main extends Application {
         launch(args);
     }
 }
-

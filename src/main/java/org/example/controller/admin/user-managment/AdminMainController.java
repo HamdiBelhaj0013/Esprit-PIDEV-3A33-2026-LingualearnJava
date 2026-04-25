@@ -23,6 +23,7 @@ public class AdminMainController {
     @FXML private StackPane contentArea;
     @FXML private Button    btnDashboard;
     @FXML private Button    btnUsers;
+    @FXML private Button    btnSupport;
 
     private User   loggedInUser;
     private Button activeButton;
@@ -54,6 +55,16 @@ public class AdminMainController {
             if (ctrl instanceof UserListController c) {
                 c.setMainController(this);
                 c.load();
+            }
+        });
+    }
+
+    @FXML
+    private void showSupport(ActionEvent event) {
+        setActive(btnSupport, "Support Management");
+        loadView("/fxml/admin/admin_view.fxml", ctrl -> {
+            if (ctrl instanceof org.example.controller.admin.supportmanagement.AdminController c) {
+                c.charger();
             }
         });
     }
