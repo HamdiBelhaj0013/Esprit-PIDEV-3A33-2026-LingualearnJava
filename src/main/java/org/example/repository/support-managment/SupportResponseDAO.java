@@ -1,4 +1,4 @@
-package org.example.repository;
+package org.example.repository.supportmanagement;
 
 import org.example.entity.SupportResponse;
 
@@ -9,7 +9,7 @@ import java.util.List;
 
 public class SupportResponseDAO {
 
-    private Connection conn = DatabaseConnection.getConnection();
+    private Connection conn = org.example.util.MyDataBase.getInstance().getConnection();
 
     public boolean ajouter(SupportResponse sr) {
         String sql = "INSERT INTO support_response (message, responded_at, reclamation_id, author_id) VALUES (?, ?, ?, ?)";

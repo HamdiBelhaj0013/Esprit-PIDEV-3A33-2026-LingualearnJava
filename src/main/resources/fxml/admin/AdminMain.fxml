@@ -29,6 +29,9 @@
             <Button fx:id="btnUsers" text="  Users"
                     styleClass="sidebar-item" onAction="#showUsers"
                     maxWidth="Infinity"/>
+            <Button fx:id="btnSupport" text="  Support"
+                    styleClass="sidebar-item" onAction="#showSupport"
+                    maxWidth="Infinity"/>
 
             <Label text="COMING SOON" styleClass="sidebar-section"/>
             <Button text="  Courses" styleClass="sidebar-item"

@@ -114,7 +114,8 @@ public class RegisterController {
                 showError(generalError, msg);
             }
         } catch (Exception e) {
-            showError(generalError, "Registration failed. Please try again.");
+            e.printStackTrace();
+            showError(generalError, e.getClass().getSimpleName() + ": " + e.getMessage());
         }
     }
 

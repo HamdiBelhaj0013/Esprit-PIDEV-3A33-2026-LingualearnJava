@@ -1,7 +1,7 @@
-package org.example.controller;
+package org.example.controller.admin.supportmanagement;
 
-import org.example.repository.ReclamationDAO;
-import org.example.repository.SupportResponseDAO;
+import org.example.repository.supportmanagement.ReclamationDAO;
+import org.example.repository.supportmanagement.SupportResponseDAO;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -105,7 +105,7 @@ public class AdminController implements Initializable {
         if (msg.isEmpty()) { showMsg("La reponse ne peut pas etre vide.", "red"); return; }
         if (msg.length() < 5) { showMsg("La reponse doit contenir au moins 5 caracteres.", "red"); return; }
 
-        SupportResponse sr = new SupportResponse(msg, sel.getId(), 2);
+        SupportResponse sr = new SupportResponse(msg, sel.getId(), org.example.util.SessionManager.getCurrentUser().getId().intValue());
         responseDao.ajouter(sr);
         if ("PENDING".equals(sel.getStatus()))
             reclDao.changerStatut(sel.getId(), "IN_PROGRESS");

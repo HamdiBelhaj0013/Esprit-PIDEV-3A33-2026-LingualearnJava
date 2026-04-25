@@ -1,6 +1,6 @@
 
-package org.example.controller;
-import org.example.repository.FAQDAO;
+package org.example.controller.admin.supportmanagement;
+import org.example.repository.supportmanagement.FAQDAO;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

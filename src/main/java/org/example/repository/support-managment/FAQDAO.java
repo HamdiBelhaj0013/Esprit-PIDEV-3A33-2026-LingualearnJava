@@ -1,4 +1,4 @@
-package org.example.repository;
+package org.example.repository.supportmanagement;
 
 import org.example.entity.FAQ;
 
@@ -9,7 +9,7 @@ import java.util.List;
 
 public class FAQDAO {
 
-    private Connection conn = DatabaseConnection.getConnection();
+    private Connection conn = org.example.util.MyDataBase.getInstance().getConnection();
 
     private FAQ map(ResultSet rs) throws SQLException {
         FAQ f = new FAQ();

@@ -1,4 +1,4 @@
-package org.example.repository;
+package org.example.repository.supportmanagement;
 
 import org.example.entity.Reclamation;
 
@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ReclamationDAO {
 
-    private Connection conn = DatabaseConnection.getConnection();
+    private Connection conn = org.example.util.MyDataBase.getInstance().getConnection();
 
     private Reclamation map(ResultSet rs) throws SQLException {
         Reclamation r = new Reclamation();
