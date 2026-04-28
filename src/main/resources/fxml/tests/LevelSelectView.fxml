@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.controller.tests.LevelSelectController"
+      stylesheets="@../../css/style.css"
+      spacing="0"
+      style="-fx-background-color: #f0f4ff;">
+
+    <!-- Header -->
+    <HBox style="-fx-background-color: #1a237e; -fx-padding: 16 32;"
+          alignment="CENTER_LEFT" spacing="16">
+        <Label text="LinguaLearn"
+               style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Retour" onAction="#handleBack"
+                style="-fx-background-color: rgba(255,255,255,0.15);
+                       -fx-text-fill: white; -fx-font-size: 13px; -fx-cursor: hand;
+                       -fx-background-radius: 6; -fx-padding: 6 16;
+                       -fx-border-color: rgba(255,255,255,0.4); -fx-border-radius: 6;"/>
+        <Label fx:id="userNameLabel" text=""
+               style="-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white;
+                      -fx-font-size: 12px; -fx-background-radius: 20; -fx-padding: 5 14;"/>
+    </HBox>
+
+    <!-- Hero -->
+    <VBox alignment="CENTER" spacing="8"
+          style="-fx-background-color: #1a237e; -fx-padding: 36 32 46 32;">
+        <Label fx:id="languageTitleLabel" text="Choisissez votre niveau"
+               style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+        <Label fx:id="languageSubtitleLabel" text=""
+               style="-fx-font-size: 14px; -fx-text-fill: rgba(255,255,255,0.75);"/>
+    </VBox>
+
+    <!-- Wave -->
+    <HBox style="-fx-background-color: #1a237e; -fx-pref-height: 24;">
+        <Region HBox.hgrow="ALWAYS"
+                style="-fx-background-color: #f0f4ff; -fx-background-radius: 24 24 0 0;"/>
+    </HBox>
+
+    <!-- Level cards in ScrollPane -->
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                style="-fx-background: #f0f4ff; -fx-background-color: #f0f4ff;
+                       -fx-border-width: 0; -fx-padding: 0;">
+        <VBox spacing="16" style="-fx-padding: 28 48 40 48;">
+
+            <Label text="Selectionnez votre niveau"
+                   style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #9ca3af;"/>
+
+            <!-- ═══ BEGINNER ═══ -->
+            <VBox fx:id="beginnerCard" spacing="0"
+                  style="-fx-background-color: #e8f5e9; -fx-background-radius: 14;
+                         -fx-border-color: #a5d6a7; -fx-border-radius: 14; -fx-border-width: 2;
+                         -fx-cursor: hand;
+                         -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 10, 0, 0, 3);"
+                  onMouseClicked="#handleBeginner">
+                <HBox spacing="20" alignment="CENTER_LEFT" style="-fx-padding: 22 28;">
+                    <VBox style="-fx-background-color: white; -fx-background-radius: 12;
+                                 -fx-min-width: 56; -fx-min-height: 56; -fx-alignment: center;">
+                        <Label text="A"
+                               style="-fx-font-size: 26px; -fx-font-weight: bold;
+                                      -fx-text-fill: #2e7d32; -fx-alignment: center;"/>
+                    </VBox>
+                    <VBox spacing="4" HBox.hgrow="ALWAYS">
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Label text="Beginner"
+                                   style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1a1f36;"/>
+                            <Label text="Toujours accessible"
+                                   style="-fx-background-color: #2e7d32; -fx-text-fill: white;
+                                          -fx-font-size: 10px; -fx-font-weight: bold;
+                                          -fx-background-radius: 20; -fx-padding: 2 8;"/>
+                        </HBox>
+                        <Label text="Niveaux A1 et A2 - Debutant et elementaire"
+                               style="-fx-font-size: 13px; -fx-text-fill: #6c7a99;"/>
+                        <HBox spacing="8" style="-fx-padding: 4 0 0 0;">
+                            <Label text="A1" style="-fx-background-color: white; -fx-text-fill: #2e7d32;
+                                                   -fx-font-size: 11px; -fx-font-weight: bold;
+                                                   -fx-background-radius: 20; -fx-padding: 3 10;"/>
+                            <Label text="A2" style="-fx-background-color: white; -fx-text-fill: #2e7d32;
+                                                   -fx-font-size: 11px; -fx-font-weight: bold;
+                                                   -fx-background-radius: 20; -fx-padding: 3 10;"/>
+                            <Label fx:id="beginnerCountLabel" text="0 test(s)"
+                                   style="-fx-font-size: 11px; -fx-text-fill: #4caf50;"/>
+                        </HBox>
+                        <Label fx:id="beginnerBestLabel" text=""
+                               style="-fx-font-size: 12px; -fx-text-fill: #2e7d32; -fx-font-weight: bold;"/>
+                        <Label fx:id="beginnerLockLabel" text=""
+                               style="-fx-font-size: 11px; -fx-text-fill: #b71c1c;
+                                      -fx-font-weight: bold;"
+                               visible="false" managed="false" wrapText="true"/>
+                    </VBox>
+                    <Label text=">"
+                           style="-fx-font-size: 20px; -fx-text-fill: #2e7d32; -fx-font-weight: bold;"/>
+                </HBox>
+            </VBox>
+
+            <!-- ═══ INTERMEDIATE ═══ -->
+            <VBox fx:id="intermediateCard" spacing="0"
+                  style="-fx-background-color: white; -fx-background-radius: 14;
+                         -fx-border-color: #e0e0e0; -fx-border-radius: 14; -fx-border-width: 1.5;
+                         -fx-cursor: hand;
+                         -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 8, 0, 0, 2);"
+                  onMouseClicked="#handleIntermediate">
+                <HBox spacing="20" alignment="CENTER_LEFT" style="-fx-padding: 22 28;">
+                    <VBox style="-fx-background-color: #fff3e0; -fx-background-radius: 12;
+                                 -fx-min-width: 56; -fx-min-height: 56; -fx-alignment: center;">
+                        <Label text="B"
+                               style="-fx-font-size: 26px; -fx-font-weight: bold;
+                                      -fx-text-fill: #e65100; -fx-alignment: center;"/>
+                    </VBox>
+                    <VBox spacing="4" HBox.hgrow="ALWAYS">
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Label text="Intermediate"
+                                   style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1a1f36;"/>
+                            <Label text="Requiert A1 >= 50%"
+                                   style="-fx-background-color: #ff9800; -fx-text-fill: white;
+                                          -fx-font-size: 10px; -fx-font-weight: bold;
+                                          -fx-background-radius: 20; -fx-padding: 2 8;"/>
+                        </HBox>
+                        <Label text="Niveaux B1 et B2 - Intermediaire et avance"
+                               style="-fx-font-size: 13px; -fx-text-fill: #6c7a99;"/>
+                        <HBox spacing="8" style="-fx-padding: 4 0 0 0;">
+                            <Label text="B1" style="-fx-background-color: #fff3e0; -fx-text-fill: #e65100;
+                                                   -fx-font-size: 11px; -fx-font-weight: bold;
+                                                   -fx-background-radius: 20; -fx-padding: 3 10;"/>
+                            <Label text="B2" style="-fx-background-color: #fff3e0; -fx-text-fill: #e65100;
+                                                   -fx-font-size: 11px; -fx-font-weight: bold;
+                                                   -fx-background-radius: 20; -fx-padding: 3 10;"/>
+                            <Label fx:id="intermediateCountLabel" text="0 test(s)"
+                                   style="-fx-font-size: 11px; -fx-text-fill: #9ca3af;"/>
+                        </HBox>
+                        <Label fx:id="intermediateBestLabel" text=""
+                               style="-fx-font-size: 12px; -fx-text-fill: #e65100; -fx-font-weight: bold;"/>
+                        <Label fx:id="intermediateLockLabel" text=""
+                               style="-fx-font-size: 11px; -fx-text-fill: #b71c1c; -fx-font-weight: bold;"
+                               visible="false" managed="false" wrapText="true"/>
+                    </VBox>
+                    <Label text=">"
+                           style="-fx-font-size: 20px; -fx-text-fill: #d1d5db; -fx-font-weight: bold;"/>
+                </HBox>
+            </VBox>
+
+            <!-- ═══ ADVANCED ═══ -->
+            <VBox fx:id="advancedCard" spacing="0"
+                  style="-fx-background-color: white; -fx-background-radius: 14;
+                         -fx-border-color: #e0e0e0; -fx-border-radius: 14; -fx-border-width: 1.5;
+                         -fx-cursor: hand;
+                         -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 8, 0, 0, 2);"
+                  onMouseClicked="#handleAdvanced">
+                <HBox spacing="20" alignment="CENTER_LEFT" style="-fx-padding: 22 28;">
+                    <VBox style="-fx-background-color: #ede7f6; -fx-background-radius: 12;
+                                 -fx-min-width: 56; -fx-min-height: 56; -fx-alignment: center;">
+                        <Label text="C"
+                               style="-fx-font-size: 26px; -fx-font-weight: bold;
+                                      -fx-text-fill: #4527a0; -fx-alignment: center;"/>
+                    </VBox>
+                    <VBox spacing="4" HBox.hgrow="ALWAYS">
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Label text="Advanced"
+                                   style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1a1f36;"/>
+                            <Label text="Requiert B1 ou B2 >= 50%"
+                                   style="-fx-background-color: #7b1fa2; -fx-text-fill: white;
+                                          -fx-font-size: 10px; -fx-font-weight: bold;
+                                          -fx-background-radius: 20; -fx-padding: 2 8;"/>
+                        </HBox>
+                        <Label text="Niveaux C1 et C2 - Courant et maitrise"
+                               style="-fx-font-size: 13px; -fx-text-fill: #6c7a99;"/>
+                        <HBox spacing="8" style="-fx-padding: 4 0 0 0;">
+                            <Label text="C1" style="-fx-background-color: #ede7f6; -fx-text-fill: #4527a0;
+                                                   -fx-font-size: 11px; -fx-font-weight: bold;
+                                                   -fx-background-radius: 20; -fx-padding: 3 10;"/>
+                            <Label text="C2" style="-fx-background-color: #ede7f6; -fx-text-fill: #4527a0;
+                                                   -fx-font-size: 11px; -fx-font-weight: bold;
+                                                   -fx-background-radius: 20; -fx-padding: 3 10;"/>
+                            <Label fx:id="advancedCountLabel" text="0 test(s)"
+                                   style="-fx-font-size: 11px; -fx-text-fill: #9ca3af;"/>
+                        </HBox>
+                        <Label fx:id="advancedBestLabel" text=""
+                               style="-fx-font-size: 12px; -fx-text-fill: #4527a0; -fx-font-weight: bold;"/>
+                        <Label fx:id="advancedLockLabel" text=""
+                               style="-fx-font-size: 11px; -fx-text-fill: #b71c1c; -fx-font-weight: bold;"
+                               visible="false" managed="false" wrapText="true"/>
+                    </VBox>
+                    <Label text=">"
+                           style="-fx-font-size: 20px; -fx-text-fill: #d1d5db; -fx-font-weight: bold;"/>
+                </HBox>
+            </VBox>
+
+        </VBox>
+    </ScrollPane>
+
+</VBox>

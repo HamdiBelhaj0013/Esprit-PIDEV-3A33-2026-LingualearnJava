@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!--
+  MockTestForm.fxml — redesigned admin create/edit form
+  Place at: src/main/resources/fxml/tests/MockTestForm.fxml
+-->
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.controller.tests.MockTestFormController"
+      styleClass="admin-root"
+      stylesheets="@../../css/admin.css"
+      spacing="0">
+
+    <VBox styleClass="content-area" VBox.vgrow="ALWAYS" spacing="0">
+
+        <!-- ══ Header ═══════════════════════════════════════════════════════ -->
+        <VBox spacing="0"
+              style="-fx-background-color:linear-gradient(to right,#1a1f36,#252d5c);
+                     -fx-padding:20 28 16 28;">
+            <HBox alignment="CENTER_LEFT" spacing="14">
+                <Button text="← Retour" onAction="#handleCancel"
+                        style="-fx-background-color:rgba(255,255,255,0.10);-fx-text-fill:white;
+                               -fx-font-size:12px;-fx-cursor:hand;-fx-background-radius:8;
+                               -fx-border-color:rgba(255,255,255,0.28);-fx-border-radius:8;
+                               -fx-border-width:1;-fx-padding:6 14;
+                               -fx-font-family:'Segoe UI';"/>
+                <VBox spacing="2">
+                    <Label fx:id="formTitleLabel" text="➕  Nouveau Test de Certification"
+                           style="-fx-font-size:20px;-fx-font-weight:bold;-fx-text-fill:white;
+                                  -fx-font-family:'Segoe UI';"/>
+                    <Label text="Tous les champs sont obligatoires."
+                           style="-fx-font-size:12px;-fx-text-fill:rgba(255,255,255,0.55);
+                                  -fx-font-family:'Segoe UI';"/>
+                </VBox>
+            </HBox>
+        </VBox>
+
+        <!-- ══ Form area ═════════════════════════════════════════════════════ -->
+        <VBox VBox.vgrow="ALWAYS"
+              style="-fx-background-color:#f4f6fb;-fx-padding:28 40;">
+
+            <VBox spacing="0"
+                  style="-fx-background-color:white;-fx-background-radius:14;
+                         -fx-border-color:#e3e8f0;-fx-border-radius:14;-fx-border-width:1;
+                         -fx-effect:dropshadow(gaussian,rgba(0,0,0,0.06),12,0,0,3);">
+
+                <ScrollPane fitToWidth="true" styleClass="scroll-pane" VBox.vgrow="ALWAYS"
+                            style="-fx-background-color:transparent;-fx-background:transparent;">
+                    <VBox spacing="24" style="-fx-padding:32 36;">
+
+                        <!-- Row 1: Type + Langue -->
+                        <HBox spacing="24">
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <HBox spacing="8" alignment="CENTER_LEFT">
+                                    <Label text="1"
+                                           style="-fx-background-color:#3b5bdb;-fx-text-fill:white;
+                                                  -fx-font-weight:bold;-fx-font-size:11px;
+                                                  -fx-background-radius:20;-fx-min-width:22;
+                                                  -fx-min-height:22;-fx-alignment:CENTER;"/>
+                                    <Label text="Type de test *" styleClass="form-label"/>
+                                </HBox>
+                                <ComboBox fx:id="typeCombo" promptText="Choisir un type..."
+                                          styleClass="form-input" maxWidth="Infinity"/>
+                                <Label fx:id="typeError" styleClass="form-error"
+                                       visible="false" managed="false"/>
+                            </VBox>
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <HBox spacing="8" alignment="CENTER_LEFT">
+                                    <Label text="2"
+                                           style="-fx-background-color:#3b5bdb;-fx-text-fill:white;
+                                                  -fx-font-weight:bold;-fx-font-size:11px;
+                                                  -fx-background-radius:20;-fx-min-width:22;
+                                                  -fx-min-height:22;-fx-alignment:CENTER;"/>
+                                    <Label text="Langue *" styleClass="form-label"/>
+                                </HBox>
+                                <ComboBox fx:id="languageCombo" promptText="Choisir une langue..."
+                                          styleClass="form-input" maxWidth="Infinity"/>
+                                <Label fx:id="languageError" styleClass="form-error"
+                                       visible="false" managed="false"/>
+                            </VBox>
+                        </HBox>
+
+                        <!-- Row 2: Titre -->
+                        <VBox spacing="6">
+                            <HBox spacing="8" alignment="CENTER_LEFT">
+                                <Label text="3"
+                                       style="-fx-background-color:#3b5bdb;-fx-text-fill:white;
+                                              -fx-font-weight:bold;-fx-font-size:11px;
+                                              -fx-background-radius:20;-fx-min-width:22;
+                                              -fx-min-height:22;-fx-alignment:CENTER;"/>
+                                <Label text="Titre du test *  (5 à 100 caractères)"
+                                       styleClass="form-label"/>
+                            </HBox>
+                            <TextField fx:id="titleField"
+                                       promptText="ex : TOEFL Practice Test — Niveau B2"
+                                       styleClass="form-input" maxWidth="Infinity"/>
+                            <Label fx:id="titleError" styleClass="form-error"
+                                   visible="false" managed="false"/>
+                        </VBox>
+
+                        <!-- Row 3: Niveau + Durée -->
+                        <HBox spacing="24">
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <HBox spacing="8" alignment="CENTER_LEFT">
+                                    <Label text="4"
+                                           style="-fx-background-color:#3b5bdb;-fx-text-fill:white;
+                                                  -fx-font-weight:bold;-fx-font-size:11px;
+                                                  -fx-background-radius:20;-fx-min-width:22;
+                                                  -fx-min-height:22;-fx-alignment:CENTER;"/>
+                                    <Label text="Niveau *" styleClass="form-label"/>
+                                </HBox>
+                                <ComboBox fx:id="levelCombo" promptText="Choisir un niveau..."
+                                          styleClass="form-input" maxWidth="Infinity"/>
+                                <Label fx:id="levelError" styleClass="form-error"
+                                       visible="false" managed="false"/>
+                            </VBox>
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <HBox spacing="8" alignment="CENTER_LEFT">
+                                    <Label text="5"
+                                           style="-fx-background-color:#3b5bdb;-fx-text-fill:white;
+                                                  -fx-font-weight:bold;-fx-font-size:11px;
+                                                  -fx-background-radius:20;-fx-min-width:22;
+                                                  -fx-min-height:22;-fx-alignment:CENTER;"/>
+                                    <Label text="Durée (minutes) *  — entre 2 et 90"
+                                           styleClass="form-label"/>
+                                </HBox>
+                                <Spinner fx:id="durationSpinner" styleClass="form-input"
+                                         maxWidth="Infinity"/>
+                                <Label fx:id="durationError" styleClass="form-error"
+                                       visible="false" managed="false"/>
+                            </VBox>
+                        </HBox>
+
+                        <!-- Info box -->
+                        <HBox spacing="12" alignment="CENTER_LEFT"
+                              style="-fx-background-color:#f0f4ff;-fx-background-radius:10;
+                                     -fx-border-color:#c5d0fc;-fx-border-radius:10;
+                                     -fx-border-width:1;-fx-padding:14 18;">
+                            <Label text="ℹ️" style="-fx-font-size:18px;"/>
+                            <VBox spacing="3">
+                                <Label text="Les questions seront mélangées aléatoirement à chaque passage."
+                                       style="-fx-font-size:12px;-fx-text-fill:#1a237e;
+                                              -fx-font-weight:bold;-fx-font-family:'Segoe UI';"/>
+                                <Label text="Le score sera affiché sur 20 points (pourcentage × 20 / 100)."
+                                       style="-fx-font-size:12px;-fx-text-fill:#3b5bdb;
+                                              -fx-font-family:'Segoe UI';"/>
+                            </VBox>
+                        </HBox>
+
+                        <!-- Messages -->
+                        <Label fx:id="globalError" styleClass="form-error" wrapText="true"
+                               visible="false" managed="false"
+                               style="-fx-font-size:13px;-fx-background-color:#fff5f5;
+                                      -fx-padding:10 14;-fx-background-radius:8;
+                                      -fx-border-color:#ffc9c9;-fx-border-radius:8;
+                                      -fx-border-width:1;"/>
+                        <Label fx:id="globalSuccess" wrapText="true"
+                               visible="false" managed="false"
+                               style="-fx-text-fill:#2fb344;-fx-font-size:13px;
+                                      -fx-background-color:#d3f9d8;-fx-padding:10 14;
+                                      -fx-background-radius:8;"/>
+                    </VBox>
+                </ScrollPane>
+
+                <!-- Footer -->
+                <HBox alignment="CENTER_RIGHT" spacing="12"
+                      style="-fx-padding:16 28;-fx-background-color:#f8fafc;
+                             -fx-border-color:#e3e8f0;-fx-border-width:1 0 0 0;
+                             -fx-background-radius:0 0 14 14;">
+                    <Button text="Annuler" onAction="#handleCancel"
+                            style="-fx-background-color:white;-fx-text-fill:#6c7a99;
+                                   -fx-font-size:13px;-fx-cursor:hand;-fx-background-radius:8;
+                                   -fx-border-color:#d1d5db;-fx-border-radius:8;
+                                   -fx-border-width:1;-fx-padding:9 20;
+                                   -fx-font-family:'Segoe UI';"/>
+                    <Button text="💾  Enregistrer" onAction="#handleSave"
+                            style="-fx-background-color:#3b5bdb;-fx-text-fill:white;
+                                   -fx-font-size:14px;-fx-font-weight:bold;-fx-cursor:hand;
+                                   -fx-background-radius:8;-fx-padding:9 24;
+                                   -fx-effect:dropshadow(gaussian,rgba(59,91,219,0.4),8,0,0,2);
+                                   -fx-font-family:'Segoe UI';"/>
+                </HBox>
+            </VBox>
+        </VBox>
+
+    </VBox>
+</VBox>

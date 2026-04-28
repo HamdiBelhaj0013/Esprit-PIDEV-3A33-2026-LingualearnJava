@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!--
+  TestResultView.fxml — redesigned admin results
+  Place at: src/main/resources/fxml/tests/TestResultView.fxml
+-->
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.controller.tests.TestResultViewController"
+      styleClass="admin-root"
+      stylesheets="@../../css/admin.css"
+      spacing="0">
+
+    <VBox styleClass="content-area" VBox.vgrow="ALWAYS" spacing="0">
+
+        <!-- ══ Header ═══════════════════════════════════════════════════════ -->
+        <VBox spacing="0"
+              style="-fx-background-color:linear-gradient(to right,#1a1f36,#252d5c);
+                     -fx-padding:20 28 16 28;">
+            <HBox alignment="CENTER_LEFT" spacing="14">
+                <Button text="← Retour" onAction="#handleBack"
+                        style="-fx-background-color:rgba(255,255,255,0.10);-fx-text-fill:white;
+                               -fx-font-size:12px;-fx-cursor:hand;-fx-background-radius:8;
+                               -fx-border-color:rgba(255,255,255,0.28);-fx-border-radius:8;
+                               -fx-border-width:1;-fx-padding:6 14;
+                               -fx-font-family:'Segoe UI';"/>
+                <VBox spacing="3" HBox.hgrow="ALWAYS">
+                    <Label text="📊  Résultats des Tests"
+                           style="-fx-font-size:20px;-fx-font-weight:bold;-fx-text-fill:white;
+                                  -fx-font-family:'Segoe UI';"/>
+                    <HBox spacing="20">
+                        <Label fx:id="totalLabel" text="0 résultat(s)"
+                               style="-fx-font-size:12px;-fx-text-fill:rgba(255,255,255,0.60);
+                                      -fx-font-family:'Segoe UI';"/>
+                        <Label fx:id="avgScoreLabel" text="Moyenne : —"
+                               style="-fx-font-size:12px;-fx-text-fill:rgba(255,255,255,0.60);
+                                      -fx-font-family:'Segoe UI';"/>
+                    </HBox>
+                </VBox>
+                <Button text="🧠  Voir rapport IA" onAction="#handleViewReport"
+                        style="-fx-background-color:#3b5bdb;-fx-text-fill:white;
+                               -fx-font-size:13px;-fx-font-weight:bold;-fx-cursor:hand;
+                               -fx-background-radius:8;-fx-padding:10 18;
+                               -fx-font-family:'Segoe UI';"/>
+            </HBox>
+        </VBox>
+
+        <!-- ══ Filter bar ════════════════════════════════════════════════════ -->
+        <HBox spacing="12" alignment="CENTER_LEFT"
+              style="-fx-padding:12 20;-fx-background-color:white;
+                     -fx-border-color:#e3e8f0;-fx-border-width:0 0 1 0;">
+            <Label text="Test :"
+                   style="-fx-font-size:12px;-fx-font-weight:bold;-fx-text-fill:#374151;"/>
+            <ComboBox fx:id="testFilterCombo" promptText="Tous les tests"
+                      styleClass="filter-combo" prefWidth="250"/>
+            <Label text="Utilisateur :"
+                   style="-fx-font-size:12px;-fx-font-weight:bold;-fx-text-fill:#374151;"/>
+            <TextField fx:id="userSearchField" promptText="🔍  Nom ou email..."
+                       styleClass="search-field" prefWidth="190"/>
+            <Button text="✕  Réinitialiser" onAction="#handleResetFilter"
+                    style="-fx-background-color:white;-fx-text-fill:#6c7a99;
+                           -fx-font-size:12px;-fx-cursor:hand;-fx-background-radius:6;
+                           -fx-border-color:#d1d5db;-fx-border-radius:6;-fx-border-width:1;
+                           -fx-padding:5 12;"/>
+        </HBox>
+
+        <!-- ══ Table ═════════════════════════════════════════════════════════ -->
+        <VBox VBox.vgrow="ALWAYS"
+              style="-fx-background-color:#f4f6fb;-fx-padding:16;">
+            <VBox VBox.vgrow="ALWAYS"
+                  style="-fx-background-color:white;-fx-background-radius:12;
+                         -fx-border-color:#e3e8f0;-fx-border-radius:12;-fx-border-width:1;
+                         -fx-effect:dropshadow(gaussian,rgba(0,0,0,0.05),10,0,0,2);">
+                <TableView fx:id="resultsTable" VBox.vgrow="ALWAYS" styleClass="table-view"
+                           style="-fx-background-color:white;-fx-background-radius:12;
+                                  -fx-border-color:transparent;">
+                    <columns>
+                        <TableColumn fx:id="colUser"    text="UTILISATEUR"      prefWidth="230"/>
+                        <TableColumn fx:id="colTest"    text="TEST"             prefWidth="230"/>
+                        <TableColumn fx:id="colScore"   text="SCORE"            prefWidth="120"/>
+                        <TableColumn fx:id="colAiScore" text="SCORE IA PRÉDIT"  prefWidth="140"/>
+                        <TableColumn fx:id="colDate"    text="DATE"             prefWidth="150"/>
+                    </columns>
+                    <placeholder>
+                        <VBox alignment="CENTER" spacing="12" style="-fx-padding:70;">
+                            <Label text="📊" style="-fx-font-size:44px;"/>
+                            <Label text="Aucun résultat enregistré"
+                                   style="-fx-font-size:15px;-fx-text-fill:#374151;
+                                          -fx-font-weight:bold;-fx-font-family:'Segoe UI';"/>
+                            <Label text="Les résultats apparaîtront ici après les passages de tests."
+                                   style="-fx-font-size:12px;-fx-text-fill:#9ca3af;
+                                          -fx-font-family:'Segoe UI';"/>
+                        </VBox>
+                    </placeholder>
+                </TableView>
+            </VBox>
+        </VBox>
+
+    </VBox>
+</VBox>

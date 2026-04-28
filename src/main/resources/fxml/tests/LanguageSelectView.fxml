@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.controller.tests.LanguageSelectController"
+      stylesheets="@../../css/style.css"
+      spacing="0"
+      style="-fx-background-color: #f0f4ff;">
+
+    <!-- Header -->
+    <HBox style="-fx-background-color: #1a237e; -fx-padding: 16 32;"
+          alignment="CENTER_LEFT" spacing="16">
+        <Label text="LinguaLearn"
+               style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Retour" onAction="#handleBack"
+                style="-fx-background-color: rgba(255,255,255,0.15);
+                       -fx-text-fill: white; -fx-font-size: 13px; -fx-cursor: hand;
+                       -fx-background-radius: 6; -fx-padding: 6 16;
+                       -fx-border-color: rgba(255,255,255,0.4); -fx-border-radius: 6;"/>
+        <Label fx:id="userNameLabel" text=""
+               style="-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white;
+                      -fx-font-size: 12px; -fx-background-radius: 20; -fx-padding: 5 14;"/>
+    </HBox>
+
+    <!-- Hero -->
+    <VBox alignment="CENTER" spacing="8"
+          style="-fx-background-color: #1a237e; -fx-padding: 40 32 50 32;">
+        <Label text="Choisissez votre langue"
+               style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+        <Label text="Selectionnez la langue du test de certification que vous souhaitez passer"
+               style="-fx-font-size: 14px; -fx-text-fill: rgba(255,255,255,0.75); -fx-wrap-text: true;"
+               wrapText="true" maxWidth="500"/>
+    </VBox>
+
+    <!-- Wave separator -->
+    <HBox style="-fx-background-color: #1a237e; -fx-pref-height: 24;">
+        <Region HBox.hgrow="ALWAYS"
+                style="-fx-background-color: #f0f4ff; -fx-background-radius: 24 24 0 0;"/>
+    </HBox>
+
+    <!-- Language cards -->
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                style="-fx-background: #f0f4ff; -fx-background-color: #f0f4ff;
+                       -fx-border-width: 0;">
+        <VBox spacing="20" style="-fx-padding: 32 48;">
+
+            <Label text="Langues disponibles"
+                   style="-fx-font-size: 13px; -fx-font-weight: bold;
+                          -fx-text-fill: #9ca3af; -fx-letter-spacing: 0.08em;"/>
+
+            <FlowPane fx:id="languageCardsPane" hgap="20" vgap="20" prefWrapLength="9999"/>
+
+            <!-- Indication -->
+            <Label text="Cliquez sur une langue pour voir les niveaux disponibles"
+                   style="-fx-font-size: 12px; -fx-text-fill: #9ca3af;
+                          -fx-padding: 8 0 0 0;"/>
+        </VBox>
+    </ScrollPane>
+
+</VBox>

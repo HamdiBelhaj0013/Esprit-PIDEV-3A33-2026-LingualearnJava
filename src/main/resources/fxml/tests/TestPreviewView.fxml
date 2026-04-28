@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!--
+  TestPreviewView.fxml
+  Place at: src/main/resources/fxml/tests/TestPreviewView.fxml
+  Controller: org.example.controller.tests.TestPreviewController
+-->
+<StackPane xmlns="http://javafx.com/javafx/21"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="org.example.controller.tests.TestPreviewController"
+           stylesheets="@../../css/style.css"
+           style="-fx-background-color: linear-gradient(to bottom right,#0d1117,#1a237e,#1565c0);">
+
+    <VBox alignment="CENTER" spacing="0" maxWidth="660" minWidth="500">
+        <StackPane.margin><Insets top="30" bottom="30"/></StackPane.margin>
+
+        <!-- ══ CARD ══════════════════════════════════════════════════════════ -->
+        <VBox spacing="0"
+              style="-fx-background-color:white; -fx-background-radius:20;
+                     -fx-effect:dropshadow(gaussian,rgba(0,0,0,0.40),50,0,0,16);">
+
+            <!-- Card Header -->
+            <VBox spacing="10" alignment="CENTER"
+                  style="-fx-background-color:linear-gradient(to right,#1a237e,#1565c0);
+                         -fx-background-radius:20 20 0 0; -fx-padding:36 44 30 44;">
+
+                <Label text="📋  APERÇU DU TEST"
+                       style="-fx-text-fill:rgba(255,255,255,0.65); -fx-font-size:11px;
+                              -fx-font-weight:bold; -fx-letter-spacing:0.12em;
+                              -fx-font-family:'Segoe UI';"/>
+                <Label fx:id="testTitleLabel" text=""
+                       style="-fx-text-fill:white; -fx-font-size:24px; -fx-font-weight:bold;
+                              -fx-font-family:'Segoe UI';" wrapText="true"
+                       alignment="CENTER" textAlignment="CENTER"/>
+            </VBox>
+
+            <!-- ══ BODY ═══════════════════════════════════════════════════════ -->
+            <VBox spacing="24" style="-fx-padding:32 44 28 44;">
+
+                <!-- Info grid 2×3 -->
+                <GridPane hgap="24" vgap="16">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="32"/>
+                        <ColumnConstraints hgrow="ALWAYS"/>
+                        <ColumnConstraints minWidth="32"/>
+                        <ColumnConstraints hgrow="ALWAYS"/>
+                    </columnConstraints>
+
+                    <!-- TYPE -->
+                    <Label text="🏷" style="-fx-font-size:22px;"
+                           GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                    <VBox spacing="2" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <Label text="TYPE"
+                               style="-fx-font-size:10px;-fx-text-fill:#9ca3af;
+                                      -fx-font-weight:bold;-fx-font-family:'Segoe UI';"/>
+                        <Label fx:id="testTypeLabel" text=""
+                               style="-fx-font-size:15px;-fx-font-weight:bold;-fx-text-fill:#1a237e;
+                                      -fx-font-family:'Segoe UI';"/>
+                    </VBox>
+
+                    <!-- LANGUE -->
+                    <Label text="🌐" style="-fx-font-size:22px;"
+                           GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                    <VBox spacing="2" GridPane.columnIndex="3" GridPane.rowIndex="0">
+                        <Label text="LANGUE"
+                               style="-fx-font-size:10px;-fx-text-fill:#9ca3af;
+                                      -fx-font-weight:bold;-fx-font-family:'Segoe UI';"/>
+                        <Label fx:id="testLanguageLabel" text=""
+                               style="-fx-font-size:15px;-fx-font-weight:bold;-fx-text-fill:#1a237e;
+                                      -fx-font-family:'Segoe UI';"/>
+                    </VBox>
+
+                    <!-- NIVEAU -->
+                    <Label text="📊" style="-fx-font-size:22px;"
+                           GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                    <VBox spacing="2" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Label text="NIVEAU"
+                               style="-fx-font-size:10px;-fx-text-fill:#9ca3af;
+                                      -fx-font-weight:bold;-fx-font-family:'Segoe UI';"/>
+                        <Label fx:id="testLevelLabel" text=""
+                               style="-fx-font-size:15px;-fx-font-weight:bold;-fx-text-fill:#1a237e;
+                                      -fx-font-family:'Segoe UI';"/>
+                    </VBox>
+
+                    <!-- DURÉE -->
+                    <Label text="⏱" style="-fx-font-size:22px;"
+                           GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                    <VBox spacing="2" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                        <Label text="DURÉE"
+                               style="-fx-font-size:10px;-fx-text-fill:#9ca3af;
+                                      -fx-font-weight:bold;-fx-font-family:'Segoe UI';"/>
+                        <Label fx:id="testDurationLabel" text=""
+                               style="-fx-font-size:15px;-fx-font-weight:bold;-fx-text-fill:#1a237e;
+                                      -fx-font-family:'Segoe UI';"/>
+                    </VBox>
+
+                    <!-- QUESTIONS -->
+                    <Label text="❓" style="-fx-font-size:22px;"
+                           GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                    <VBox spacing="2" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <Label text="QUESTIONS"
+                               style="-fx-font-size:10px;-fx-text-fill:#9ca3af;
+                                      -fx-font-weight:bold;-fx-font-family:'Segoe UI';"/>
+                        <Label fx:id="testQuestionsLabel" text="" wrapText="true"
+                               style="-fx-font-size:13px;-fx-font-weight:bold;-fx-text-fill:#2e7d32;
+                                      -fx-font-family:'Segoe UI';"/>
+                    </VBox>
+
+                    <!-- NOTATION -->
+                    <Label text="🏆" style="-fx-font-size:22px;"
+                           GridPane.columnIndex="2" GridPane.rowIndex="2"/>
+                    <VBox spacing="2" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                        <Label text="NOTATION"
+                               style="-fx-font-size:10px;-fx-text-fill:#9ca3af;
+                                      -fx-font-weight:bold;-fx-font-family:'Segoe UI';"/>
+                        <Label fx:id="testScoringLabel" text="" wrapText="true"
+                               style="-fx-font-size:13px;-fx-font-weight:bold;-fx-text-fill:#e65100;
+                                      -fx-font-family:'Segoe UI';"/>
+                    </VBox>
+                </GridPane>
+
+                <!-- ── Penalty rules box ──────────────────────────────────── -->
+                <VBox spacing="10"
+                      style="-fx-background-color:#fff8e1; -fx-background-radius:12;
+                             -fx-border-color:#ffe082; -fx-border-radius:12;
+                             -fx-border-width:1.5; -fx-padding:16 20;">
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="⚠️" style="-fx-font-size:18px;"/>
+                        <Label text="Règles de pénalité"
+                               style="-fx-font-size:13px;-fx-font-weight:bold;-fx-text-fill:#b45309;
+                                      -fx-font-family:'Segoe UI';"/>
+                    </HBox>
+                    <Label fx:id="penaltyRulesLabel" text="" wrapText="true"
+                           style="-fx-font-size:12px;-fx-text-fill:#78350f;
+                                  -fx-font-family:'Segoe UI';-fx-line-spacing:4;"/>
+                </VBox>
+
+                <!-- ── Action buttons ─────────────────────────────────────── -->
+                <HBox spacing="16" alignment="CENTER">
+                    <Button text="← Retour aux tests" onAction="#handleCancel"
+                            prefWidth="180" prefHeight="44"
+                            style="-fx-background-color:white;-fx-text-fill:#6c7a99;
+                                   -fx-font-size:13px;-fx-font-weight:bold;-fx-cursor:hand;
+                                   -fx-background-radius:10;-fx-border-color:#d1d5db;
+                                   -fx-border-radius:10;-fx-border-width:1.5;
+                                   -fx-font-family:'Segoe UI';"/>
+                    <Button text="🚀  Commencer le test" onAction="#handleStart"
+                            prefWidth="220" prefHeight="44"
+                            style="-fx-background-color:linear-gradient(to right,#1a237e,#1565c0);
+                                   -fx-text-fill:white;-fx-font-size:15px;-fx-font-weight:bold;
+                                   -fx-cursor:hand;-fx-background-radius:10;
+                                   -fx-effect:dropshadow(gaussian,rgba(26,35,126,0.45),12,0,0,4);
+                                   -fx-font-family:'Segoe UI';"/>
+                </HBox>
+
+            </VBox>
+        </VBox>
+    </VBox>
+</StackPane>
