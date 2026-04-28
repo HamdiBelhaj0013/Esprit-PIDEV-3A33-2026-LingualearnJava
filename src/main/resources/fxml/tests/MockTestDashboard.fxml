@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!--
+  MockTestDashboard.fxml — redesigned admin UI
+  Place at: src/main/resources/fxml/tests/MockTestDashboard.fxml
+-->
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.controller.tests.MockTestDashboardController"
+      styleClass="admin-root"
+      stylesheets="@../../css/admin.css"
+      spacing="0">
+
+    <VBox styleClass="content-area" VBox.vgrow="ALWAYS" spacing="0">
+
+        <!-- ══ Page Header (dark gradient) ═══════════════════════════════════ -->
+        <VBox spacing="0"
+              style="-fx-background-color:linear-gradient(to right,#1a1f36,#252d5c);
+                     -fx-padding:22 28 18 28;">
+
+            <HBox alignment="CENTER_LEFT" spacing="14">
+                <VBox spacing="3" HBox.hgrow="ALWAYS">
+                    <Label text="🌍  Tests de Certification"
+                           style="-fx-font-size:22px;-fx-font-weight:bold;-fx-text-fill:white;
+                                  -fx-font-family:'Segoe UI';"/>
+                    <Label text="Gérez vos tests TOEFL · IELTS · DELF · DALF · TCF · Cambridge"
+                           style="-fx-font-size:12px;-fx-text-fill:rgba(255,255,255,0.55);
+                                  -fx-font-family:'Segoe UI';"/>
+                </VBox>
+                <Button text="➕  Nouveau Test" onAction="#handleNewTest"
+                        style="-fx-background-color:#3b5bdb;-fx-text-fill:white;
+                               -fx-font-size:13px;-fx-font-weight:bold;-fx-cursor:hand;
+                               -fx-background-radius:8;-fx-padding:10 20;
+                               -fx-effect:dropshadow(gaussian,rgba(59,91,219,0.5),8,0,0,2);
+                               -fx-font-family:'Segoe UI';"/>
+            </HBox>
+
+            <!-- Stat chips -->
+            <HBox spacing="14" style="-fx-padding:18 0 0 0;">
+                <VBox spacing="1" alignment="CENTER_LEFT"
+                      style="-fx-background-color:rgba(59,91,219,0.22);-fx-background-radius:10;
+                             -fx-padding:10 18;-fx-border-color:rgba(59,91,219,0.40);
+                             -fx-border-radius:10;-fx-border-width:1;">
+                    <Label fx:id="totalTestsLabel" text="0"
+                           style="-fx-font-size:26px;-fx-font-weight:bold;-fx-text-fill:white;
+                                  -fx-font-family:'Segoe UI';"/>
+                    <Label text="Tests créés"
+                           style="-fx-font-size:10px;-fx-text-fill:rgba(255,255,255,0.58);
+                                  -fx-font-family:'Segoe UI';"/>
+                </VBox>
+                <VBox spacing="1" alignment="CENTER_LEFT"
+                      style="-fx-background-color:rgba(47,179,68,0.18);-fx-background-radius:10;
+                             -fx-padding:10 18;-fx-border-color:rgba(47,179,68,0.38);
+                             -fx-border-radius:10;-fx-border-width:1;">
+                    <Label fx:id="totalQuestionsLabel" text="0"
+                           style="-fx-font-size:26px;-fx-font-weight:bold;-fx-text-fill:white;
+                                  -fx-font-family:'Segoe UI';"/>
+                    <Label text="Questions"
+                           style="-fx-font-size:10px;-fx-text-fill:rgba(255,255,255,0.58);
+                                  -fx-font-family:'Segoe UI';"/>
+                </VBox>
+                <VBox spacing="1" alignment="CENTER_LEFT"
+                      style="-fx-background-color:rgba(245,159,0,0.18);-fx-background-radius:10;
+                             -fx-padding:10 18;-fx-border-color:rgba(245,159,0,0.38);
+                             -fx-border-radius:10;-fx-border-width:1;">
+                    <Label fx:id="totalResultsLabel" text="0"
+                           style="-fx-font-size:26px;-fx-font-weight:bold;-fx-text-fill:white;
+                                  -fx-font-family:'Segoe UI';"/>
+                    <Label text="Résultats enregistrés"
+                           style="-fx-font-size:10px;-fx-text-fill:rgba(255,255,255,0.58);
+                                  -fx-font-family:'Segoe UI';"/>
+                </VBox>
+            </HBox>
+        </VBox>
+
+        <!-- ══ Toolbar ════════════════════════════════════════════════════════ -->
+        <HBox spacing="10" alignment="CENTER_LEFT"
+              style="-fx-padding:12 20;-fx-background-color:white;
+                     -fx-border-color:#e3e8f0;-fx-border-width:0 0 1 0;">
+            <TextField fx:id="searchField" promptText="🔍  Rechercher un test..."
+                       styleClass="search-field" prefWidth="210"/>
+            <ComboBox fx:id="typeFilterCombo"  styleClass="filter-combo"
+                      prefWidth="120" promptText="Type"/>
+            <ComboBox fx:id="levelFilterCombo" styleClass="filter-combo"
+                      prefWidth="100" promptText="Niveau"/>
+            <ComboBox fx:id="sortCombo"        styleClass="filter-combo" prefWidth="130"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="✏️  Modifier"   styleClass="btn-warning btn-sm" onAction="#handleEdit"/>
+            <Button text="🗑️  Supprimer" styleClass="btn-danger  btn-sm" onAction="#handleDelete"/>
+            <Button text="📋  Questions" onAction="#handleViewQuestions"
+                    style="-fx-background-color:white;-fx-text-fill:#3b5bdb;-fx-font-size:12px;
+                           -fx-font-weight:bold;-fx-cursor:hand;-fx-background-radius:6;
+                           -fx-border-color:#3b5bdb;-fx-border-radius:6;-fx-border-width:1;
+                           -fx-padding:5 12;"/>
+            <Button text="📊  Résultats" styleClass="btn-success btn-sm"
+                    onAction="#handleViewResults"/>
+        </HBox>
+
+        <!-- ══ Table container ════════════════════════════════════════════════ -->
+        <VBox VBox.vgrow="ALWAYS"
+              style="-fx-background-color:#f4f6fb;-fx-padding:16;">
+            <VBox VBox.vgrow="ALWAYS"
+                  style="-fx-background-color:white;-fx-background-radius:12;
+                         -fx-border-color:#e3e8f0;-fx-border-radius:12;-fx-border-width:1;
+                         -fx-effect:dropshadow(gaussian,rgba(0,0,0,0.05),10,0,0,2);">
+                <TableView fx:id="testsTable" VBox.vgrow="ALWAYS" styleClass="table-view"
+                           style="-fx-background-color:white;-fx-background-radius:12;
+                                  -fx-border-color:transparent;">
+                    <columns>
+                        <TableColumn fx:id="colType"        text="TYPE"        prefWidth="110"/>
+                        <TableColumn fx:id="colTitle"       text="TITRE"       prefWidth="265"/>
+                        <TableColumn fx:id="colLanguage"    text="LANGUE"      prefWidth="120"/>
+                        <TableColumn fx:id="colLevel"       text="NIVEAU"      prefWidth="80"/>
+                        <TableColumn fx:id="colDuration"    text="DURÉE (min)" prefWidth="105"/>
+                        <TableColumn fx:id="colNbQuestions" text="QUESTIONS"   prefWidth="100"/>
+                    </columns>
+                    <placeholder>
+                        <VBox alignment="CENTER" spacing="12" style="-fx-padding:70;">
+                            <Label text="📭" style="-fx-font-size:44px;"/>
+                            <Label text="Aucun test trouvé"
+                                   style="-fx-font-size:15px;-fx-text-fill:#374151;
+                                          -fx-font-weight:bold;-fx-font-family:'Segoe UI';"/>
+                            <Label text="Cliquez ➕ Nouveau Test pour commencer."
+                                   style="-fx-font-size:12px;-fx-text-fill:#9ca3af;
+                                          -fx-font-family:'Segoe UI';"/>
+                        </VBox>
+                    </placeholder>
+                </TableView>
+            </VBox>
+            <Label text="💡  Double-cliquez sur un test pour accéder à ses questions."
+                   style="-fx-font-size:11px;-fx-text-fill:#9ca3af;-fx-padding:8 0 0 4;
+                          -fx-font-family:'Segoe UI';"/>
+        </VBox>
+
+    </VBox>
+</VBox>

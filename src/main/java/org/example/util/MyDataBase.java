@@ -18,7 +18,7 @@ public class MyDataBase {
             connection = DriverManager.getConnection(URL, USER, PASSWORD);
             System.out.println("Connexion établie !");
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Erreur connexion : " + e.getMessage());
         }
     }
 
@@ -40,7 +40,7 @@ public class MyDataBase {
                 System.out.println("Connexion fermée !");
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Erreur fermeture : " + e.getMessage());
         }
     }
 }

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.controller.tests.UserTestDetailController"
+      styleClass="dashboard-root"
+      stylesheets="@../../css/style.css"
+      spacing="0">
+
+    <!-- ══ HEADER ═══════════════════════════════════════════════════════════ -->
+    <HBox styleClass="dashboard-header" alignment="CENTER_LEFT" spacing="16">
+        <Label text="LinguaLearn" styleClass="header-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <!-- Label anti-triche (caché par défaut, s'affiche si sortie détectée) -->
+        <Label fx:id="antiCheatLabel" text=""
+               visible="false" managed="false"
+               style="-fx-text-fill:white;-fx-font-size:12px;-fx-font-weight:bold;
+                      -fx-background-color:#f59f00;-fx-background-radius:6;
+                      -fx-padding:5 14;"/>
+
+        <!-- Chronomètre -->
+        <VBox fx:id="chronoBox" alignment="CENTER" spacing="2"
+              style="-fx-background-color: rgba(0,0,0,0.25); -fx-background-radius: 10;
+                     -fx-padding: 6 16; -fx-min-width: 120;">
+            <Label text="TEMPS RESTANT"
+                   style="-fx-text-fill: rgba(255,255,255,0.6); -fx-font-size: 9px;
+                          -fx-font-weight: bold;"/>
+            <Label fx:id="chronoLabel" text="00:00"
+                   style="-fx-text-fill: #2fb344; -fx-font-size: 22px;
+                          -fx-font-weight: bold; -fx-font-family: monospace;"/>
+        </VBox>
+
+        <Region prefWidth="16"/>
+        <Button text="Retour aux tests" onAction="#handleBack"
+                style="-fx-background-color: transparent;
+                       -fx-text-fill: rgba(255,255,255,0.85);
+                       -fx-font-size: 13px; -fx-cursor: hand;
+                       -fx-border-color: rgba(255,255,255,0.5);
+                       -fx-border-radius: 6; -fx-background-radius: 6;
+                       -fx-padding: 6 14;"/>
+    </HBox>
+
+    <HBox VBox.vgrow="ALWAYS" spacing="0">
+
+        <!-- ══ PANNEAU GAUCHE : infos + résultat ════════════════════════════ -->
+        <VBox prefWidth="300" minWidth="260" spacing="0"
+              style="-fx-background-color: #1a1f36;">
+            <VBox spacing="16" style="-fx-padding: 28 24;">
+
+                <Label text="📋 Informations"
+                       style="-fx-text-fill: #a0aec0; -fx-font-size: 11px; -fx-font-weight: bold;"/>
+
+                <VBox spacing="4">
+                    <Label fx:id="testTitleLabel" text=""
+                           style="-fx-text-fill: white; -fx-font-size: 16px;
+                                  -fx-font-weight: bold;" wrapText="true"/>
+                </VBox>
+
+                <Separator style="-fx-background-color: #2d3561;"/>
+
+                <!-- Détails -->
+                <VBox spacing="10">
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Label text="Type :"
+                               style="-fx-text-fill: #6c7a99; -fx-font-size: 12px; -fx-min-width: 80;"/>
+                        <Label fx:id="testTypeLabel" text=""
+                               style="-fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold;"/>
+                    </HBox>
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Label text="Niveau :"
+                               style="-fx-text-fill: #6c7a99; -fx-font-size: 12px; -fx-min-width: 80;"/>
+                        <Label fx:id="testLevelLabel" text=""
+                               style="-fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold;"/>
+                    </HBox>
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Label text="Durée :"
+                               style="-fx-text-fill: #6c7a99; -fx-font-size: 12px; -fx-min-width: 80;"/>
+                        <Label fx:id="testDurationLabel" text=""
+                               style="-fx-text-fill: white; -fx-font-size: 13px;"/>
+                    </HBox>
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Label text="Langue :"
+                               style="-fx-text-fill: #6c7a99; -fx-font-size: 12px; -fx-min-width: 80;"/>
+                        <Label fx:id="testLanguageLabel" text=""
+                               style="-fx-text-fill: white; -fx-font-size: 13px;"/>
+                    </HBox>
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Label text="Questions :"
+                               style="-fx-text-fill: #6c7a99; -fx-font-size: 12px; -fx-min-width: 80;"/>
+                        <Label fx:id="testQuestionsCountLabel" text=""
+                               style="-fx-text-fill: #2fb344; -fx-font-size: 13px; -fx-font-weight: bold;"/>
+                    </HBox>
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Label text="Notation :"
+                               style="-fx-text-fill: #6c7a99; -fx-font-size: 12px; -fx-min-width: 80;"/>
+                        <Label fx:id="totalPointsLabel" text=""
+                               style="-fx-text-fill: #f59f00; -fx-font-size: 12px; -fx-font-weight: bold;"
+                               wrapText="true"/>
+                    </HBox>
+                </VBox>
+
+                <Separator style="-fx-background-color: #2d3561;"/>
+
+                <!-- Bouton soumettre -->
+                <Button fx:id="submitBtn" text="✅ Soumettre mes réponses"
+                        onAction="#handleSubmit"
+                        style="-fx-background-color: #2fb344; -fx-text-fill: white;
+                               -fx-font-size: 14px; -fx-font-weight: bold;
+                               -fx-background-radius: 8; -fx-cursor: hand;
+                               -fx-padding: 12 20;" maxWidth="Infinity"/>
+
+                <!-- ══ ZONE RÉSULTAT ══════════════════════════════════════════
+                     Layout :
+                       "Votre Score"         ← titre petit
+                       "20.0 / 20"           ← scoreLabel  (grand, coloré)
+                       "= 85%"               ← scorePctLabel (moyen, même couleur)
+                       "🥇 Très bien !"      ← scoreDetailLabel (petit gris)
+                       [penaliteLabel]        ← visible si pénalité
+                ════════════════════════════════════════════════════════════ -->
+                <VBox fx:id="resultBox" spacing="6" alignment="CENTER"
+                      style="-fx-background-color: #0d1117; -fx-background-radius: 12;
+                             -fx-padding: 22 16; -fx-border-color: #2d3561;
+                             -fx-border-radius: 12; -fx-border-width: 1;">
+
+                    <Label text="🏆 Votre Score"
+                           style="-fx-text-fill: #a0aec0; -fx-font-size: 12px;
+                                  -fx-font-weight: bold;"/>
+
+                    <!-- Note /20 — grand et bien visible -->
+                    <Label fx:id="scoreLabel" text="—"
+                           style="-fx-font-size: 36px; -fx-font-weight: bold;
+                                  -fx-text-fill: #2fb344;"
+                           alignment="CENTER" maxWidth="Infinity"/>
+
+                    <!-- Pourcentage — ligne séparée en dessous -->
+                    <Label fx:id="scorePctLabel" text=""
+                           style="-fx-font-size: 18px; -fx-font-weight: bold;
+                                  -fx-text-fill: #2fb344; -fx-opacity: 0.85;"
+                           alignment="CENTER" maxWidth="Infinity"/>
+
+                    <!-- Niveau de performance -->
+                    <Label fx:id="scoreDetailLabel" text=""
+                           style="-fx-text-fill: #a0aec0; -fx-font-size: 13px;"
+                           alignment="CENTER" maxWidth="Infinity"
+                           wrapText="true"/>
+
+                    <!-- Pénalité (masquée par défaut) -->
+                    <Label fx:id="penaliteLabel" text="" wrapText="true"
+                           style="-fx-font-size: 12px; -fx-font-weight: bold;
+                                  -fx-background-radius: 6; -fx-padding: 6 14;"
+                           alignment="CENTER" maxWidth="Infinity"
+                           visible="false" managed="false"/>
+                </VBox>
+
+            </VBox>
+        </VBox>
+
+        <!-- ══ PANNEAU DROIT : questions ════════════════════════════════════ -->
+        <VBox HBox.hgrow="ALWAYS" spacing="0"
+              style="-fx-background-color: #f8fafc;">
+
+            <Label text="Questions du test"
+                   style="-fx-font-size: 16px; -fx-font-weight: bold;
+                          -fx-text-fill: #1a1f36; -fx-padding: 20 24 8 24;"/>
+
+            <ScrollPane fx:id="questionsScroll" fitToWidth="true"
+                        VBox.vgrow="ALWAYS"
+                        style="-fx-background-color: transparent;
+                               -fx-background: transparent; -fx-border-width: 0;">
+                <VBox fx:id="questionsContainer" spacing="16"
+                      style="-fx-padding: 8 24 24 24;"/>
+            </ScrollPane>
+        </VBox>
+
+    </HBox>
+
+</VBox>
