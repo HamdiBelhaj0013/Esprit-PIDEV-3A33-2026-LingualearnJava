@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.chart.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.controller.tests.ProfileController"
+      stylesheets="@../../css/style.css"
+      spacing="0"
+      style="-fx-background-color: #f0f4ff;">
+
+    <!-- Header -->
+    <HBox style="-fx-background-color: #1a237e; -fx-padding: 16 32;"
+          alignment="CENTER_LEFT" spacing="16">
+        <Label text="LinguaLearn"
+               style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Retour" onAction="#handleBack"
+                style="-fx-background-color: rgba(255,255,255,0.15);
+                       -fx-text-fill: white; -fx-font-size: 13px; -fx-cursor: hand;
+                       -fx-background-radius: 6; -fx-padding: 6 16;
+                       -fx-border-color: rgba(255,255,255,0.4); -fx-border-radius: 6;"/>
+        <Label fx:id="userNameLabel" text=""
+               style="-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white;
+                      -fx-font-size: 12px; -fx-background-radius: 20; -fx-padding: 5 14;"/>
+    </HBox>
+
+    <!-- Contenu scrollable -->
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                style="-fx-background: #f0f4ff; -fx-background-color: #f0f4ff;
+                       -fx-border-width: 0;">
+        <VBox spacing="24" style="-fx-padding: 32 48 48 48;">
+
+            <!-- ═══ SECTION 1 : CARTE IDENTITE ═══ -->
+            <HBox spacing="20" alignment="CENTER_LEFT">
+                <!-- Avatar -->
+                <VBox fx:id="avatarBox" alignment="CENTER"
+                      style="-fx-background-color: #3b5bdb; -fx-background-radius: 50%;
+                             -fx-min-width: 80; -fx-min-height: 80;
+                             -fx-max-width: 80; -fx-max-height: 80;">
+                    <Label fx:id="avatarLabel" text="T"
+                           style="-fx-font-size: 32px; -fx-font-weight: bold;
+                                  -fx-text-fill: white;"/>
+                </VBox>
+
+                <!-- Infos -->
+                <VBox spacing="4" HBox.hgrow="ALWAYS">
+                    <Label fx:id="fullNameLabel" text=""
+                           style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #1a1f36;"/>
+                    <Label fx:id="emailLabel" text=""
+                           style="-fx-font-size: 14px; -fx-text-fill: #6c7a99;"/>
+                    <HBox spacing="8" style="-fx-padding: 4 0 0 0;">
+                        <Label fx:id="planBadge" text="FREE"
+                               style="-fx-background-color: #eef2ff; -fx-text-fill: #3b5bdb;
+                                      -fx-font-size: 11px; -fx-font-weight: bold;
+                                      -fx-background-radius: 20; -fx-padding: 3 12;"/>
+                        <Label fx:id="niveauBadge" text="Debutant"
+                               style="-fx-background-color: #d3f9d8; -fx-text-fill: #2e7d32;
+                                      -fx-font-size: 11px; -fx-font-weight: bold;
+                                      -fx-background-radius: 20; -fx-padding: 3 12;"/>
+                    </HBox>
+                </VBox>
+            </HBox>
+
+            <!-- ═══ SECTION 2 : MES PERFORMANCES ═══ -->
+            <VBox spacing="16">
+                <Label text="Mes Performances"
+                       style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1a1f36;"/>
+
+                <!-- 4 Stat cards -->
+                <HBox spacing="16">
+                    <!-- Score moyen -->
+                    <VBox spacing="4" alignment="CENTER" HBox.hgrow="ALWAYS"
+                          style="-fx-background-color: white; -fx-background-radius: 12;
+                                 -fx-border-color: #e3e8f0; -fx-border-radius: 12;
+                                 -fx-border-width: 0 0 0 4; -fx-border-color: #3b5bdb;
+                                 -fx-padding: 20;
+                                 -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.05),8,0,0,2);">
+                        <Label fx:id="scoreMoyenLabel" text="—"
+                               style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #3b5bdb;"/>
+                        <Label text="Score moyen"
+                               style="-fx-font-size: 12px; -fx-text-fill: #6c7a99;"/>
+                    </VBox>
+
+                    <!-- Tests passes -->
+                    <VBox spacing="4" alignment="CENTER" HBox.hgrow="ALWAYS"
+                          style="-fx-background-color: white; -fx-background-radius: 12;
+                                 -fx-border-color: #2fb344; -fx-border-width: 0 0 0 4;
+                                 -fx-padding: 20;
+                                 -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.05),8,0,0,2);">
+                        <Label fx:id="testsPassesLabel" text="0"
+                               style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2fb344;"/>
+                        <Label text="Tests passes"
+                               style="-fx-font-size: 12px; -fx-text-fill: #6c7a99;"/>
+                    </VBox>
+
+                    <!-- Meilleur score -->
+                    <VBox spacing="4" alignment="CENTER" HBox.hgrow="ALWAYS"
+                          style="-fx-background-color: white; -fx-background-radius: 12;
+                                 -fx-border-color: #f59f00; -fx-border-width: 0 0 0 4;
+                                 -fx-padding: 20;
+                                 -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.05),8,0,0,2);">
+                        <Label fx:id="meilleurScoreLabel" text="—"
+                               style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #f59f00;"/>
+                        <Label text="Meilleur score"
+                               style="-fx-font-size: 12px; -fx-text-fill: #6c7a99;"/>
+                    </VBox>
+
+                    <!-- Niveau atteint -->
+                    <VBox spacing="4" alignment="CENTER" HBox.hgrow="ALWAYS"
+                          style="-fx-background-color: white; -fx-background-radius: 12;
+                                 -fx-border-color: #7048e8; -fx-border-width: 0 0 0 4;
+                                 -fx-padding: 20;
+                                 -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.05),8,0,0,2);">
+                        <Label fx:id="niveauAtteintLabel" text="—"
+                               style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #7048e8;"/>
+                        <Label text="Niveau atteint"
+                               style="-fx-font-size: 12px; -fx-text-fill: #6c7a99;"/>
+                    </VBox>
+                </HBox>
+
+                <!-- Graphique progression -->
+                <VBox spacing="8"
+                      style="-fx-background-color: white; -fx-background-radius: 12;
+                             -fx-border-color: #e3e8f0; -fx-border-radius: 12; -fx-border-width: 1;
+                             -fx-padding: 20;
+                             -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.05),8,0,0,2);">
+                    <Label text="Courbe de progression"
+                           style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1a1f36;"/>
+                    <LineChart fx:id="progressionChart" prefHeight="220"
+                               style="-fx-background-color: transparent;">
+                        <xAxis>
+                            <NumberAxis label="Tests" lowerBound="0" upperBound="20" tickUnit="1"/>
+                        </xAxis>
+                        <yAxis>
+                            <NumberAxis label="Score (%)" lowerBound="0" upperBound="100" tickUnit="10"/>
+                        </yAxis>
+                    </LineChart>
+                </VBox>
+
+                <!-- Forces et Faiblesses -->
+                <HBox spacing="16">
+                    <!-- Par type de test -->
+                    <VBox spacing="10" HBox.hgrow="ALWAYS"
+                          style="-fx-background-color: white; -fx-background-radius: 12;
+                                 -fx-border-color: #e3e8f0; -fx-border-radius: 12; -fx-border-width: 1;
+                                 -fx-padding: 20;
+                                 -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.05),8,0,0,2);">
+                        <Label text="Performance par type"
+                               style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1a1f36;"/>
+                        <VBox fx:id="parTypeContainer" spacing="8"/>
+                    </VBox>
+
+                    <!-- Forces et faiblesses par section -->
+                    <VBox spacing="10" HBox.hgrow="ALWAYS"
+                          style="-fx-background-color: white; -fx-background-radius: 12;
+                                 -fx-border-color: #e3e8f0; -fx-border-radius: 12; -fx-border-width: 1;
+                                 -fx-padding: 20;
+                                 -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.05),8,0,0,2);">
+                        <Label text="Forces et Faiblesses"
+                               style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1a1f36;"/>
+                        <VBox fx:id="forcesContainer" spacing="8"/>
+                    </VBox>
+                </HBox>
+            </VBox>
+
+            <!-- ═══ SECTION 3 : RECOMMANDATIONS ═══ -->
+            <VBox spacing="12">
+                <Label text="Tests Recommandes"
+                       style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1a1f36;"/>
+                <VBox fx:id="recommendationsContainer" spacing="12"/>
+            </VBox>
+
+            <!-- ═══ SECTION 4 : CERTIFICATS ═══ -->
+            <VBox spacing="12">
+                <Label text="Mes Certificats"
+                       style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1a1f36;"/>
+                <HBox spacing="16" fx:id="certificatsContainer"/>
+            </VBox>
+
+        </VBox>
+    </ScrollPane>
+
+</VBox>

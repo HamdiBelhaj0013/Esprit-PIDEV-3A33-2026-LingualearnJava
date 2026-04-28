@@ -1,7 +1,9 @@
 package org.example.controller.admin;
 
-import org.example.App;
+import org.example.controller.tests.MockTestDashboardController;
 import org.example.entity.User;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -24,26 +26,31 @@ public class AdminMainController {
     @FXML private StackPane contentArea;
     @FXML private Button    btnDashboard;
     @FXML private Button    btnUsers;
+    @FXML private Button    btnTests;
 
-    private User   loggedInUser;
-    private Button activeButton;
+    private User                 loggedInUser;
+    private Button               activeButton;
+    private EntityManagerFactory emf;
 
-    // ── Entry point from LoginController ─────────────────────────────────────
+    // ── Entry point ───────────────────────────────────────────────────────────
 
     public void setUser(User user) {
         this.loggedInUser = user;
+        this.emf = Persistence.createEntityManagerFactory("lingualearn");
         adminNameLabel.setText(user.getFirstName() + " " + user.getLastName());
         showDashboard(null);
     }
 
-    // ── Sidebar navigation ────────────────────────────────────────────────────
+    private EntityManagerFactory getEmf() { return emf; }
+
+    // ── Navigation sidebar ────────────────────────────────────────────────────
 
     @FXML
     private void showDashboard(ActionEvent event) {
         setActive(btnDashboard, "Dashboard");
         loadView("/fxml/admin/DashboardView.fxml", ctrl -> {
             if (ctrl instanceof DashboardViewController c) {
-                c.setEntityManagerFactory(App.getEmf());
+                c.setEntityManagerFactory(getEmf());
                 c.load();
             }
         });
@@ -55,56 +62,65 @@ public class AdminMainController {
         loadView("/fxml/admin/UserListView.fxml", ctrl -> {
             if (ctrl instanceof UserListController c) {
                 c.setMainController(this);
-                c.setEntityManagerFactory(App.getEmf());
+                c.setEntityManagerFactory(getEmf());
                 c.load();
             }
         });
     }
 
-    // ── Called by child controllers to open dialogs ───────────────────────────
+    // ── TON MODULE ────────────────────────────────────────────────────────────
 
-    /** Open the user detail popup window for the given user. */
+    @FXML
+    private void showTests(ActionEvent event) {
+        setActive(btnTests, "Tests de Certification Internationaux");
+        loadView("/fxml/tests/MockTestDashboard.fxml", ctrl -> {
+            if (ctrl instanceof MockTestDashboardController c) {
+                c.setContentArea(contentArea);
+            }
+        });
+    }
+
+    // ── Dialogs ───────────────────────────────────────────────────────────────
+
     public void openUserDetail(User user) {
         openStage("/fxml/admin/UserDetailDialog.fxml", "User: " + user.getFullName(),
-            700, 620, ctrl -> {
-                if (ctrl instanceof UserDetailController c) {
-                    c.setMainController(this);
-                    c.setUser(user);
-                }
-            });
+                700, 620, ctrl -> {
+                    if (ctrl instanceof UserDetailController c) {
+                        c.setMainController(this);
+                        c.setEmf(getEmf());
+                        c.setUser(user);
+                    }
+                });
     }
 
-    /** Open create-user form dialog with a callback invoked after successful save. */
     public void openCreateUser(Runnable onSaved) {
         openStage("/fxml/admin/UserFormDialog.fxml", "Create User",
-            500, 560, ctrl -> {
-                if (ctrl instanceof UserFormController c) {
-                    c.initForCreate(App.getEmf(), onSaved);
-                }
-            });
+                500, 560, ctrl -> {
+                    if (ctrl instanceof UserFormController c)
+                        c.initForCreate(getEmf(), onSaved);
+                });
     }
 
-    /** Open edit-user form dialog for a given user. */
     public void openEditUser(User user, Runnable onSaved) {
         openStage("/fxml/admin/UserFormDialog.fxml", "Edit User — " + user.getFullName(),
-            500, 560, ctrl -> {
-                if (ctrl instanceof UserFormController c) {
-                    c.initForEdit(user, App.getEmf(), onSaved);
-                }
-            });
+                500, 560, ctrl -> {
+                    if (ctrl instanceof UserFormController c)
+                        c.initForEdit(user, getEmf(), onSaved);
+                });
     }
 
-    /** Refresh whatever view is currently active (used after mutations). */
     public void refreshCurrentView() {
-        if (activeButton == btnUsers) showUsers(null);
-        else showDashboard(null);
+        if      (activeButton == btnUsers) showUsers(null);
+        else if (activeButton == btnTests) showTests(null);
+        else                               showDashboard(null);
     }
 
-    // ── Logout ───────────────────────────────────────────────────────────────
+    // ── Logout ────────────────────────────────────────────────────────────────
 
     @FXML
     private void handleLogout(ActionEvent event) {
         try {
+            if (emf != null && emf.isOpen()) emf.close();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/login.fxml"));
             Parent root = loader.load();
             Stage stage = (Stage) contentArea.getScene().getWindow();
@@ -135,7 +151,7 @@ public class AdminMainController {
             setup.accept(loader.getController());
             contentArea.getChildren().setAll(view);
         } catch (IOException e) {
-            showError("Failed to load view: " + e.getMessage());
+            showError("Impossible de charger la vue : " + e.getMessage());
         }
     }
 
@@ -145,7 +161,6 @@ public class AdminMainController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent root = loader.load();
             setup.accept(loader.getController());
-
             Stage stage = new Stage();
             stage.setTitle(title);
             stage.setScene(new Scene(root));

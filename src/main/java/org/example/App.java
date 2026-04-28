@@ -1,24 +1,23 @@
 package org.example;
 
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.example.service.tests.AntiCheatApiServer;
+import org.example.service.tests.CertificateApiServer;
+import org.example.util.MyDataBase;
 
 public class App extends Application {
 
-    private static EntityManagerFactory emf;
-
-    /** Called by all controllers to obtain an EntityManager. */
-    public static EntityManagerFactory getEmf() {
-        return emf;
-    }
-
     @Override
     public void init() throws Exception {
-        emf = Persistence.createEntityManagerFactory("lingualearn");
+        // 1. Connexion base de données
+        MyDataBase.getInstance();
+        // 2. API Certificats    → http://localhost:9090/api/certificate/verify/{uuid}
+        CertificateApiServer.start();
+        // 3. API Anti-Triche   → http://localhost:9091/api/anticheat/logs
+        AntiCheatApiServer.start();
     }
 
     @Override
@@ -34,8 +33,9 @@ public class App extends Application {
 
     @Override
     public void stop() {
-        if (emf != null && emf.isOpen()) {
-            emf.close();
-        }
+        // Arrêt propre des deux serveurs
+        CertificateApiServer.stop();
+        AntiCheatApiServer.stop();
+        MyDataBase.getInstance().closeConnection();
     }
 }

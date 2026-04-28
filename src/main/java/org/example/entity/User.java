@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -32,7 +33,6 @@ public class User {
 
     @Column(name = "subscription_expiry")
     private LocalDateTime subscriptionExpiry;
-
 
     @Column(name = "is_premium", nullable = false)
     private boolean isPremium = false;
@@ -71,11 +71,6 @@ public class User {
         this.createdAt = LocalDateTime.now();
     }
 
-    /**
-     * Called by JPA after loading from DB so that isPremium is always
-     * consistent with subscriptionPlan + subscriptionExpiry — even if
-     * Symfony wrote a stale is_premium value into the DB.
-     */
     @PostLoad
     public void postLoad() {
         updatePremiumStatus();
@@ -84,13 +79,20 @@ public class User {
     // ── Getters / setters ────────────────────────────────────────────────────
 
     public Long getId()               { return id; }
+
+    /**
+     * Needed by JDBC repositories (TestResultRepository, etc.)
+     * to set the id after reading from ResultSet.
+     * JPA never calls this — it manages the id field directly.
+     */
+    public void setId(Long id)        { this.id = id; }
+
     public String getEmail()          { return email; }
     public void setEmail(String e)    { this.email = e; }
 
     public String getPassword()       { return password; }
     public void setPassword(String p) { this.password = p; }
 
-    /** Parse Symfony JSON array: ["ROLE_USER","ROLE_ADMIN"] */
     public List<String> getRoles() {
         if (roles == null || roles.isBlank()) return new ArrayList<>(List.of("ROLE_USER"));
         String t = roles.trim();
@@ -106,7 +108,6 @@ public class User {
         return new ArrayList<>(List.of(t.split(",")));
     }
 
-    /** Write Symfony JSON array format: ["ROLE_USER","ROLE_ADMIN"] */
     public void setRoles(List<String> r) {
         List<String> list = new ArrayList<>(r.stream().distinct().toList());
         if (!list.contains("ROLE_USER")) list.add(0, "ROLE_USER");
@@ -122,10 +123,8 @@ public class User {
 
     public String getFirstName()        { return firstName; }
     public void setFirstName(String v)  { this.firstName = v; }
-
     public String getLastName()         { return lastName; }
     public void setLastName(String v)   { this.lastName = v; }
-
     public String getFullName()         { return firstName + " " + lastName; }
 
     public String getStatus()           { return status; }
@@ -150,10 +149,6 @@ public class User {
     public String getLastPaymentStatus()       { return lastPaymentStatus; }
     public void setLastPaymentStatus(String v) { this.lastPaymentStatus = v; }
 
-    /**
-     * Only place that writes isPremium — mirrors Symfony's updatePremiumStatus().
-     * Also called from @PostLoad so the value is always fresh after a DB read.
-     */
     void updatePremiumStatus() {
         this.isPremium =
                 ("MONTHLY".equals(subscriptionPlan) || "YEARLY".equals(subscriptionPlan))

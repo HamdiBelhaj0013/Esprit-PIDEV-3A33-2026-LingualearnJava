@@ -2,48 +2,40 @@ package org.example.controller.admin;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
-import org.example.entity.LearningStats;
 import org.example.entity.User;
 import org.example.service.UserService;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.layout.HBox;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class UserListController {
 
-    // ── FXML refs ──────────────────────────────────────────────────────────────
-    @FXML private TextField  searchField;
+    // ── FXML refs ─────────────────────────────────────────────────────────────
+    @FXML private TextField        searchField;
     @FXML private ComboBox<String> statusFilter;
     @FXML private ComboBox<String> roleFilter;
     @FXML private ComboBox<String> planFilter;
     @FXML private ComboBox<String> sortCombo;
 
-    @FXML private TableView<User>            userTable;
-    @FXML private TableColumn<User, Boolean> colSelect;
-    @FXML private TableColumn<User, Long>    colId;
-    @FXML private TableColumn<User, String>  colName;
-    @FXML private TableColumn<User, String>  colEmail;
-    @FXML private TableColumn<User, String>  colStatus;
-    @FXML private TableColumn<User, String>  colPlan;
-    @FXML private TableColumn<User, Boolean> colPremium;
+    @FXML private TableView<User>                 userTable;
+    @FXML private TableColumn<User, Boolean>      colSelect;
+    @FXML private TableColumn<User, Long>         colId;
+    @FXML private TableColumn<User, String>       colName;
+    @FXML private TableColumn<User, String>       colEmail;
+    @FXML private TableColumn<User, String>       colStatus;
+    @FXML private TableColumn<User, String>       colPlan;
+    @FXML private TableColumn<User, Boolean>      colPremium;
     @FXML private TableColumn<User, LocalDateTime> colJoined;
-    @FXML private TableColumn<User, Void>    colActions;
+    @FXML private TableColumn<User, Void>         colActions;
 
     @FXML private Label  countLabel;
     @FXML private Label  pageLabel;
@@ -53,18 +45,18 @@ public class UserListController {
     @FXML private Button bulkSuspendBtn;
     @FXML private Button bulkDeleteBtn;
 
-    // ── State ──────────────────────────────────────────────────────────────────
-    private AdminMainController      mainController;
-    private EntityManagerFactory     emf;
+    // ── State ─────────────────────────────────────────────────────────────────
+    private AdminMainController  mainController;
+    private EntityManagerFactory emf;
 
-    private final Set<Long>          selected  = new HashSet<>();
-    private int                      page      = 1;
-    private static final int         PAGE_SIZE = 20;
-    private long                     totalCount = 0;
+    private final Set<Long> selected  = new HashSet<>();
+    private int             page      = 1;
+    private static final int PAGE_SIZE = 20;
+    private long            totalCount = 0;
 
-    // ── Init ───────────────────────────────────────────────────────────────────
+    // ── Init ──────────────────────────────────────────────────────────────────
 
-    public void setMainController(AdminMainController mc)  { this.mainController = mc; }
+    public void setMainController(AdminMainController mc)       { this.mainController = mc; }
     public void setEntityManagerFactory(EntityManagerFactory e) { this.emf = e; }
 
     public void load() {
@@ -75,23 +67,23 @@ public class UserListController {
 
     private void initFilters() {
         statusFilter.setItems(FXCollections.observableArrayList(
-            "All", "active", "suspended", "deleted"));
+                "All", "active", "suspended", "deleted"));
         statusFilter.getSelectionModel().selectFirst();
 
         roleFilter.setItems(FXCollections.observableArrayList(
-            "All", "ROLE_USER", "ROLE_ADMIN", "ROLE_TEACHER"));
+                "All", "ROLE_USER", "ROLE_ADMIN", "ROLE_TEACHER"));
         roleFilter.getSelectionModel().selectFirst();
 
         planFilter.setItems(FXCollections.observableArrayList(
-            "All", "FREE", "MONTHLY", "YEARLY"));
+                "All", "FREE", "MONTHLY", "YEARLY"));
         planFilter.getSelectionModel().selectFirst();
 
         sortCombo.setItems(FXCollections.observableArrayList(
-            "Recent", "Name A→Z", "Email A→Z", "Status", "Premium first"));
+                "Recent", "Name A→Z", "Email A→Z", "Status", "Premium first"));
         sortCombo.getSelectionModel().selectFirst();
     }
 
-    // ── Columns ────────────────────────────────────────────────────────────────
+    // ── Columns ───────────────────────────────────────────────────────────────
 
     private void setupColumns() {
         userTable.setEditable(true);
@@ -112,19 +104,19 @@ public class UserListController {
 
         // ID
         colId.setCellValueFactory(c ->
-            new javafx.beans.property.SimpleLongProperty(c.getValue().getId()).asObject());
+                new javafx.beans.property.SimpleLongProperty(c.getValue().getId()).asObject());
 
         // Full name
         colName.setCellValueFactory(c ->
-            new SimpleStringProperty(c.getValue().getFullName()));
+                new SimpleStringProperty(c.getValue().getFullName()));
 
         // Email
         colEmail.setCellValueFactory(c ->
-            new SimpleStringProperty(c.getValue().getEmail()));
+                new SimpleStringProperty(c.getValue().getEmail()));
 
         // Status badge
         colStatus.setCellValueFactory(c ->
-            new SimpleStringProperty(c.getValue().getStatus()));
+                new SimpleStringProperty(c.getValue().getStatus()));
         colStatus.setCellFactory(col -> new TableCell<>() {
             @Override protected void updateItem(String s, boolean empty) {
                 super.updateItem(s, empty);
@@ -138,7 +130,7 @@ public class UserListController {
 
         // Plan
         colPlan.setCellValueFactory(c ->
-            new SimpleStringProperty(c.getValue().getSubscriptionPlan()));
+                new SimpleStringProperty(c.getValue().getSubscriptionPlan()));
         colPlan.setCellFactory(col -> new TableCell<>() {
             @Override protected void updateItem(String s, boolean empty) {
                 super.updateItem(s, empty);
@@ -152,21 +144,21 @@ public class UserListController {
 
         // Premium
         colPremium.setCellValueFactory(c ->
-            new SimpleBooleanProperty(c.getValue().isPremium()).asObject());
+                new SimpleBooleanProperty(c.getValue().isPremium()).asObject());
         colPremium.setCellFactory(col -> new TableCell<>() {
             @Override protected void updateItem(Boolean b, boolean empty) {
                 super.updateItem(b, empty);
                 if (empty || b == null) { setText(null); return; }
                 setText(b ? "★ Yes" : "—");
                 setStyle(b ? "-fx-text-fill: #856404; -fx-font-weight: bold;"
-                           : "-fx-text-fill: #adb5bd;");
+                        : "-fx-text-fill: #adb5bd;");
             }
         });
 
         // Joined date
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         colJoined.setCellValueFactory(c ->
-            new javafx.beans.property.SimpleObjectProperty<>(c.getValue().getCreatedAt()));
+                new javafx.beans.property.SimpleObjectProperty<>(c.getValue().getCreatedAt()));
         colJoined.setCellFactory(col -> new TableCell<>() {
             @Override protected void updateItem(LocalDateTime dt, boolean empty) {
                 super.updateItem(dt, empty);
@@ -207,7 +199,7 @@ public class UserListController {
         });
     }
 
-    // ── Data loading ───────────────────────────────────────────────────────────
+    // ── Data loading ──────────────────────────────────────────────────────────
 
     private void refresh() {
         selected.clear();
@@ -224,7 +216,6 @@ public class UserListController {
             UserService svc = new UserService(em);
             totalCount = svc.countAdvanced(search, status, role, plan);
             List<User> users = svc.findAdvanced(search, status, role, plan, sort, page, PAGE_SIZE);
-
             userTable.setItems(FXCollections.observableArrayList(users));
             updatePagination();
         } finally {
@@ -241,11 +232,11 @@ public class UserListController {
         String s = sortCombo.getValue();
         if (s == null) return null;
         return switch (s) {
-            case "Name A→Z"     -> "name";
-            case "Email A→Z"    -> "email";
-            case "Status"       -> "status";
-            case "Premium first"-> "premium";
-            default             -> null;
+            case "Name A→Z"      -> "name";
+            case "Email A→Z"     -> "email";
+            case "Status"        -> "status";
+            case "Premium first" -> "premium";
+            default              -> null;
         };
     }
 
@@ -264,9 +255,10 @@ public class UserListController {
         bulkDeleteBtn.setDisable(!hasSelection);
     }
 
-    // ── FXML handlers ──────────────────────────────────────────────────────────
+    // ── FXML handlers ─────────────────────────────────────────────────────────
 
     @FXML private void handleApplyFilters(ActionEvent e) { page = 1; refresh(); }
+
     @FXML private void handleClearFilters(ActionEvent e) {
         searchField.clear();
         statusFilter.getSelectionModel().selectFirst();
@@ -276,6 +268,7 @@ public class UserListController {
         page = 1;
         refresh();
     }
+
     @FXML private void handleRefresh(ActionEvent e)  { refresh(); }
     @FXML private void handlePrevPage(ActionEvent e) { if (page > 1) { page--; refresh(); } }
     @FXML private void handleNextPage(ActionEvent e) {
@@ -304,8 +297,8 @@ public class UserListController {
 
     private void handleDeleteUser(User user) {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
-            "Delete " + user.getFullName() + "?\nThis cannot be undone.",
-            ButtonType.OK, ButtonType.CANCEL);
+                "Delete " + user.getFullName() + "?\nThis cannot be undone.",
+                ButtonType.OK, ButtonType.CANCEL);
         confirm.setHeaderText("Confirm Deletion");
         confirm.showAndWait().ifPresent(btn -> {
             if (btn == ButtonType.OK) {
@@ -326,7 +319,7 @@ public class UserListController {
     // ── Bulk actions ──────────────────────────────────────────────────────────
 
     @FXML private void handleBulkActivate(ActionEvent e) {
-        applyBulkAction("Activate", u -> {
+        applyBulkAction(u -> {
             EntityManager em = emf.createEntityManager();
             try { new UserService(em).activateUser(u); }
             finally { em.close(); }
@@ -334,7 +327,7 @@ public class UserListController {
     }
 
     @FXML private void handleBulkSuspend(ActionEvent e) {
-        applyBulkAction("Suspend", u -> {
+        applyBulkAction(u -> {
             EntityManager em = emf.createEntityManager();
             try { new UserService(em).suspendUser(u); }
             finally { em.close(); }
@@ -343,12 +336,12 @@ public class UserListController {
 
     @FXML private void handleBulkDelete(ActionEvent e) {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
-            "Delete " + selected.size() + " selected user(s)? This cannot be undone.",
-            ButtonType.OK, ButtonType.CANCEL);
+                "Delete " + selected.size() + " selected user(s)? This cannot be undone.",
+                ButtonType.OK, ButtonType.CANCEL);
         confirm.setHeaderText("Confirm Bulk Delete");
         confirm.showAndWait().ifPresent(btn -> {
             if (btn == ButtonType.OK) {
-                applyBulkAction("Delete", u -> {
+                applyBulkAction(u -> {
                     EntityManager em = emf.createEntityManager();
                     try { new UserService(em).deleteUser(u); }
                     finally { em.close(); }
@@ -357,17 +350,15 @@ public class UserListController {
         });
     }
 
-    private void applyBulkAction(String label, java.util.function.Consumer<User> action) {
+    private void applyBulkAction(java.util.function.Consumer<User> action) {
         EntityManager em = emf.createEntityManager();
         try {
             UserService svc = new UserService(em);
-            List<Long> ids = new ArrayList<>(selected);
-            for (Long id : ids) {
-                svc.findById(id).ifPresent(u -> {
-                    try { action.accept(u); }
-                    catch (Exception ex) { /* skip individual failures */ }
-                });
-            }
+            new ArrayList<>(selected).forEach(id ->
+                    svc.findById(id).ifPresent(u -> {
+                        try { action.accept(u); }
+                        catch (Exception ex) { /* skip */ }
+                    }));
         } finally {
             em.close();
         }
