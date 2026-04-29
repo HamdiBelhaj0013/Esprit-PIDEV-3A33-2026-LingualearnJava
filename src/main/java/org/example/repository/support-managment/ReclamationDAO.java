@@ -21,17 +21,28 @@ public class ReclamationDAO {
         r.setPriority(rs.getString("priority"));
         Timestamp t = rs.getTimestamp("submitted_at");
         if (t != null) r.setSubmittedAt(t.toLocalDateTime());
+        // ✅ Ajout sla_deadline
+        Timestamp sla = rs.getTimestamp("sla_deadline");
+        if (sla != null) r.setSlaDeadline(sla.toLocalDateTime());
         return r;
     }
 
+    // ✅ INSERT avec sla_deadline
     public boolean ajouter(Reclamation r) {
-        String sql = "INSERT INTO reclamation (subject, message_body, status, submitted_at, user_id, priority) VALUES (?, ?, 'PENDING', ?, ?, ?)";
+        String sql = "INSERT INTO reclamation " +
+                     "(subject, message_body, status, submitted_at, user_id, priority, sla_deadline) " +
+                     "VALUES (?, ?, 'PENDING', ?, ?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, r.getSubject());
             ps.setString(2, r.getMessageBody());
             ps.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
             ps.setInt(4, r.getUserId());
             ps.setString(5, r.getPriority());
+            // SLA
+            if (r.getSlaDeadline() != null)
+                ps.setTimestamp(6, Timestamp.valueOf(r.getSlaDeadline()));
+            else
+                ps.setNull(6, Types.TIMESTAMP);
             ps.executeUpdate();
             return true;
         } catch (SQLException e) {
@@ -56,7 +67,8 @@ public class ReclamationDAO {
     public List<Reclamation> getAll() {
         List<Reclamation> list = new ArrayList<>();
         String sql = "SELECT * FROM reclamation ORDER BY submitted_at DESC";
-        try (Statement st = conn.createStatement(); ResultSet rs = st.executeQuery(sql)) {
+        try (Statement st = conn.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
             while (rs.next()) list.add(map(rs));
         } catch (SQLException e) {
             System.out.println("Erreur getAll: " + e.getMessage());
@@ -65,12 +77,18 @@ public class ReclamationDAO {
     }
 
     public boolean modifier(Reclamation r) {
-        String sql = "UPDATE reclamation SET subject=?, message_body=?, priority=? WHERE id=? AND status='PENDING'";
+        // ✅ Recalcule aussi le SLA lors de la modification
+        String sql = "UPDATE reclamation SET subject=?, message_body=?, priority=?, sla_deadline=? " +
+                     "WHERE id=? AND status='PENDING'";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, r.getSubject());
             ps.setString(2, r.getMessageBody());
             ps.setString(3, r.getPriority());
-            ps.setInt(4, r.getId());
+            if (r.getSlaDeadline() != null)
+                ps.setTimestamp(4, Timestamp.valueOf(r.getSlaDeadline()));
+            else
+                ps.setNull(4, Types.TIMESTAMP);
+            ps.setInt(5, r.getId());
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             System.out.println("Erreur modifier: " + e.getMessage());
@@ -112,4 +130,3 @@ public class ReclamationDAO {
         }
     }
 }
-

@@ -10,6 +10,7 @@
   <HBox styleClass="header-bar secondary" alignment="CENTER_LEFT">
     <Label text="LinguaLearn - Administration" styleClass="header-title"/>
     <Region HBox.hgrow="ALWAYS"/>
+    <Label fx:id="slaTimerLabel" text="" styleClass="stat-label"/>
     <Button text="Gerer les FAQ" onAction="#ouvrirGestionFAQ" styleClass="btn-light"/>
   </HBox>
 
@@ -25,6 +26,18 @@
     <VBox styleClass="stat-card success" HBox.hgrow="ALWAYS">
       <Label text="Resolues" styleClass="stat-label"/>
       <Label fx:id="statResolved" text="-" styleClass="stat-value"/>
+    </VBox>
+    <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+      <Label text="Urgent" styleClass="stat-label"/>
+      <Label fx:id="statUrgent" text="0" styleClass="stat-value"/>
+    </VBox>
+    <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+      <Label text="High" styleClass="stat-label"/>
+      <Label fx:id="statHigh" text="0" styleClass="stat-value"/>
+    </VBox>
+    <VBox styleClass="stat-card warning" HBox.hgrow="ALWAYS">
+      <Label text="En retard" styleClass="stat-label"/>
+      <Label fx:id="statLate" text="0" styleClass="stat-value"/>
     </VBox>
   </HBox>
 
@@ -47,13 +60,18 @@
           <TableColumn fx:id="rColStatus" text="Statut" prefWidth="115"/>
           <TableColumn fx:id="rColPriority" text="Priorite" prefWidth="85"/>
           <TableColumn fx:id="rColDate" text="Date" prefWidth="145"/>
+          <TableColumn fx:id="rColSLA" text="SLA Restant" prefWidth="120"/>
         </columns>
         <placeholder><Label text="Aucune reclamation." styleClass="hint-label"/></placeholder>
       </TableView>
-      <HBox spacing="8" styleClass="toolbar-row">
+      <HBox spacing="8" styleClass="toolbar-row" alignment="CENTER_LEFT">
         <ComboBox fx:id="statutBox" promptText="Nouveau statut" prefWidth="155"/>
         <Button text="Changer statut" onAction="#changerStatut" styleClass="btn-secondary"/>
         <Button text="Supprimer" onAction="#supprimer" styleClass="btn-danger"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="btnPrev" text="◀" onAction="#pagePrecedente" styleClass="btn-light"/>
+        <Label fx:id="labelPage" text="Page 1 / 1" styleClass="hint-label"/>
+        <Button fx:id="btnNext" text="▶" onAction="#pageSuivante" styleClass="btn-light"/>
       </HBox>
     </VBox>
 
@@ -65,6 +83,8 @@
       <Label fx:id="reponseMsg"/>
       <Label text="Historique" styleClass="hint-label"/>
       <ListView fx:id="reponsesList" prefHeight="80" styleClass="clean-list"/>
+      <Label text="Historique (Audit Logs)" styleClass="hint-label"/>
+      <ListView fx:id="historiqueList" prefHeight="60" styleClass="clean-list"/>
     </VBox>
 
   </VBox>
