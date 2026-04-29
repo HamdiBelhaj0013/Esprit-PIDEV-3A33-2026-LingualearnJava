@@ -1,7 +1,7 @@
 package org.example.service.supportManagment;
 
 import org.example.entity.FAQ;
-import org.example.repository.FAQDAO;
+import org.example.repository.supportmanagement.FAQDAO;  // ✅ CORRIGÉ
 import java.util.List;
 
 public class FAQServiceImpl implements IFAQService {

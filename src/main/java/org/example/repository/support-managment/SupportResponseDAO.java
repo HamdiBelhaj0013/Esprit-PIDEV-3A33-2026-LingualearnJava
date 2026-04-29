@@ -9,16 +9,21 @@ import java.util.List;
 
 public class SupportResponseDAO {
 
-    private Connection conn = org.example.util.MyDataBase.getInstance().getConnection();
+    // ✅ PLUS de champ conn partagé
 
     public boolean ajouter(SupportResponse sr) {
-        String sql = "INSERT INTO support_response (message, responded_at, reclamation_id, author_id) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        String sql = "INSERT INTO support_response (message, responded_at, reclamation_id, author_id) " +
+                "VALUES (?, ?, ?, ?)";
+        try (Connection conn = org.example.util.MyDataBase.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, sr.getMessage());
             ps.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
             ps.setInt(3, sr.getReclamationId());
-            if (sr.getAuthorId() != null) ps.setInt(4, sr.getAuthorId());
-            else ps.setNull(4, Types.INTEGER);
+            // ✅ FK fix : si authorId est null ou 0 → on met NULL en DB
+            if (sr.getAuthorId() != null && sr.getAuthorId() != 0)
+                ps.setInt(4, sr.getAuthorId());
+            else
+                ps.setNull(4, Types.INTEGER);
             ps.executeUpdate();
             return true;
         } catch (SQLException e) {
@@ -30,7 +35,8 @@ public class SupportResponseDAO {
     public List<SupportResponse> getByReclamationId(int reclamationId) {
         List<SupportResponse> list = new ArrayList<>();
         String sql = "SELECT * FROM support_response WHERE reclamation_id=? ORDER BY responded_at ASC";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = org.example.util.MyDataBase.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, reclamationId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {

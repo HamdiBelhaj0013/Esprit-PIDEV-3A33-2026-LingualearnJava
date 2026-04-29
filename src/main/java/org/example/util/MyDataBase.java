@@ -7,24 +7,12 @@ import java.sql.SQLException;
 public class MyDataBase {
 
     private static MyDataBase instance;
-    private Connection connection;
 
     private final String URL      = "jdbc:mysql://localhost:3306/1lingualearn_db?autoReconnect=true&useSSL=false";
     private final String USER     = "root";
     private final String PASSWORD = "";
 
-    private MyDataBase() {
-        connect();
-    }
-
-    private void connect() {
-        try {
-            connection = DriverManager.getConnection(URL, USER, PASSWORD);
-            System.out.println("Connexion établie !");
-        } catch (SQLException e) {
-            System.out.println("Erreur connexion: " + e.getMessage());
-        }
-    }
+    private MyDataBase() {}
 
     public static MyDataBase getInstance() {
         if (instance == null) {
@@ -33,28 +21,16 @@ public class MyDataBase {
         return instance;
     }
 
-    // ✅ Vérifie et reconnecte automatiquement si connexion fermée
+    // ✅ Crée une NOUVELLE connexion à chaque appel — à utiliser dans try-with-resources
     public Connection getConnection() {
         try {
-            if (connection == null || connection.isClosed() || !connection.isValid(2)) {
-                System.out.println("Reconnexion à la base de données...");
-                connect();
-            }
+            return DriverManager.getConnection(URL, USER, PASSWORD);
         } catch (SQLException e) {
-            System.out.println("Erreur vérification connexion: " + e.getMessage());
-            connect();
+            System.out.println("Erreur connexion: " + e.getMessage());
+            return null;
         }
-        return connection;
     }
 
-    public void closeConnection() {
-        try {
-            if (connection != null && !connection.isClosed()) {
-                connection.close();
-                System.out.println("Connexion fermée !");
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-    }
+    // Gardé pour compatibilité si utilisé ailleurs
+    public void closeConnection() {}
 }
