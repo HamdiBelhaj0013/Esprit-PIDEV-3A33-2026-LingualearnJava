@@ -5,16 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c62684bd-7db6-4266-8409-2a36624f041e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/support-managment/ReclamationDetailController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/admin/reclamation_detail.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user-managment/Reclamationuserdetailcontroller" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/user/reclamation_user_detail.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/LoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/LoginController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/support-managment/AdminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/support-managment/AdminController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/repository/support-managment/ReclamationDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/repository/support-managment/ReclamationDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/repository/support-managment/SupportResponseDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/repository/support-managment/SupportResponseDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/support-managment/FAQServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/support-managment/FAQServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/util/MyDataBase.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/util/MyDataBase.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/admin/admin_view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/admin/admin_view.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/support-managment/ReclamationDetailController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/support-managment/ReclamationDetailController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/user/support-managment/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/user/support-managment/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/user/user_view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/user/user_view.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,6 +55,7 @@
     "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "Application.App.executor": "Run",
     "Application.Main.executor": "Run",
+    "Maven.JavaFX Run (Maven).executor": "Run",
     "Maven.lingualearn [javafx:run].executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -97,7 +95,7 @@
       <recent name="C:\Users\belha\OneDrive\Bureau\LingualearnJava\src\main\java\org\example\entity" />
     </key>
   </component>
-  <component name="RunManager" selected="Maven.lingualearn [javafx:run]">
+  <component name="RunManager" selected="Maven.JavaFX Run (Maven)">
     <configuration name="lingualearn [javafx:run]" type="MavenRunConfiguration" factoryName="Maven" nameIsGenerated="true">
       <MavenSettings>
         <option name="myGeneralSettings" />

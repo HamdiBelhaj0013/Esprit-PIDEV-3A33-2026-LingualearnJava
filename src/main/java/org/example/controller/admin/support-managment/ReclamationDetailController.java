@@ -9,6 +9,7 @@ import org.example.entity.Reclamation;
 import org.example.entity.SupportResponse;
 import org.example.repository.supportmanagement.ReclamationDAO;
 import org.example.repository.supportmanagement.SupportResponseDAO;
+import org.example.service.supportManagment.PusherService;
 import org.example.util.MyDataBase;
 import org.example.util.Session;
 
@@ -131,9 +132,7 @@ public class ReclamationDetailController implements Initializable {
         }
         lastResponseTime = LocalDateTime.now();
 
-        // ✅ Utilise Session.getCurrentUserId() directement
         int adminId = Session.getCurrentUserId();
-
         SupportResponse sr = new SupportResponse(msg, reclamation.getId(), adminId);
         responseDao.ajouter(sr);
 
@@ -144,6 +143,11 @@ public class ReclamationDetailController implements Initializable {
             reclamation.setStatus("IN_PROGRESS");
         } else {
             logAudit("RESPONSE_ADDED", "Réponse ajoutée", null, null);
+        }
+
+        // ✅ Notification Pusher — une seule fois
+        if (reclamation.getUserId() != 0) {
+            PusherService.notifierUser(reclamation.getUserId(), reclamation.getSubject());
         }
 
         reponseField.clear();
@@ -199,9 +203,7 @@ public class ReclamationDetailController implements Initializable {
     }
 
     private void logAudit(String action, String description, String oldVal, String newVal) {
-        // ✅ Utilise Session.getCurrentUserId() directement — jamais null
         int adminId = Session.getCurrentUserId();
-
         String sql = "INSERT INTO support_audit_logs " +
                 "(action, description, created_at, old_value, new_value, reclamation_id, performed_by_id) " +
                 "VALUES (?, ?, NOW(), ?, ?, ?, ?)";
@@ -212,7 +214,6 @@ public class ReclamationDetailController implements Initializable {
             ps.setString(3, oldVal);
             ps.setString(4, newVal);
             ps.setInt(5, reclamation.getId());
-            // ✅ FK fix : si adminId=0 → NULL
             if (adminId != 0) ps.setInt(6, adminId);
             else              ps.setNull(6, Types.INTEGER);
             ps.executeUpdate();
