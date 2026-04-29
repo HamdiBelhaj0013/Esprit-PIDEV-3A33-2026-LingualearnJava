@@ -53,8 +53,8 @@
       <Button text="Tout voir" onAction="#charger" styleClass="btn-light"/>
     </HBox>
 
-    <VBox styleClass="card">
-      <TableView fx:id="reclTable" prefHeight="190" styleClass="clean-table">
+    <VBox styleClass="card" VBox.vgrow="ALWAYS">
+      <TableView fx:id="reclTable" minHeight="300" prefHeight="400" styleClass="clean-table" VBox.vgrow="ALWAYS">
         <columns>
           <TableColumn fx:id="rColSubject" text="Sujet" prefWidth="185"/>
           <TableColumn fx:id="rColStatus" text="Statut" prefWidth="115"/>
