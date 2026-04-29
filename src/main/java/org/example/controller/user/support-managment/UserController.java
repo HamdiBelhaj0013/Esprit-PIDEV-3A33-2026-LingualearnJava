@@ -67,10 +67,12 @@ public class UserController implements Initializable {
         faqSortBox.setItems(FXCollections.observableArrayList("Date desc", "Date asc", "Question A-Z"));
         faqSortBox.setValue("Date desc");
 
-        rColSubject.setCellValueFactory(new PropertyValueFactory<>("subject"));
-        rColStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
-        rColPriority.setCellValueFactory(new PropertyValueFactory<>("priority"));
-        rColDate.setCellValueFactory(new PropertyValueFactory<>("submittedAt"));
+        rColSubject.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getSubject()));
+        rColStatus.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getStatus()));
+        rColPriority.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getPriority()));
+        rColDate.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(
+            cellData.getValue().getSubmittedAt() != null ? cellData.getValue().getSubmittedAt().toString().replace("T", " ").substring(0, 16) : ""
+        ));
 
         reclTable.getSelectionModel().selectedItemProperty().addListener(
             (obs, old, sel) -> {
@@ -82,9 +84,9 @@ public class UserController implements Initializable {
             }
         );
 
-        fColQuestion.setCellValueFactory(new PropertyValueFactory<>("question"));
-        fColAnswer.setCellValueFactory(new PropertyValueFactory<>("answer"));
-        fColCategory.setCellValueFactory(new PropertyValueFactory<>("category"));
+        fColQuestion.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getQuestion()));
+        fColAnswer.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getAnswer()));
+        fColCategory.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getCategory()));
 
         chargerReclamations();
         chargerFAQ();

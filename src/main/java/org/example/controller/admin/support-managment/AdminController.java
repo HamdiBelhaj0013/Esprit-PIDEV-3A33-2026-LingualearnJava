@@ -34,7 +34,7 @@ public class AdminController implements Initializable {
     @FXML private TableColumn<Reclamation,String> rColStatus;
     @FXML private TableColumn<Reclamation,String> rColPriority;
     @FXML private TableColumn<Reclamation,String> rColDate;
-    @FXML private TableColumn<Reclamation, LocalDateTime> rColSLA;      // ← nouveau
+    @FXML private TableColumn<Reclamation, String> rColSLA;      // ← nouveau
 
     // ── Filtres ────────────────────────────────────────────────────────────
     @FXML private ComboBox<String> filtreStatut;
@@ -96,29 +96,18 @@ public class AdminController implements Initializable {
     // ══════════════════════════════════════════════════════════════════════
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        rColSubject.setCellValueFactory(new PropertyValueFactory<>("subject"));
-        rColStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
-        rColPriority.setCellValueFactory(new PropertyValueFactory<>("priority"));
-        rColDate.setCellValueFactory(new PropertyValueFactory<>("submittedAt"));
+        rColSubject.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getSubject()));
+        rColStatus.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getStatus()));
+        rColPriority.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getPriority()));
+        rColDate.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(
+            cellData.getValue().getSubmittedAt() != null ? cellData.getValue().getSubmittedAt().toString().replace("T", " ").substring(0, 16) : ""
+        ));
 
         // Colonne SLA restant
         if (rColSLA != null) {
-            rColSLA.setCellFactory(col -> new TableCell<Reclamation, LocalDateTime>() {
-                @Override protected void updateItem(LocalDateTime item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (empty || getTableRow() == null || getTableRow().getItem() == null) {
-                        setText(null); setStyle("");
-                        return;
-                    }
-                    Reclamation r = (Reclamation) getTableRow().getItem();
-                    setText(formatSLA(r));
-                    setStyle(isSLALate(r) ? "-fx-text-fill: red; -fx-font-weight:bold;"
-                                          : "-fx-text-fill: green;");
-                }
-            });
             rColSLA.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleObjectProperty<>(
-                    cellData.getValue().getSlaDeadline()));
+                new javafx.beans.property.SimpleStringProperty(
+                    formatSLA(cellData.getValue())));
         }
 
         filtreStatut.setItems(FXCollections.observableArrayList(
@@ -150,8 +139,28 @@ public class AdminController implements Initializable {
     // ── Charger toutes les réclamations ───────────────────────────────────
     @FXML public void charger() {
         reclamationCache = reclDao.getAll();
-        appliquerFiltresEtTri();
-        mettreAJourStats();
+        
+        // Stats
+        statTotal.setText(String.valueOf(reclamationCache.size()));
+        statPending.setText(String.valueOf(
+            reclamationCache.stream().filter(r -> "PENDING".equals(r.getStatus())).count()));
+        statResolved.setText(String.valueOf(
+            reclamationCache.stream().filter(r -> "RESOLVED".equals(r.getStatus())).count()));
+        if (statUrgent != null)
+            statUrgent.setText(String.valueOf(
+                reclamationCache.stream().filter(r -> "URGENT".equals(r.getPriority())).count()));
+        if (statHigh != null)
+            statHigh.setText(String.valueOf(
+                reclamationCache.stream().filter(r -> "HIGH".equals(r.getPriority())).count()));
+        if (statLate != null)
+            statLate.setText(String.valueOf(
+                reclamationCache.stream().filter(this::isSLALate).count()));
+
+        // ✅ filteredCache correctement rempli
+        filteredCache = new ArrayList<>(reclamationCache);
+        currentPage = 1;
+        afficherPage();
+
         reponsesList.getItems().clear();
         reponseMsg.setText("");
         if (historiqueList != null) historiqueList.getItems().clear();
