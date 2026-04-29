@@ -13,6 +13,7 @@ import org.example.controller.admin.AdminMainController;
 import org.example.controller.user.UserMainController;
 import org.example.entity.User;
 import org.example.service.UserService;
+import org.example.util.Session;
 import org.example.util.StageManager;
 
 import java.io.IOException;
@@ -21,7 +22,7 @@ import java.util.regex.Pattern;
 public class LoginController {
 
     private static final Pattern EMAIL_PATTERN =
-        Pattern.compile("^[\\w._%+\\-]+@[\\w.\\-]+\\.[a-zA-Z]{2,}$");
+            Pattern.compile("^[\\w._%+\\-]+@[\\w.\\-]+\\.[a-zA-Z]{2,}$");
 
     @FXML private TextField     emailField;
     @FXML private PasswordField passwordField;
@@ -66,6 +67,11 @@ public class LoginController {
 
             User user    = userOpt.get();
             boolean isAdmin = user.getRoles().contains("ROLE_ADMIN");
+
+            // ✅ CORRIGÉ : set la session avec le vrai ID de l'utilisateur connecté
+            String role = isAdmin ? "ROLE_ADMIN" : "ROLE_USER";
+            Session.setCurrentUser(user.getId().intValue(), role);
+
             navigateToDashboard(user, isAdmin);
 
         } catch (Exception e) {
@@ -87,7 +93,7 @@ public class LoginController {
 
         if (isAdmin) {
             FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/fxml/admin/AdminMain.fxml"));
+                    getClass().getResource("/fxml/admin/AdminMain.fxml"));
             Parent root = loader.load();
             AdminMainController ctrl = loader.getController();
             ctrl.setUser(user);
@@ -97,7 +103,7 @@ public class LoginController {
             stage.setMinHeight(700);
         } else {
             FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/fxml/user/UserMain.fxml"));
+                    getClass().getResource("/fxml/user/UserMain.fxml"));
             Parent root = loader.load();
             UserMainController ctrl = loader.getController();
             ctrl.setUser(user);
