@@ -10,6 +10,7 @@ public class Reclamation {
     private LocalDateTime submittedAt;
     private int userId;
     private String priority;
+    private LocalDateTime slaDeadline;
 
     public Reclamation() {}
 
@@ -42,6 +43,9 @@ public class Reclamation {
 
     public String getPriority() { return priority; }
     public void setPriority(String p) { this.priority = p; }
+
+    public LocalDateTime getSlaDeadline() { return slaDeadline; }
+    public void setSlaDeadline(LocalDateTime s) { this.slaDeadline = s; }
 
     @Override
     public String toString() { return subject + " [" + status + "]"; }

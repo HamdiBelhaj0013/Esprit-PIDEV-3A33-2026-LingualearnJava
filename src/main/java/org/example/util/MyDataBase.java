@@ -9,16 +9,20 @@ public class MyDataBase {
     private static MyDataBase instance;
     private Connection connection;
 
-    private final String URL      = "jdbc:mysql://localhost:3306/1lingualearn_db";
+    private final String URL      = "jdbc:mysql://localhost:3306/1lingualearn_db?autoReconnect=true&useSSL=false";
     private final String USER     = "root";
     private final String PASSWORD = "";
 
     private MyDataBase() {
+        connect();
+    }
+
+    private void connect() {
         try {
             connection = DriverManager.getConnection(URL, USER, PASSWORD);
             System.out.println("Connexion établie !");
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Erreur connexion: " + e.getMessage());
         }
     }
 
@@ -29,7 +33,17 @@ public class MyDataBase {
         return instance;
     }
 
+    // ✅ Vérifie et reconnecte automatiquement si connexion fermée
     public Connection getConnection() {
+        try {
+            if (connection == null || connection.isClosed() || !connection.isValid(2)) {
+                System.out.println("Reconnexion à la base de données...");
+                connect();
+            }
+        } catch (SQLException e) {
+            System.out.println("Erreur vérification connexion: " + e.getMessage());
+            connect();
+        }
         return connection;
     }
 

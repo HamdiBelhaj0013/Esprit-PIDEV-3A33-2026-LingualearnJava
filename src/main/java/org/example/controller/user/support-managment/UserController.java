@@ -19,6 +19,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
+import java.time.LocalDateTime;
+import org.example.service.supportManagment.BadWordsFilter;
+import org.example.service.supportManagment.PriorityDetector;
 
 public class UserController implements Initializable {
 
@@ -50,6 +53,9 @@ public class UserController implements Initializable {
     private final SupportResponseDAO responseDao = new SupportResponseDAO();
     private List<Reclamation> reclamationCache = new ArrayList<>();
     private List<FAQ> faqCache = new ArrayList<>();
+
+    // Anti-spam : historique des soumissions par user
+    private final List<LocalDateTime> submissionTimes = new ArrayList<>();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -107,24 +113,78 @@ public class UserController implements Initializable {
     @FXML public void soumettre() {
         String subject = subjectField.getText().trim();
         String message = messageField.getText().trim();
-        String priority = priorityBox.getValue();
+
+        // ── Anti-spam : max 3 réclamations par 5 minutes ──────────────────
+        LocalDateTime maintenant = LocalDateTime.now();
+        LocalDateTime limite = maintenant.minusMinutes(5);
+
+        // Supprimer les anciennes entrées hors fenêtre
+        submissionTimes.removeIf(t -> t.isBefore(limite));
+
+        if (submissionTimes.size() >= 3) {
+            // Calculer le temps restant avant de pouvoir soumettre
+            LocalDateTime prochaine = submissionTimes.get(0).plusMinutes(5);
+            long secondesRestantes = java.time.temporal.ChronoUnit.SECONDS
+                .between(maintenant, prochaine);
+            long min = secondesRestantes / 60;
+            long sec = secondesRestantes % 60;
+            reclErreur("⚠️ Anti-spam : max 3 réclamations / 5 min. "
+                + "Réessayez dans " + min + "m " + sec + "s.");
+            return;
+        }
 
         if (subject.isEmpty()) { reclErreur("Le sujet est obligatoire."); return; }
         if (subject.length() < 5) { reclErreur("Le sujet doit contenir au moins 5 caracteres."); return; }
         if (subject.length() > 100) { reclErreur("Sujet max 100 caracteres."); return; }
         if (message.isEmpty()) { reclErreur("Le message est obligatoire."); return; }
         if (message.length() < 5) { reclErreur("Le message doit contenir au moins 5 caracteres."); return; }
-        if (priority == null) { reclErreur("Choisis une priorite."); return; }
 
-        Reclamation r = new Reclamation(SessionManager.getCurrentUser().getId().intValue(), subject, message, priority);
+        // ⚠️ Vérification bad words AVANT soumission
+        String texte = subject + " " + message;
+        if (BadWordsFilter.containsBadWord(texte)) {
+            // Bannir le user
+            banUserLocally();
+            reclErreur("⚠️ Message refusé : contenu inapproprié. Votre compte a été suspendu.");
+            return;
+        }
+
+        // Priorité détectée automatiquement
+        String priority = PriorityDetector.detect(subject, message);
+
+        Reclamation r = new Reclamation(
+            SessionManager.getCurrentUser().getId().intValue(),
+            subject, message, priority
+        );
+
+        // SLA selon priorité
+        switch (priority) {
+            case "URGENT" -> r.setSlaDeadline(java.time.LocalDateTime.now().plusHours(2));
+            case "HIGH"   -> r.setSlaDeadline(java.time.LocalDateTime.now().plusHours(12));
+            default       -> r.setSlaDeadline(java.time.LocalDateTime.now().plusHours(24));
+        }
+
         if (reclDao.ajouter(r)) {
-            reclSucces("Reclamation soumise.");
+            // ✅ Enregistrer le timestamp de cette soumission
+            submissionTimes.add(maintenant);
+            reclSucces("Reclamation soumise. Priorité détectée : " + priority);
             subjectField.clear();
             messageField.clear();
-            priorityBox.setValue(null);
             chargerReclamations();
         } else {
             reclErreur("Erreur lors de la soumission.");
+        }
+    }
+
+    private void banUserLocally() {
+        String sql = "UPDATE users SET is_banned=1, banned_at=NOW(), " +
+                     "banned_until=DATE_ADD(NOW(), INTERVAL 7 DAY), " +
+                     "ban_reason='Bad word in reclamation' WHERE id=?";
+        try (var conn = org.example.util.MyDataBase.getInstance().getConnection();
+             var ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, SessionManager.getCurrentUser().getId().intValue());
+            ps.executeUpdate();
+        } catch (Exception e) {
+            System.err.println("Ban failed: " + e.getMessage());
         }
     }
 
@@ -137,23 +197,29 @@ public class UserController implements Initializable {
 
         String subject = subjectField.getText().trim();
         String message = messageField.getText().trim();
-        String priority = priorityBox.getValue();
 
         if (subject.isEmpty()) { reclErreur("Le sujet est obligatoire."); return; }
         if (subject.length() < 5) { reclErreur("Le sujet doit contenir au moins 5 caracteres."); return; }
         if (message.isEmpty()) { reclErreur("Le message est obligatoire."); return; }
         if (message.length() < 5) { reclErreur("Le message doit contenir au moins 5 caracteres."); return; }
-        if (priority == null) { reclErreur("Choisis une priorite."); return; }
 
+        // Bad words check
+        if (BadWordsFilter.containsBadWord(subject + " " + message)) {
+            banUserLocally();
+            reclErreur("⚠️ Contenu inapproprié détecté. Compte suspendu.");
+            return;
+        }
+
+        // Priorité recalculée automatiquement
+        String priority = PriorityDetector.detect(subject, message);
         sel.setSubject(subject);
         sel.setMessageBody(message);
         sel.setPriority(priority);
 
         if (reclDao.modifier(sel)) {
-            reclSucces("Reclamation modifiee avec succes.");
+            reclSucces("Reclamation modifiée. Priorité : " + priority);
             subjectField.clear();
             messageField.clear();
-            priorityBox.setValue(null);
             chargerReclamations();
         } else {
             reclErreur("Modification impossible.");
@@ -165,7 +231,6 @@ public class UserController implements Initializable {
         if (sel == null) return;
         subjectField.setText(sel.getSubject());
         messageField.setText(sel.getMessageBody());
-        priorityBox.setValue(sel.getPriority());
     }
 
     @FXML public void supprimer() {
