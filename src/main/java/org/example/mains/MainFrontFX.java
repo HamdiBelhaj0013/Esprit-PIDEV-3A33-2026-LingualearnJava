@@ -12,7 +12,7 @@ public class MainFrontFX extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/views/frontoffice/front-shell.fxml")
+                getClass().getResource("/fxml/user/front-shell.fxml")
         );
 
         Rectangle2D bounds = Screen.getPrimary().getVisualBounds();

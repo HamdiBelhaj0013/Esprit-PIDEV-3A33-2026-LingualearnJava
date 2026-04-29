@@ -1,11 +1,11 @@
 package org.example.mains;
 
-import org.example.entities.Course;
-import org.example.entities.Lesson;
-import org.example.entities.PlatformLanguage;
-import org.example.services.CourseService;
-import org.example.services.LessonService;
-import org.example.services.PlatformLanguageService;
+import org.example.entities.pedagogicalcontent.Course;
+import org.example.entities.pedagogicalcontent.Lesson;
+import org.example.entities.pedagogicalcontent.PlatformLanguage;
+import org.example.service.CourseService;
+import org.example.service.LessonService;
+import org.example.service.PlatformLanguageService;
 
 import java.sql.Timestamp;
 import java.util.List;

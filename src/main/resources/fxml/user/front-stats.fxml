@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.controller.FrontStatsController"
+            fitToWidth="true"
+            hbarPolicy="NEVER"
+            styleClass="front-page-root">
+
+    <content>
+        <VBox spacing="28" style="-fx-background-color:#eef2ff;">
+            <padding><Insets top="32" right="36" bottom="40" left="36"/></padding>
+
+            <!-- ===== HEADER ===== -->
+            <HBox alignment="CENTER_LEFT" spacing="12">
+                <VBox spacing="4">
+                    <Label text="📊  My Statistics" styleClass="front-page-title"/>
+                    <Label text="Track your learning progress and achievements"
+                           styleClass="front-page-subtitle"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="lblLastActivity" styleClass="stats-last-activity"/>
+            </HBox>
+
+            <!-- ===== TOP KPI CARDS ===== -->
+            <GridPane hgap="18" vgap="18">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="ALWAYS" percentWidth="25"/>
+                    <ColumnConstraints hgrow="ALWAYS" percentWidth="25"/>
+                    <ColumnConstraints hgrow="ALWAYS" percentWidth="25"/>
+                    <ColumnConstraints hgrow="ALWAYS" percentWidth="25"/>
+                </columnConstraints>
+
+                <!-- Total XP -->
+                <VBox styleClass="stats-kpi-card stats-kpi-blue"
+                      GridPane.columnIndex="0" GridPane.rowIndex="0">
+                    <Label text="⭐" styleClass="stats-kpi-icon"/>
+                    <Label fx:id="lblTotalXp" text="0" styleClass="stats-kpi-value"/>
+                    <Label text="Total XP Earned" styleClass="stats-kpi-label"/>
+                    <HBox spacing="6" alignment="CENTER_LEFT" style="-fx-padding:8 0 0 0;">
+                        <Label fx:id="lblXpChange" text="+0 this week"
+                               styleClass="stats-kpi-trend-up"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Lessons Completed -->
+                <VBox styleClass="stats-kpi-card stats-kpi-green"
+                      GridPane.columnIndex="1" GridPane.rowIndex="0">
+                    <Label text="📖" styleClass="stats-kpi-icon"/>
+                    <Label fx:id="lblLessonsCompleted" text="0" styleClass="stats-kpi-value"/>
+                    <Label text="Lessons Completed" styleClass="stats-kpi-label"/>
+                    <HBox spacing="6" alignment="CENTER_LEFT" style="-fx-padding:8 0 0 0;">
+                        <Label fx:id="lblLessonsChange" text="+0 this week"
+                               styleClass="stats-kpi-trend-up"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Study Time -->
+                <VBox styleClass="stats-kpi-card stats-kpi-purple"
+                      GridPane.columnIndex="2" GridPane.rowIndex="0">
+                    <Label text="⏱" styleClass="stats-kpi-icon"/>
+                    <Label fx:id="lblStudyTime" text="0 min" styleClass="stats-kpi-value"/>
+                    <Label text="Study Time" styleClass="stats-kpi-label"/>
+                    <HBox spacing="6" alignment="CENTER_LEFT" style="-fx-padding:8 0 0 0;">
+                        <Label fx:id="lblTimeChange" text="+0 min today"
+                               styleClass="stats-kpi-trend-up"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Streak -->
+                <VBox styleClass="stats-kpi-card stats-kpi-orange"
+                      GridPane.columnIndex="3" GridPane.rowIndex="0">
+                    <Label text="🔥" styleClass="stats-kpi-icon"/>
+                    <Label fx:id="lblStreak" text="0" styleClass="stats-kpi-value"/>
+                    <Label text="Day Streak" styleClass="stats-kpi-label"/>
+                    <HBox spacing="6" alignment="CENTER_LEFT" style="-fx-padding:8 0 0 0;">
+                        <Label fx:id="lblStreakMsg" text="Keep it up!"
+                               styleClass="stats-kpi-trend-up"/>
+                    </HBox>
+                </VBox>
+            </GridPane>
+
+            <!-- ===== MIDDLE ROW : Level + Weekly Activity ===== -->
+            <HBox spacing="18">
+
+                <!-- XP Level card -->
+                <VBox styleClass="stats-card" spacing="16" HBox.hgrow="ALWAYS">
+                    <HBox alignment="CENTER_LEFT">
+                        <Label text="🏅  Current Level" styleClass="stats-card-title"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="lblLevelBadge" text="Beginner"
+                               styleClass="stats-level-badge"/>
+                    </HBox>
+
+                    <HBox alignment="CENTER_LEFT" spacing="12">
+                        <Label fx:id="lblLevelXp"  text="0 XP"
+                               style="-fx-font-size:28px;-fx-font-weight:bold;-fx-text-fill:#2563eb;"/>
+                        <VBox spacing="3" HBox.hgrow="ALWAYS">
+                            <HBox alignment="CENTER_LEFT">
+                                <Label fx:id="lblLevelName" text="Level 1"
+                                       style="-fx-font-size:13px;-fx-font-weight:bold;-fx-text-fill:#0f172a;"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="lblLevelNext" text="100 XP to next"
+                                       style="-fx-font-size:11px;-fx-text-fill:#64748b;"/>
+                            </HBox>
+                            <ProgressBar fx:id="levelProgressBar"
+                                         maxWidth="Infinity"
+                                         prefHeight="10"
+                                         progress="0.0"
+                                         styleClass="stats-progress-bar"/>
+                        </VBox>
+                    </HBox>
+
+                    <!-- Level milestones -->
+                    <HBox spacing="8">
+                        <VBox styleClass="stats-milestone" alignment="CENTER" HBox.hgrow="ALWAYS">
+                            <Label text="🌱" style="-fx-font-size:18px;"/>
+                            <Label text="Beginner" styleClass="stats-milestone-label"/>
+                            <Label text="0 XP" styleClass="stats-milestone-xp"/>
+                        </VBox>
+                        <VBox styleClass="stats-milestone" alignment="CENTER" HBox.hgrow="ALWAYS">
+                            <Label text="📘" style="-fx-font-size:18px;"/>
+                            <Label text="Explorer" styleClass="stats-milestone-label"/>
+                            <Label text="100 XP" styleClass="stats-milestone-xp"/>
+                        </VBox>
+                        <VBox styleClass="stats-milestone" alignment="CENTER" HBox.hgrow="ALWAYS">
+                            <Label text="🎯" style="-fx-font-size:18px;"/>
+                            <Label text="Learner" styleClass="stats-milestone-label"/>
+                            <Label text="300 XP" styleClass="stats-milestone-xp"/>
+                        </VBox>
+                        <VBox styleClass="stats-milestone" alignment="CENTER" HBox.hgrow="ALWAYS">
+                            <Label text="🏆" style="-fx-font-size:18px;"/>
+                            <Label text="Expert" styleClass="stats-milestone-label"/>
+                            <Label text="600 XP" styleClass="stats-milestone-xp"/>
+                        </VBox>
+                        <VBox styleClass="stats-milestone" alignment="CENTER" HBox.hgrow="ALWAYS">
+                            <Label text="👑" style="-fx-font-size:18px;"/>
+                            <Label text="Master" styleClass="stats-milestone-label"/>
+                            <Label text="1000 XP" styleClass="stats-milestone-xp"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+
+                <!-- Weekly activity heatmap -->
+                <VBox styleClass="stats-card" spacing="14" prefWidth="280">
+                    <Label text="📅  This Week" styleClass="stats-card-title"/>
+                    <HBox fx:id="weeklyHeatmap" spacing="8" alignment="CENTER"/>
+                    <HBox alignment="CENTER_LEFT" spacing="6">
+                        <Label text="Less" style="-fx-font-size:11px;-fx-text-fill:#94a3b8;"/>
+                        <Label styleClass="heatmap-dot heatmap-0"/>
+                        <Label styleClass="heatmap-dot heatmap-1"/>
+                        <Label styleClass="heatmap-dot heatmap-2"/>
+                        <Label styleClass="heatmap-dot heatmap-3"/>
+                        <Label text="More" style="-fx-font-size:11px;-fx-text-fill:#94a3b8;"/>
+                    </HBox>
+                </VBox>
+
+            </HBox>
+
+            <!-- ===== BOTTOM ROW : Courses + Recent Activity ===== -->
+            <HBox spacing="18">
+
+                <!-- Courses progress -->
+                <VBox styleClass="stats-card" spacing="14" HBox.hgrow="ALWAYS">
+                    <Label text="📚  Courses Progress" styleClass="stats-card-title"/>
+                    <VBox fx:id="coursesProgressList" spacing="10"/>
+                    <Label fx:id="lblNoCoursesProgress" text="No courses started yet."
+                           styleClass="front-page-subtitle" managed="false" visible="false"/>
+                </VBox>
+
+                <!-- Recent completed lessons -->
+                <VBox styleClass="stats-card" spacing="14" prefWidth="300">
+                    <Label text="🕒  Recent Activity" styleClass="stats-card-title"/>
+                    <VBox fx:id="recentActivityList" spacing="8"/>
+                    <Label fx:id="lblNoActivity" text="No activity yet. Start learning!"
+                           styleClass="front-page-subtitle" managed="false" visible="false"/>
+                </VBox>
+
+            </HBox>
+
+            <!-- ===== ACHIEVEMENTS ===== -->
+            <VBox styleClass="stats-card" spacing="14">
+                <Label text="🏆  Achievements" styleClass="stats-card-title"/>
+                <FlowPane fx:id="achievementsPane" hgap="12" vgap="12"/>
+            </VBox>
+
+            <!-- Footer -->
+            <HBox>
+                <Label text="© 2026 LinguaLearn. All rights reserved." styleClass="footer"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="LinguaLearn v1.0" styleClass="footer"/>
+            </HBox>
+
+        </VBox>
+    </content>
+</ScrollPane>
