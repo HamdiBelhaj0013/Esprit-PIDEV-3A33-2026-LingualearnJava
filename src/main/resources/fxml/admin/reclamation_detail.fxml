@@ -1,79 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.*?>
 <VBox xmlns:fx="http://javafx.com/fxml"
       fx:controller="org.example.controller.admin.supportmanagement.ReclamationDetailController"
-      spacing="0"
-      stylesheets="@../../css/style.css"
-      prefWidth="680">
-
-    <!-- Header -->
-    <HBox styleClass="header-bar secondary" alignment="CENTER_LEFT" spacing="10">
-        <Label text="Détail de la réclamation" styleClass="header-title"/>
-        <Region HBox.hgrow="ALWAYS"/>
-        <Button text="✕ Fermer" onAction="#fermer" styleClass="btn-light"/>
-    </HBox>
-
-    <VBox spacing="14" styleClass="page-content">
-
-        <!-- Infos réclamation -->
-        <VBox styleClass="card" spacing="8">
-            <Label text="Informations" styleClass="section-title"/>
-            <GridPane hgap="12" vgap="6">
-                <Label text="Sujet :"      GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="hint-label"/>
-                <Label fx:id="labelSujet"  GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="stat-label"/>
-
-                <Label text="Statut :"     GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="hint-label"/>
-                <Label fx:id="labelStatut" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="stat-label"/>
-
-                <Label text="Priorité :"      GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="hint-label"/>
-                <Label fx:id="labelPriorite"  GridPane.columnIndex="1" GridPane.rowIndex="2" styleClass="stat-label"/>
-
-                <Label text="Date :"       GridPane.columnIndex="0" GridPane.rowIndex="3" styleClass="hint-label"/>
-                <Label fx:id="labelDate"   GridPane.columnIndex="1" GridPane.rowIndex="3" styleClass="stat-label"/>
-
-                <Label text="SLA :"        GridPane.columnIndex="0" GridPane.rowIndex="4" styleClass="hint-label"/>
-                <Label fx:id="labelSLA"    GridPane.columnIndex="1" GridPane.rowIndex="4" styleClass="stat-label"/>
-
-                <Label text="Message :"    GridPane.columnIndex="0" GridPane.rowIndex="5" styleClass="hint-label"/>
-                <Label fx:id="labelMessage" GridPane.columnIndex="1" GridPane.rowIndex="5"
-                       wrapText="true" maxWidth="450" styleClass="stat-label"/>
-            </GridPane>
-        </VBox>
-
-        <!-- Changer statut + Supprimer -->
-        <VBox styleClass="card" spacing="8">
-            <Label text="Actions" styleClass="section-title"/>
-            <HBox spacing="10" alignment="CENTER_LEFT">
-                <ComboBox fx:id="statutBox" promptText="Nouveau statut" prefWidth="180"/>
-                <Button fx:id="btnChangerStatut" text="✔ Changer statut"
-                        onAction="#changerStatut" styleClass="btn-secondary"/>
-                <Button fx:id="btnSupprimer" text="🗑 Supprimer"
-                        onAction="#supprimerReclamation" styleClass="btn-danger"/>
-            </HBox>
-            <Label fx:id="msgStatut" text=""/>
-        </VBox>
-
-        <!-- Réponse -->
-        <VBox styleClass="card" spacing="8">
-            <Label text="Répondre" styleClass="section-title"/>
-            <TextArea fx:id="reponseField" promptText="Votre réponse..."
-                      prefHeight="80" wrapText="true" styleClass="input-field"/>
-            <HBox spacing="8">
-                <Button fx:id="btnEnvoyer" text="📤 Envoyer"
-                        onAction="#envoyerReponse" styleClass="btn-primary"/>
-                <Label fx:id="msgReponse" text=""/>
-            </HBox>
-            <Label text="Réponses précédentes :" styleClass="hint-label"/>
-            <ListView fx:id="reponsesList" prefHeight="100" styleClass="clean-list"/>
-        </VBox>
-
-        <!-- Audit -->
-        <VBox styleClass="card" spacing="8">
-            <Label text="Historique (Audit Logs)" styleClass="section-title"/>
-            <ListView fx:id="auditList" prefHeight="110" styleClass="clean-list"/>
-        </VBox>
-
+      spacing="0" stylesheets="@../../css/style.css" prefWidth="680">
+  <HBox styleClass="header-bar secondary" alignment="CENTER_LEFT" spacing="10">
+    <Label text="Detail de la reclamation" styleClass="header-title"/>
+    <Region HBox.hgrow="ALWAYS"/>
+    <Button text="Fermer" onAction="#fermer" styleClass="btn-light"/>
+  </HBox>
+  <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background-color:transparent;">
+    <VBox spacing="12" styleClass="page-content">
+      <VBox styleClass="card" spacing="8">
+        <Label text="Informations" styleClass="section-title"/>
+        <GridPane hgap="12" vgap="6">
+          <Label text="Sujet :" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="hint-label"/>
+          <Label fx:id="labelSujet" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="stat-label"/>
+          <Label text="Statut :" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="hint-label"/>
+          <Label fx:id="labelStatut" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="stat-label"/>
+          <Label text="Priorite :" GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="hint-label"/>
+          <Label fx:id="labelPriorite" GridPane.columnIndex="1" GridPane.rowIndex="2" styleClass="stat-label"/>
+          <Label text="Date :" GridPane.columnIndex="0" GridPane.rowIndex="3" styleClass="hint-label"/>
+          <Label fx:id="labelDate" GridPane.columnIndex="1" GridPane.rowIndex="3" styleClass="stat-label"/>
+          <Label text="SLA :" GridPane.columnIndex="0" GridPane.rowIndex="4" styleClass="hint-label"/>
+          <Label fx:id="labelSLA" GridPane.columnIndex="1" GridPane.rowIndex="4" styleClass="stat-label"/>
+          <Label text="Message :" GridPane.columnIndex="0" GridPane.rowIndex="5" styleClass="hint-label"/>
+          <Label fx:id="labelMessage" GridPane.columnIndex="1" GridPane.rowIndex="5" wrapText="true" maxWidth="450" styleClass="stat-label"/>
+        </GridPane>
+        <Label fx:id="labelImageInfo" text="Aucune image jointe." styleClass="hint-label"/>
+        <ImageView fx:id="imageReclamation" fitWidth="300" fitHeight="200" preserveRatio="true" visible="false" managed="false"/>
+      </VBox>
+      <VBox styleClass="card" spacing="8">
+        <Label text="Actions" styleClass="section-title"/>
+        <HBox spacing="10" alignment="CENTER_LEFT">
+          <ComboBox fx:id="statutBox" promptText="Nouveau statut" prefWidth="180"/>
+          <Button fx:id="btnChangerStatut" text="Changer statut" onAction="#changerStatut" styleClass="btn-secondary"/>
+          <Button fx:id="btnSupprimer" text="Supprimer" onAction="#supprimerReclamation" styleClass="btn-danger"/>
+        </HBox>
+        <Label fx:id="msgStatut" text=""/>
+      </VBox>
+      <VBox styleClass="card" spacing="8">
+        <Label text="Repondre" styleClass="section-title"/>
+        <TextArea fx:id="reponseField" promptText="Votre reponse..." prefHeight="80" wrapText="true" styleClass="input-field"/>
+        <HBox spacing="8">
+          <Button fx:id="btnEnvoyer" text="Envoyer" onAction="#envoyerReponse" styleClass="btn-primary"/>
+          <Label fx:id="msgReponse" text=""/>
+        </HBox>
+        <Label text="Reponses precedentes :" styleClass="hint-label"/>
+        <ListView fx:id="reponsesList" prefHeight="100" styleClass="clean-list"/>
+      </VBox>
+      <VBox styleClass="card" spacing="8">
+        <Label text="Historique (Audit Logs)" styleClass="section-title"/>
+        <ListView fx:id="auditList" prefHeight="110" styleClass="clean-list"/>
+      </VBox>
     </VBox>
+  </ScrollPane>
 </VBox>

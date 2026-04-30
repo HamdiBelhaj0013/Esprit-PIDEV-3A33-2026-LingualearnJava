@@ -3,94 +3,79 @@
 <?import javafx.scene.control.*?>
 <VBox xmlns:fx="http://javafx.com/fxml"
       fx:controller="org.example.controller.user.supportmanagement.UserController"
-      spacing="0"
-      styleClass="root-pane"
-      stylesheets="@../../css/style.css">
-
-    <HBox styleClass="header-bar" alignment="CENTER_LEFT">
-        <Label text="LinguaLearn - Mon espace" styleClass="header-title"/>
-    </HBox>
-
-    <TabPane VBox.vgrow="ALWAYS">
-
-        <Tab text="Mes Reclamations" closable="false">
-            <VBox spacing="12" styleClass="page-content">
-
-                <!-- Nouvelle réclamation -->
-                <VBox styleClass="card" spacing="8">
-                    <Label text="Nouvelle reclamation" styleClass="section-title"/>
-                    <TextField fx:id="subjectField" promptText="Sujet *" styleClass="input-field"/>
-                    <TextArea  fx:id="messageField" promptText="Votre message *"
-                               prefHeight="75" wrapText="true" styleClass="input-field"/>
-                    <HBox spacing="8" alignment="CENTER_LEFT">
-                        <Button text="🔧 Corriger avec IA" onAction="#corrigerAvantSoumission" styleClass="btn-light"/>
-                        <Label fx:id="msgCorrection" text="" style="-fx-text-fill: green;"/>
-                    </HBox>
-                    <Label text="💡 La priorité est détectée automatiquement." styleClass="hint-label"/>
-                    <HBox spacing="8">
-                        <Button text="Soumettre"  onAction="#soumettre"           styleClass="btn-primary"/>
-                        <Button text="Actualiser" onAction="#chargerReclamations"  styleClass="btn-light"/>
-                    </HBox>
-                    <Label fx:id="reclMsg"/>
-                </VBox>
-
-                <!-- Liste réclamations -->
-                <VBox styleClass="card" VBox.vgrow="ALWAYS">
-                    <HBox spacing="8" alignment="CENTER_LEFT" style="-fx-padding:0 0 8 0;">
-                        <TextField fx:id="reclSearch" promptText="Rechercher..."
-                                   HBox.hgrow="ALWAYS" styleClass="input-field"/>
-                        <ComboBox fx:id="reclStatusFilter" promptText="Statut" prefWidth="140"/>
-                        <ComboBox fx:id="reclSortBox"      promptText="Tri"    prefWidth="140"
-                                  onAction="#trierReclamations"/>
-                        <Button text="Appliquer" onAction="#filtrerReclamations" styleClass="btn-light"/>
-                    </HBox>
-                    <Label text="Double-cliquez sur une réclamation pour voir les détails."
-                           styleClass="hint-label" style="-fx-padding:0 0 4 0;"/>
-                    <TableView fx:id="reclTable" prefHeight="300" styleClass="clean-table" VBox.vgrow="ALWAYS">
-                        <columns>
-                            <TableColumn fx:id="rColSubject"  text="Sujet"    prefWidth="200"/>
-                            <TableColumn fx:id="rColStatus"   text="Statut"   prefWidth="120"/>
-                            <TableColumn fx:id="rColPriority" text="Priorite" prefWidth="90"/>
-                            <TableColumn fx:id="rColDate"     text="Date"     prefWidth="160"/>
-                        </columns>
-                        <placeholder>
-                            <Label text="Aucune reclamation." styleClass="hint-label"/>
-                        </placeholder>
-                    </TableView>
-                </VBox>
-
-            </VBox>
-        </Tab>
-
-        <!-- FAQ -->
-        <Tab text="FAQ" closable="false">
-            <VBox spacing="10" styleClass="page-content">
-                <HBox spacing="8" alignment="CENTER_LEFT">
-                    <Label text="Questions frequentes" styleClass="section-title"/>
-                    <Region HBox.hgrow="ALWAYS"/>
-                    <TextField fx:id="faqSearch"         promptText="Rechercher..."  prefWidth="200" styleClass="input-field"/>
-                    <TextField fx:id="faqCategoryFilter" promptText="Categorie..."   prefWidth="160" styleClass="input-field"/>
-                    <ComboBox  fx:id="faqSortBox"         promptText="Tri"           prefWidth="130" onAction="#trierFAQ"/>
-                    <Button text="Rechercher" onAction="#rechercherFAQ" styleClass="btn-primary"/>
-                    <Button text="Filtrer"    onAction="#filtrerFAQ"    styleClass="btn-secondary"/>
-                    <Button text="Tout voir"  onAction="#chargerFAQ"    styleClass="btn-light"/>
-                </HBox>
-                <VBox styleClass="card">
-                    <TableView fx:id="faqTable" prefHeight="400" styleClass="clean-table">
-                        <columns>
-                            <TableColumn fx:id="fColQuestion" text="Question"  prefWidth="280"/>
-                            <TableColumn fx:id="fColAnswer"   text="Reponse"   prefWidth="300"/>
-                            <TableColumn fx:id="fColCategory" text="Categorie" prefWidth="120"/>
-                        </columns>
-                        <placeholder><Label text="Aucune FAQ." styleClass="hint-label"/></placeholder>
-                    </TableView>
-                </VBox>
-            </VBox>
-        </Tab>
-
-    </TabPane>
-
-    <!-- Champs cachés pour compatibilité controller -->
-    <ListView  fx:id="userResponsesList" visible="false" managed="false"/>
-    <ComboBox  fx:id="priorityBox"       visible="false" managed="false"/>
+      spacing="0" styleClass="root-pane" stylesheets="@../../css/style.css">
+  <HBox styleClass="header-bar" alignment="CENTER_LEFT">
+    <Label text="LinguaLearn - Mon espace" styleClass="header-title"/>
+  </HBox>
+  <TabPane VBox.vgrow="ALWAYS">
+    <Tab text="Mes Reclamations" closable="false">
+      <VBox spacing="12" styleClass="page-content">
+        <VBox styleClass="card" spacing="8">
+          <Label text="Nouvelle reclamation" styleClass="section-title"/>
+          <TextField fx:id="subjectField" promptText="Sujet *" styleClass="input-field"/>
+          <TextArea fx:id="messageField" promptText="Votre message *" prefHeight="75" wrapText="true" styleClass="input-field"/>
+          <HBox spacing="8" alignment="CENTER_LEFT">
+            <Button text="📎 Ajouter image (optionnel)" onAction="#choisirImage" styleClass="btn-light"/>
+            <Label fx:id="labelImageChoisie" text="Aucune image selectionnee" styleClass="hint-label"/>
+            <Button fx:id="btnSupprimerImage" text="X" onAction="#supprimerImage" styleClass="btn-light" visible="false" managed="false"/>
+          </HBox>
+          <HBox spacing="8" alignment="CENTER_LEFT">
+            <Button text="Corriger avec IA" onAction="#corrigerAvantSoumission" styleClass="btn-light"/>
+            <Label fx:id="msgCorrection" text="" style="-fx-text-fill: green;"/>
+          </HBox>
+          <Label text="La priorite est detectee automatiquement." styleClass="hint-label"/>
+          <HBox spacing="8">
+            <Button text="Dicter" onAction="#ouvrirMicrophone" styleClass="btn-light"/>
+            <Button text="Soumettre" onAction="#soumettre" styleClass="btn-primary"/>
+            <Button text="Actualiser" onAction="#chargerReclamations" styleClass="btn-light"/>
+          </HBox>
+          <Label fx:id="reclMsg"/>
+        </VBox>
+        <VBox styleClass="card" VBox.vgrow="ALWAYS">
+          <HBox spacing="8" alignment="CENTER_LEFT" style="-fx-padding:0 0 8 0;">
+            <TextField fx:id="reclSearch" promptText="Rechercher..." HBox.hgrow="ALWAYS" styleClass="input-field"/>
+            <ComboBox fx:id="reclStatusFilter" promptText="Statut" prefWidth="140"/>
+            <ComboBox fx:id="reclSortBox" promptText="Tri" prefWidth="140" onAction="#trierReclamations"/>
+            <Button text="Appliquer" onAction="#filtrerReclamations" styleClass="btn-light"/>
+          </HBox>
+          <Label text="Double-cliquez pour voir les details." styleClass="hint-label"/>
+          <TableView fx:id="reclTable" prefHeight="300" styleClass="clean-table" VBox.vgrow="ALWAYS">
+            <columns>
+              <TableColumn fx:id="rColSubject" text="Sujet" prefWidth="200"/>
+              <TableColumn fx:id="rColStatus" text="Statut" prefWidth="120"/>
+              <TableColumn fx:id="rColPriority" text="Priorite" prefWidth="90"/>
+              <TableColumn fx:id="rColDate" text="Date" prefWidth="160"/>
+            </columns>
+            <placeholder><Label text="Aucune reclamation." styleClass="hint-label"/></placeholder>
+          </TableView>
+        </VBox>
+      </VBox>
+    </Tab>
+    <Tab text="FAQ" closable="false">
+      <VBox spacing="10" styleClass="page-content">
+        <HBox spacing="8" alignment="CENTER_LEFT">
+          <Label text="Questions frequentes" styleClass="section-title"/>
+          <Region HBox.hgrow="ALWAYS"/>
+          <TextField fx:id="faqSearch" promptText="Rechercher..." prefWidth="200" styleClass="input-field"/>
+          <TextField fx:id="faqCategoryFilter" promptText="Categorie..." prefWidth="160" styleClass="input-field"/>
+          <ComboBox fx:id="faqSortBox" promptText="Tri" prefWidth="130" onAction="#trierFAQ"/>
+          <Button text="Rechercher" onAction="#rechercherFAQ" styleClass="btn-primary"/>
+          <Button text="Filtrer" onAction="#filtrerFAQ" styleClass="btn-secondary"/>
+          <Button text="Tout voir" onAction="#chargerFAQ" styleClass="btn-light"/>
+        </HBox>
+        <VBox styleClass="card">
+          <TableView fx:id="faqTable" prefHeight="400" styleClass="clean-table">
+            <columns>
+              <TableColumn fx:id="fColQuestion" text="Question" prefWidth="280"/>
+              <TableColumn fx:id="fColAnswer" text="Reponse" prefWidth="300"/>
+              <TableColumn fx:id="fColCategory" text="Categorie" prefWidth="120"/>
+            </columns>
+            <placeholder><Label text="Aucune FAQ." styleClass="hint-label"/></placeholder>
+          </TableView>
+        </VBox>
+      </VBox>
+    </Tab>
+  </TabPane>
+  <ListView fx:id="userResponsesList" visible="false" managed="false"/>
+  <ComboBox fx:id="priorityBox" visible="false" managed="false"/>
 </VBox>

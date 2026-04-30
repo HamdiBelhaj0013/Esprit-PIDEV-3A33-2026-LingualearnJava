@@ -20,10 +20,13 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.net.URL;
+import java.nio.file.*;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -35,7 +38,12 @@ public class UserController implements Initializable {
     @FXML private Label            reclMsg;
     @FXML private Label            msgCorrection;
 
-    // Cachés pour compatibilité FXML
+    // ── Image ─────────────────────────────────────────────────────────────
+    @FXML private Label  labelImageChoisie;
+    @FXML private Button btnSupprimerImage;
+    private File selectedImageFile = null;
+
+    // Cachés compatibilité
     @FXML private ComboBox<String> priorityBox;
     @FXML private ListView<String> userResponsesList;
 
@@ -64,6 +72,10 @@ public class UserController implements Initializable {
     private List<Reclamation> reclamationCache = new ArrayList<>();
     private List<FAQ>         faqCache         = new ArrayList<>();
     private final List<LocalDateTime> submissionTimes = new ArrayList<>();
+
+    // Serveur HTTP microphone
+    private static com.sun.net.httpserver.HttpServer micServer = null;
+    private static int micPort = 0;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -95,7 +107,6 @@ public class UserController implements Initializable {
         fColCategory.setCellValueFactory(c ->
                 new javafx.beans.property.SimpleStringProperty(c.getValue().getCategory()));
 
-        // Double-clic → fenêtre détail
         reclTable.setRowFactory(tv -> {
             TableRow<Reclamation> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
@@ -111,7 +122,6 @@ public class UserController implements Initializable {
         chargerReclamations();
         chargerFAQ();
 
-        // ✅ Pusher — écoute notifications temps réel
         int userId = getUserId();
         if (userId != 0) {
             PusherListenerService.demarrer(userId, message ->
@@ -123,13 +133,56 @@ public class UserController implements Initializable {
         }
     }
 
-    // ── Notification ──────────────────────────────────────────────────────
     private void afficherNotification(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("🔔 Nouvelle réponse");
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.show();
+    }
+
+    // ── Upload image ──────────────────────────────────────────────────────
+    @FXML public void choisirImage() {
+        FileChooser fc = new FileChooser();
+        fc.setTitle("Choisir une image");
+        fc.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg", "*.gif", "*.bmp")
+        );
+        File file = fc.showOpenDialog(subjectField.getScene().getWindow());
+        if (file != null) {
+            selectedImageFile = file;
+            labelImageChoisie.setText("📎 " + file.getName());
+            if (btnSupprimerImage != null) {
+                btnSupprimerImage.setVisible(true);
+                btnSupprimerImage.setManaged(true);
+            }
+        }
+    }
+
+    @FXML public void supprimerImage() {
+        selectedImageFile = null;
+        if (labelImageChoisie != null)
+            labelImageChoisie.setText("Aucune image sélectionnée");
+        if (btnSupprimerImage != null) {
+            btnSupprimerImage.setVisible(false);
+            btnSupprimerImage.setManaged(false);
+        }
+    }
+
+    // Copie l'image dans le dossier uploads et retourne le chemin
+    private String sauvegarderImage(File sourceFile) {
+        try {
+            Path uploadsDir = Path.of("uploads", "reclamations");
+            Files.createDirectories(uploadsDir);
+            String ext = sourceFile.getName().substring(sourceFile.getName().lastIndexOf('.'));
+            String newName = "recl_" + System.currentTimeMillis() + ext;
+            Path dest = uploadsDir.resolve(newName);
+            Files.copy(sourceFile.toPath(), dest, StandardCopyOption.REPLACE_EXISTING);
+            return dest.toString();
+        } catch (Exception e) {
+            System.err.println("Erreur sauvegarde image: " + e.getMessage());
+            return null;
+        }
     }
 
     // ── Correction IA ─────────────────────────────────────────────────────
@@ -144,7 +197,6 @@ public class UserController implements Initializable {
             }
             return;
         }
-
         if (msgCorrection != null) {
             msgCorrection.setStyle("-fx-text-fill: gray;");
             msgCorrection.setText("⏳ Correction en cours...");
@@ -166,6 +218,71 @@ public class UserController implements Initializable {
                 }
             });
         }).start();
+    }
+
+    // ── Microphone ────────────────────────────────────────────────────────
+    @FXML public void ouvrirMicrophone() {
+        try {
+            if (micServer == null) {
+                micServer = com.sun.net.httpserver.HttpServer.create(
+                        new java.net.InetSocketAddress(0), 0);
+                micPort = micServer.getAddress().getPort();
+                final String html = buildSpeechHtml();
+                micServer.createContext("/speech.html", exchange -> {
+                    byte[] content = html.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+                    exchange.getResponseHeaders().set("Content-Type", "text/html; charset=UTF-8");
+                    exchange.sendResponseHeaders(200, content.length);
+                    exchange.getResponseBody().write(content);
+                    exchange.getResponseBody().close();
+                });
+                micServer.setExecutor(null);
+                micServer.start();
+            }
+            java.awt.Desktop.getDesktop().browse(
+                    new java.net.URI("http://localhost:" + micPort + "/speech.html"));
+            reclMsg.setStyle("-fx-text-fill: #1a73e8; -fx-font-weight: bold;");
+            reclMsg.setText("🎤 Parlez dans Chrome puis copiez le texte dans le champ message !");
+        } catch (Exception e) {
+            reclMsg.setStyle("-fx-text-fill: red;");
+            reclMsg.setText("Erreur microphone: " + e.getMessage());
+        }
+    }
+
+    private String buildSpeechHtml() {
+        return "<!DOCTYPE html><html><head><meta charset='UTF-8'/><title>Microphone</title>"
+                + "<style>body{font-family:Arial,sans-serif;text-align:center;padding:40px;background:#f8f9fa;}"
+                + "h2{color:#1a73e8;}button{font-size:50px;border:none;background:#e8f0fe;"
+                + "border-radius:50%;padding:20px;cursor:pointer;margin:20px;transition:all 0.2s;}"
+                + "button:hover{background:#d2e3fc;transform:scale(1.1);}"
+                + "#result{margin-top:20px;font-size:20px;color:#1a73e8;font-weight:bold;"
+                + "padding:15px;background:#e8f0fe;border-radius:8px;min-height:50px;}"
+                + "#status{font-size:16px;color:#555;margin:10px;}"
+                + ".copy-btn{font-size:16px!important;border-radius:8px!important;"
+                + "padding:10px 20px!important;background:#1a73e8!important;color:white;margin-top:10px;}"
+                + "</style></head>"
+                + "<body><h2>🎤 Reconnaissance vocale</h2>"
+                + "<div id='status'>Cliquez sur le microphone et parlez en français</div>"
+                + "<button id='micBtn' onclick='toggleMic()'>🎤</button>"
+                + "<div id='result'>Le texte reconnu apparaîtra ici...</div>"
+                + "<br/><button class='copy-btn' onclick='copyText()'>📋 Copier le texte</button>"
+                + "<script>var r,active=false;"
+                + "function toggleMic(){if(active){r.stop();return;}"
+                + "var R=window.SpeechRecognition||window.webkitSpeechRecognition;"
+                + "if(!R){document.getElementById('status').innerText='❌ Utilisez Chrome ou Edge';return;}"
+                + "r=new R();r.lang='fr-FR';r.continuous=true;r.interimResults=true;"
+                + "r.onstart=function(){active=true;document.getElementById('micBtn').innerText='⏹️';"
+                + "document.getElementById('status').innerText='🔴 Écoute en cours...';};"
+                + "r.onresult=function(e){var t='';for(var i=e.resultIndex;i<e.results.length;i++)"
+                + "t+=e.results[i][0].transcript;document.getElementById('result').innerText=t;};"
+                + "r.onerror=function(e){document.getElementById('status').innerText='Erreur: '+e.error;"
+                + "active=false;document.getElementById('micBtn').innerText='🎤';};"
+                + "r.onend=function(){active=false;document.getElementById('micBtn').innerText='🎤';"
+                + "document.getElementById('status').innerText='✅ Terminé ! Copiez le texte.';};"
+                + "r.start();}"
+                + "function copyText(){var t=document.getElementById('result').innerText;"
+                + "navigator.clipboard.writeText(t).then(()=>{"
+                + "document.getElementById('status').innerText='✅ Copié dans le presse-papiers !';});}"
+                + "</script></body></html>";
     }
 
     // ── Soumettre ─────────────────────────────────────────────────────────
@@ -197,6 +314,12 @@ public class UserController implements Initializable {
         r.setPriority(priority);
         r.setUserId(getUserId());
 
+        // ✅ Sauvegarder image si choisie
+        if (selectedImageFile != null) {
+            String imagePath = sauvegarderImage(selectedImageFile);
+            r.setImagePath(imagePath);
+        }
+
         LocalDateTime now = LocalDateTime.now();
         r.setSlaDeadline(switch (priority) {
             case "URGENT" -> now.plusHours(2);
@@ -209,6 +332,7 @@ public class UserController implements Initializable {
             submissionTimes.add(maintenant);
             subjectField.clear();
             messageField.clear();
+            supprimerImage();
             if (msgCorrection != null) msgCorrection.setText("");
             reclSucces("✅ Soumise ! Priorité : " + priority);
             chargerReclamations();

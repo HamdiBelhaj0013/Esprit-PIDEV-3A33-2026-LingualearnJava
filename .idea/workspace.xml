@@ -5,12 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c62684bd-7db6-4266-8409-2a36624f041e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user-managment/Reclamationuserdetailcontroller" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/user/reclamation_user_detail.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/support-managment/EmailService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/support-managment/OllamaService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/support-managment/AdminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/support-managment/AdminController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/support-managment/ReclamationDetailController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/support-managment/ReclamationDetailController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/user/support-managment/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/user/support-managment/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/entities/Reclamation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/entities/Reclamation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/repository/support-managment/ReclamationDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/repository/support-managment/ReclamationDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/support-managment/PusherListenerService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/support-managment/PusherListenerService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/admin/admin_view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/admin/admin_view.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/admin/reclamation_detail.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/admin/reclamation_detail.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/user/user_view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/user/user_view.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

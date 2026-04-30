@@ -9,8 +9,6 @@ import java.util.List;
 
 public class ReclamationDAO {
 
-    // ✅ PLUS de champ "conn" partagé — chaque méthode ouvre sa propre connexion
-
     private Reclamation map(ResultSet rs) throws SQLException {
         Reclamation r = new Reclamation();
         r.setId(rs.getInt("id"));
@@ -23,13 +21,15 @@ public class ReclamationDAO {
         if (t != null) r.setSubmittedAt(t.toLocalDateTime());
         Timestamp sla = rs.getTimestamp("sla_deadline");
         if (sla != null) r.setSlaDeadline(sla.toLocalDateTime());
+        // ✅ image_path
+        try { r.setImagePath(rs.getString("image_path")); } catch (SQLException ignored) {}
         return r;
     }
 
     public boolean ajouter(Reclamation r) {
         String sql = "INSERT INTO reclamation " +
-                "(subject, message_body, status, submitted_at, user_id, priority, sla_deadline) " +
-                "VALUES (?, ?, 'PENDING', ?, ?, ?, ?)";
+                "(subject, message_body, status, submitted_at, user_id, priority, sla_deadline, image_path) " +
+                "VALUES (?, ?, 'PENDING', ?, ?, ?, ?, ?)";
         try (Connection conn = org.example.util.MyDataBase.getInstance().getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, r.getSubject());
@@ -41,6 +41,11 @@ public class ReclamationDAO {
                 ps.setTimestamp(6, Timestamp.valueOf(r.getSlaDeadline()));
             else
                 ps.setNull(6, Types.TIMESTAMP);
+            // ✅ image_path
+            if (r.getImagePath() != null)
+                ps.setString(7, r.getImagePath());
+            else
+                ps.setNull(7, Types.VARCHAR);
             ps.executeUpdate();
             return true;
         } catch (SQLException e) {

@@ -4,11 +4,14 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import org.example.entity.Reclamation;
 import org.example.entity.SupportResponse;
 import org.example.repository.supportmanagement.ReclamationDAO;
 import org.example.repository.supportmanagement.SupportResponseDAO;
+import org.example.service.supportManagment.EmailService;
 import org.example.service.supportManagment.PusherService;
 import org.example.util.MyDataBase;
 import org.example.util.Session;
@@ -29,6 +32,10 @@ public class ReclamationDetailController implements Initializable {
     @FXML private Label labelSLA;
     @FXML private Label labelMessage;
 
+    // ── Image de la réclamation ───────────────────────────────────────────
+    @FXML private ImageView imageReclamation;
+    @FXML private Label     labelImageInfo;
+
     @FXML private ComboBox<String> statutBox;
     @FXML private Button           btnChangerStatut;
     @FXML private Button           btnSupprimer;
@@ -38,7 +45,6 @@ public class ReclamationDetailController implements Initializable {
     @FXML private Button           btnEnvoyer;
     @FXML private Label            msgReponse;
     @FXML private ListView<String> reponsesList;
-
     @FXML private ListView<String> auditList;
 
     private final ReclamationDAO     reclDao     = new ReclamationDAO();
@@ -46,6 +52,7 @@ public class ReclamationDetailController implements Initializable {
 
     private Reclamation reclamation;
     private Runnable    onClose;
+    private String      userEmail = null;
 
     private static final Map<String, List<String>> WORKFLOW = Map.of(
             "PENDING",     List.of("IN_PROGRESS", "CLOSED"),
@@ -62,6 +69,7 @@ public class ReclamationDetailController implements Initializable {
     public void setReclamation(Reclamation r, Runnable onCloseCallback) {
         this.reclamation = r;
         this.onClose     = onCloseCallback;
+        chargerEmailUser();
         rafraichir();
     }
 
@@ -83,6 +91,9 @@ public class ReclamationDetailController implements Initializable {
             labelSLA.setText("N/A");
         }
 
+        // ✅ Afficher image si présente
+        afficherImage();
+
         List<String> allowed = WORKFLOW.getOrDefault(reclamation.getStatus(), List.of());
         statutBox.setItems(FXCollections.observableArrayList(allowed));
         if (!allowed.isEmpty()) {
@@ -97,6 +108,49 @@ public class ReclamationDetailController implements Initializable {
 
         chargerReponses();
         chargerAudit();
+    }
+
+    // ── Afficher image ────────────────────────────────────────────────────
+    private void afficherImage() {
+        if (imageReclamation == null) return;
+        String imagePath = reclamation.getImagePath();
+        if (imagePath != null && !imagePath.isEmpty()) {
+            try {
+                java.io.File file = new java.io.File(imagePath);
+                if (file.exists()) {
+                    Image img = new Image(file.toURI().toString(),
+                            300, 200, true, true);
+                    imageReclamation.setImage(img);
+                    imageReclamation.setVisible(true);
+                    imageReclamation.setManaged(true);
+                    if (labelImageInfo != null) labelImageInfo.setText("📎 Image jointe");
+                } else {
+                    imageReclamation.setVisible(false);
+                    imageReclamation.setManaged(false);
+                    if (labelImageInfo != null) labelImageInfo.setText("⚠️ Image introuvable");
+                }
+            } catch (Exception e) {
+                imageReclamation.setVisible(false);
+                imageReclamation.setManaged(false);
+            }
+        } else {
+            imageReclamation.setVisible(false);
+            imageReclamation.setManaged(false);
+            if (labelImageInfo != null) labelImageInfo.setText("Aucune image jointe.");
+        }
+    }
+
+    // ── Charger email user ────────────────────────────────────────────────
+    private void chargerEmailUser() {
+        String sql = "SELECT email FROM users WHERE id = ?";
+        try (Connection conn = MyDataBase.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, reclamation.getUserId());
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) userEmail = rs.getString("email");
+        } catch (SQLException e) {
+            System.err.println("Erreur email user: " + e.getMessage());
+        }
     }
 
     @FXML public void changerStatut() {
@@ -145,13 +199,19 @@ public class ReclamationDetailController implements Initializable {
             logAudit("RESPONSE_ADDED", "Réponse ajoutée", null, null);
         }
 
-        // ✅ Notification Pusher — une seule fois
+        // ✅ Pusher notification
         if (reclamation.getUserId() != 0) {
             PusherService.notifierUser(reclamation.getUserId(), reclamation.getSubject());
         }
 
+        // ✅ Email notification
+        if (userEmail != null && !userEmail.isEmpty()) {
+            EmailService.envoyerNotificationReponse(userEmail, reclamation.getSubject(), msg);
+            System.out.println("📧 Email envoyé à " + userEmail);
+        }
+
         reponseField.clear();
-        showMsg(msgReponse, "✅ Réponse envoyée.", "green");
+        showMsg(msgReponse, "✅ Réponse envoyée + email notifié.", "green");
         rafraichir();
         if (onClose != null) onClose.run();
     }
