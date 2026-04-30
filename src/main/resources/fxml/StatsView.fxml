@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+<?import javafx.scene.chart.*?>
+
+<HBox xmlns:fx="http://javafx.com/fxml" 
+      fx:controller="org.example.controller.StatsController"
+      stylesheets="@styles.css"
+      prefWidth="1200" prefHeight="800">
+
+    <!-- Sidebar Integration -->
+    <fx:include source="Sidebar.fxml" fx:id="sidebar"/>
+
+    <VBox HBox.hgrow="ALWAYS" spacing="0" style="-fx-background-color: #f8fafc;">
+
+        <!-- Header -->
+        <HBox alignment="CENTER_LEFT" styleClass="top-header">
+            <VBox spacing="4" HBox.hgrow="ALWAYS">
+                <Label text="Analytics Overview" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                <Label text="Detailed statistics of Quizzes and Exercises" style="-fx-text-fill: #64748b; -fx-font-size: 13px;"/>
+            </VBox>
+            <Button onAction="#refreshStats" styleClass="btn-outline">
+                <graphic>
+                    <HBox spacing="8" alignment="CENTER">
+                        <FontIcon iconLiteral="fas-sync-alt" iconSize="12"/>
+                        <Label text="Refresh Data"/>
+                    </HBox>
+                </graphic>
+            </Button>
+        </HBox>
+
+        <ScrollPane fitToWidth="true" styleClass="scroll-pane-transparent" VBox.vgrow="ALWAYS">
+            <VBox spacing="25" style="-fx-padding: 30;">
+
+                <!-- Summary Cards Row -->
+                <HBox spacing="20">
+                    <HBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                        <StackPane styleClass="stat-icon-blue">
+                            <FontIcon iconLiteral="fas-dumbbell" iconSize="24" iconColor="#0d6efd"/>
+                        </StackPane>
+                        <VBox alignment="CENTER_LEFT" spacing="4">
+                            <Label text="Total Quizzes" styleClass="stat-label"/>
+                            <Label fx:id="lblTotalQuizzes" text="0" styleClass="stat-value"/>
+                        </VBox>
+                    </HBox>
+                    <HBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                        <StackPane styleClass="stat-icon-purple">
+                            <FontIcon iconLiteral="fas-pen-fancy" iconSize="24" iconColor="#8b5cf6"/>
+                        </StackPane>
+                        <VBox alignment="CENTER_LEFT" spacing="4">
+                            <Label text="Total Exercises" styleClass="stat-label"/>
+                            <Label fx:id="lblTotalExercises" text="0" styleClass="stat-value"/>
+                        </VBox>
+                    </HBox>
+                    <HBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                        <StackPane styleClass="stat-icon-green">
+                            <FontIcon iconLiteral="fas-check-circle" iconSize="24" iconColor="#22c55e"/>
+                        </StackPane>
+                        <VBox alignment="CENTER_LEFT" spacing="4">
+                            <Label text="Avg Passing Score" styleClass="stat-label"/>
+                            <Label fx:id="lblAvgScore" text="0%" styleClass="stat-value"/>
+                        </VBox>
+                    </HBox>
+                </HBox>
+
+                <!-- Charts Row 1 -->
+                <HBox spacing="20">
+                    <!-- Bar Chart: Exercises by Type -->
+                    <VBox style="-fx-background-color: white; -fx-background-radius: 15; -fx-padding: 20;" HBox.hgrow="ALWAYS" prefWidth="500">
+                        <Label text="Exercises by Category Type" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1e293b; -fx-padding: 0 0 10 0;"/>
+                        <BarChart fx:id="barChartQuestions" legendVisible="false" prefHeight="300">
+                            <xAxis><CategoryAxis label="Exercise Type"/></xAxis>
+                            <yAxis><NumberAxis label="Number of Exercises"/></yAxis>
+                        </BarChart>
+                    </VBox>
+
+                    <!-- Pie Chart: Exercise Difficulty -->
+                    <VBox style="-fx-background-color: white; -fx-background-radius: 15; -fx-padding: 20;" HBox.hgrow="ALWAYS" prefWidth="400">
+                        <Label text="Exercise Difficulty Distribution" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1e293b; -fx-padding: 0 0 10 0;"/>
+                        <PieChart fx:id="pieChartDifficulty" prefHeight="300" legendSide="BOTTOM"/>
+                    </VBox>
+                </HBox>
+
+                <!-- Charts Row 2 -->
+                <HBox spacing="20">
+                    <!-- Line Chart: Quiz Passing Scores -->
+                    <VBox style="-fx-background-color: white; -fx-background-radius: 15; -fx-padding: 20;" HBox.hgrow="ALWAYS">
+                        <Label text="Quiz Passing Scores Overview" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1e293b; -fx-padding: 0 0 10 0;"/>
+                        <LineChart fx:id="lineChartScores" legendVisible="false" prefHeight="300">
+                            <xAxis><CategoryAxis label="Quiz Title"/></xAxis>
+                            <yAxis><NumberAxis label="Passing Score %"/></yAxis>
+                        </LineChart>
+                    </VBox>
+                </HBox>
+
+            </VBox>
+        </ScrollPane>
+    </VBox>
+</HBox>

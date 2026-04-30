@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<HBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.controller.QuizFormController"
+      stylesheets="@styles.css"
+      prefWidth="1200" prefHeight="800">
+
+    <fx:include source="Sidebar.fxml"/>
+
+    <VBox HBox.hgrow="ALWAYS" spacing="0">
+
+        <!-- TOP HEADER -->
+        <HBox alignment="CENTER_LEFT" spacing="20" styleClass="top-header">
+            <Button onAction="#goBack" styleClass="btn-outline">
+                <graphic>
+                    <HBox spacing="8" alignment="CENTER">
+                        <FontIcon iconLiteral="fas-arrow-left" iconSize="12"/>
+                        <Label text="Back"/>
+                    </HBox>
+                </graphic>
+            </Button>
+            <VBox spacing="2">
+                <Label fx:id="labelFormTitle" text="Create New Quiz"
+                       style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                <Label text="Fill in the details below to save your quiz"
+                       style="-fx-text-fill: #64748b; -fx-font-size: 12px;"/>
+            </VBox>
+        </HBox>
+
+        <ScrollPane fitToWidth="true" styleClass="scroll-pane-transparent" VBox.vgrow="ALWAYS">
+            <VBox alignment="TOP_CENTER" style="-fx-padding: 40 50;">
+
+                <VBox spacing="35" maxWidth="820" styleClass="form-container" style="-fx-background-color: white; -fx-padding: 40; -fx-background-radius: 20;">
+
+                    <!-- SECTION: Basic Info -->
+                    <VBox spacing="20">
+                        <HBox alignment="CENTER_LEFT" spacing="12">
+                            <StackPane styleClass="stat-icon-purple" style="-fx-padding: 10;">
+                                <FontIcon iconLiteral="fas-info-circle" iconSize="16" iconColor="#0d6efd"/>
+                            </StackPane>
+                            <Label text="Basic Information" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                        </HBox>
+
+                        <VBox spacing="8">
+                            <Label text="QUIZ TITLE *" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #94a3b8;"/>
+                            <TextField fx:id="fieldTitle" promptText="Enter a descriptive name for your quiz"
+                                       styleClass="text-field-modern"/>
+                            <Label fx:id="errorTitle" text="Title is required"
+                                   styleClass="error-label" visible="false" managed="false"/>
+                        </VBox>
+
+                        <VBox spacing="8">
+                            <Label text="DESCRIPTION" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #94a3b8;"/>
+                            <TextArea fx:id="fieldDescription"
+                                      promptText="Describe what this quiz covers..." prefRowCount="3"
+                                      styleClass="text-field-modern" wrapText="true"/>
+                        </VBox>
+
+                        <HBox spacing="25">
+                            <VBox spacing="8" HBox.hgrow="ALWAYS">
+                                <Label text="LINKED LESSON" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #94a3b8;"/>
+                                <ComboBox fx:id="comboLesson" maxWidth="Infinity"
+                                          promptText="Choose a lesson (optional)"
+                                          styleClass="text-field-modern"/>
+                            </VBox>
+                            <VBox spacing="8" HBox.hgrow="ALWAYS">
+                                <Label text="DIFFICULTY *" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #94a3b8;"/>
+                                <ComboBox fx:id="comboDifficulty" maxWidth="Infinity"
+                                          styleClass="text-field-modern"/>
+                                <Label fx:id="errorDifficulty" text="Select a difficulty"
+                                       styleClass="error-label" visible="false" managed="false"/>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+
+                    <Separator style="-fx-opacity: 0.5;"/>
+
+                    <!-- SECTION: Settings -->
+                    <VBox spacing="20">
+                        <HBox alignment="CENTER_LEFT" spacing="12">
+                            <StackPane styleClass="stat-icon-orange" style="-fx-padding: 10;">
+                                <FontIcon iconLiteral="fas-cog" iconSize="16" iconColor="#f59e0b"/>
+                            </StackPane>
+                            <Label text="Quiz Settings" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                        </HBox>
+
+                        <HBox spacing="25">
+                            <VBox spacing="8" HBox.hgrow="ALWAYS">
+                                <Label text="PASSING SCORE (%) *" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #94a3b8;"/>
+                                <TextField fx:id="fieldPassingScore" promptText="e.g. 70"
+                                           styleClass="text-field-modern"/>
+                                <Label fx:id="errorPassingScore" text="Enter a valid score (0–100)"
+                                       styleClass="error-label" visible="false" managed="false"/>
+                            </VBox>
+                            <VBox spacing="8" HBox.hgrow="ALWAYS">
+                                <Label text="QUESTION COUNT *" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #94a3b8;"/>
+                                <TextField fx:id="fieldQuestionCount" promptText="e.g. 10"
+                                           styleClass="text-field-modern"/>
+                                <Label fx:id="errorQuestionCount" text="Enter a valid number"
+                                       styleClass="error-label" visible="false" managed="false"/>
+                            </VBox>
+                        </HBox>
+
+                        <CheckBox fx:id="checkEnabled" text="Publish this quiz (make it visible to users)"
+                                  style="-fx-font-size: 14px; -fx-text-fill: #1e293b;"/>
+                    </VBox>
+
+                    <Separator style="-fx-opacity: 0.5;"/>
+
+                    <!-- SECTION: Skills -->
+                    <VBox spacing="15">
+                        <HBox alignment="CENTER_LEFT" spacing="12">
+                            <StackPane styleClass="stat-icon-green" style="-fx-padding: 10;">
+                                <FontIcon iconLiteral="fas-tags" iconSize="16" iconColor="#22c55e"/>
+                            </StackPane>
+                            <Label text="Skill Codes" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button onAction="#addSkillLine" styleClass="btn-outline">
+                                <graphic>
+                                    <HBox spacing="8" alignment="CENTER">
+                                        <FontIcon iconLiteral="fas-plus" iconSize="10"/>
+                                        <Label text="Add Skill" style="-fx-font-size: 12px;"/>
+                                    </HBox>
+                                </graphic>
+                            </Button>
+                        </HBox>
+                        <Label text="Tag this quiz with skill codes to improve recommendations"
+                               style="-fx-text-fill: #64748b; -fx-font-size: 11px;"/>
+                        <VBox fx:id="vboxSkills" spacing="12"/>
+                    </VBox>
+
+                    <!-- ACTION BUTTONS -->
+                    <HBox alignment="CENTER_RIGHT" spacing="15" style="-fx-padding: 20 0 0 0;">
+                        <Button text="Cancel" onAction="#goBack" styleClass="btn-outline" prefWidth="120" prefHeight="45"/>
+                        <Button fx:id="btnSubmit" text="Save Quiz" onAction="#handleSubmit" styleClass="btn-primary" prefWidth="160" prefHeight="45">
+                            <graphic>
+                                <FontIcon iconLiteral="fas-save" iconSize="14" iconColor="white"/>
+                            </graphic>
+                        </Button>
+                    </HBox>
+
+                </VBox>
+            </VBox>
+        </ScrollPane>
+    </VBox>
+</HBox>

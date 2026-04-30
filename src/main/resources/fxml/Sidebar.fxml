@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.controller.SidebarController"
+      prefWidth="270" minWidth="270" maxWidth="270"
+      styleClass="sidebar" stylesheets="@../css/styles.css" spacing="0">
+
+    <!-- LOGO -->
+    <HBox alignment="CENTER_LEFT" spacing="12" styleClass="sidebar-logo">
+        <StackPane style="-fx-background-color: #0d6efd; -fx-background-radius: 50; -fx-min-width: 32; -fx-min-height: 32; -fx-max-width: 32; -fx-max-height: 32;">
+            <Label text="L" style="-fx-font-weight: bold; -fx-text-fill: white; -fx-font-size: 16px;"/>
+        </StackPane>
+        <Label text="LinguaLearn" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+    </HBox>
+
+    <!-- NO USER PROFILE FOR NOW -->
+
+    <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;" styleClass="scroll-pane-transparent" VBox.vgrow="ALWAYS">
+        <VBox spacing="0" style="-fx-padding: 10 0 20 0;">
+            
+            <!-- MAIN SECTION -->
+            <Label text="MAIN" styleClass="sidebar-section-label"/>
+            <Button fx:id="btnDashboard" onAction="#goToDashboard" maxWidth="Infinity" styleClass="nav-button">
+                <graphic>
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <FontIcon iconLiteral="fas-th-large" iconSize="14"/>
+                        <Label text="Dashboard"/>
+                    </HBox>
+                </graphic>
+            </Button>
+            <Button maxWidth="Infinity" styleClass="nav-button">
+                <graphic>
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <FontIcon iconLiteral="fas-book" iconSize="14"/>
+                        <Label text="My Courses"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <StackPane style="-fx-background-color: #0d6efd; -fx-background-radius: 50; -fx-padding: 2; -fx-min-width: 8; -fx-min-height: 8; -fx-max-width: 8; -fx-max-height: 8;"/>
+                    </HBox>
+                </graphic>
+            </Button>
+            <!-- Mapped our existing functions -->
+            <Button fx:id="btnQuizzes" onAction="#goToQuizzes" maxWidth="Infinity" styleClass="nav-button">
+                <graphic>
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <FontIcon iconLiteral="fas-dumbbell" iconSize="14"/>
+                        <Label text="Practice (Quizzes)"/>
+                    </HBox>
+                </graphic>
+            </Button>
+            <Button fx:id="btnExercises" onAction="#goToExercises" maxWidth="Infinity" styleClass="nav-button">
+                <graphic>
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <FontIcon iconLiteral="fas-pen-fancy" iconSize="14"/>
+                        <Label text="Exercises"/>
+                    </HBox>
+                </graphic>
+            </Button>
+            <Button fx:id="btnStats" onAction="#goToStats" maxWidth="Infinity" styleClass="nav-button">
+                <graphic>
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <FontIcon iconLiteral="fas-chart-pie" iconSize="14"/>
+                        <Label text="Statistics"/>
+                    </HBox>
+                </graphic>
+            </Button>
+            <Button maxWidth="Infinity" styleClass="nav-button">
+                <graphic>
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <FontIcon iconLiteral="fas-file-alt" iconSize="14"/>
+                        <Label text="Mock Tests"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label text="PRO" style="-fx-background-color: #f59e0b; -fx-text-fill: white; -fx-font-size: 9px; -fx-font-weight: bold; -fx-padding: 2 6; -fx-background-radius: 8;"/>
+                    </HBox>
+                </graphic>
+            </Button>
+
+            <!-- ACCOUNT SECTION -->
+            <Label text="ACCOUNT" styleClass="sidebar-section-label" style="-fx-padding: 20 25 5 25;"/>
+            <Button maxWidth="Infinity" styleClass="nav-button">
+                <graphic>
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <FontIcon iconLiteral="fas-user" iconSize="14"/>
+                        <Label text="My Profile"/>
+                    </HBox>
+                </graphic>
+            </Button>
+            <Button maxWidth="Infinity" styleClass="nav-button">
+                <graphic>
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <FontIcon iconLiteral="fas-bell" iconSize="14"/>
+                        <Label text="Notifications"/>
+                    </HBox>
+                </graphic>
+            </Button>
+            <Button maxWidth="Infinity" styleClass="nav-button">
+                <graphic>
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <FontIcon iconLiteral="fas-credit-card" iconSize="14"/>
+                        <Label text="Plans &amp; Billing"/>
+                    </HBox>
+                </graphic>
+            </Button>
+
+            <!-- PREMIUM BANNER -->
+            <VBox styleClass="premium-banner" spacing="8" style="-fx-margin: 25 20 10 20;">
+                <Label text="✦ GO PREMIUM" style="-fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: #d97706;"/>
+                <Label text="Unlock all courses, mock tests &amp; AI practice." wrapText="true" style="-fx-font-size: 11px; -fx-text-fill: #92400e;"/>
+                <Button text="Upgrade Now →" styleClass="btn-primary" style="-fx-background-color: #f59e0b; -fx-font-size: 12px; -fx-padding: 8 15; -fx-margin: 5 0 0 0;" maxWidth="Infinity"/>
+            </VBox>
+
+        </VBox>
+    </ScrollPane>
+
+    <VBox style="-fx-padding: 10 0 20 0;">
+        <Button onAction="#handleLogout" maxWidth="Infinity" styleClass="nav-button, logout-btn">
+            <graphic>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <FontIcon iconLiteral="fas-sign-out-alt" iconSize="14"/>
+                    <Label text="Log Out"/>
+                </HBox>
+            </graphic>
+        </Button>
+    </VBox>
+</VBox>

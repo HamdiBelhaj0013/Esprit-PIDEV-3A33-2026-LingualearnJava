@@ -10,9 +10,9 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/LoginView.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/fxml/LoginView.fxml"));
         Scene scene = new Scene(root);
-        scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
         primaryStage.setTitle("Login - LinguaLearn");
         primaryStage.setScene(scene);
         primaryStage.setMaximized(true);
