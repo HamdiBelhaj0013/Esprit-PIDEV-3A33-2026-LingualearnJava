@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://js.hcaptcha.com/1/api.js?host=127.0.0.1" async defer></script>
+    <style>
+        body {
+            margin: 0; padding: 10px;
+            background: transparent;
+            display: flex; justify-content: center;
+        }
+    </style>
+</head>
+<body>
+<div class="h-captcha"
+     data-sitekey="e76e241a-a3ba-4a6a-989a-3fbe50840714"
+     data-callback="onCaptchaSuccess"
+     data-theme="light">
+</div>
+<script>
+    var captchaToken = "";
+    function onCaptchaSuccess(token) {
+        captchaToken = token;
+    }
+    function getToken() {
+        return captchaToken;
+    }
+</script>
+</body>
+</html>
