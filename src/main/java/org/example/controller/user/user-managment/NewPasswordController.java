@@ -8,10 +8,15 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+import netscape.javascript.JSObject;
+import org.example.service.HCaptchaService;
 import org.example.service.PasswordResetService;
 
 import java.io.IOException;
+import java.net.URL;
 
 public class NewPasswordController {
 
@@ -20,17 +25,53 @@ public class NewPasswordController {
     @FXML private Label         passwordError;
     @FXML private Label         confirmError;
     @FXML private Label         errorLabel;
+    @FXML private WebView       captchaWebView;
+    @FXML private Label         captchaError;
 
     private String email;
     private String otp;
 
+    private HCaptchaService captchaService = new HCaptchaService();
+    private WebEngine webEngine;
+
+    @FXML
+    public void initialize() {
+        webEngine = captchaWebView.getEngine();
+        URL captchaPage = getClass().getResource("/captcha/captcha.html");
+        if (captchaPage != null) {
+            webEngine.load(captchaPage.toExternalForm());
+        }
+    }
+
     public void setEmail(String email) { this.email = email; }
     public void setOtp(String otp)     { this.otp   = otp;   }
+
+    private String getCaptchaToken() {
+        try {
+            JSObject window = (JSObject) webEngine.executeScript("window");
+            Object token = window.call("getToken");
+            return token != null ? token.toString() : "";
+        } catch (Exception e) {
+            return "";
+        }
+    }
 
     @FXML
     private void handleReset(ActionEvent event) {
         clearAllErrors();
 
+        // ── CAPTCHA verification ─────────────────────
+        String token = getCaptchaToken();
+        if (token.isEmpty() || !captchaService.verify(token)) {
+            captchaError.setVisible(true);
+            captchaError.setManaged(true);
+            try { webEngine.executeScript("hcaptcha.reset()"); } catch (Exception ignored) {}
+            return;
+        }
+        captchaError.setVisible(false);
+        captchaError.setManaged(false);
+
+        // ── Password validation ──────────────────────
         String password = passwordField.getText();
         String confirm  = confirmField.getText();
 
