@@ -16,6 +16,7 @@ import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import org.example.entities.forum.Notification;
 import org.example.service.forum.NotificationManager;
+import org.example.util.SessionManager;
 
 import java.io.IOException;
 import java.util.List;
@@ -35,6 +36,15 @@ public class MainController {
 
     @FXML
     public void initialize() {
+        // ── Guard: user must be logged in ────────────────────────────────────
+        if (SessionManager.getCurrentUser() == null) {
+            contentArea.getChildren().clear();
+            Label msg = new Label("🔒 Vous devez être connecté pour accéder au forum.");
+            msg.setStyle("-fx-font-size: 16px; -fx-text-fill: #64748b; -fx-padding: 40;");
+            contentArea.getChildren().add(msg);
+            return;
+        }
+
         // Nouvelle notification â†’ toast + rafraÃ®chissement si panel ouvert
         NotificationManager.getInstance().setOnNewNotification(() -> {
             updateBadge();

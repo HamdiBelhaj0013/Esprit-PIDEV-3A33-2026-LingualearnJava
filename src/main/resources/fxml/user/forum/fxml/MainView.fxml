@@ -12,10 +12,10 @@
         <!-- NAVBAR -->
         <HBox styleClass="navbar" alignment="CENTER_LEFT" spacing="20" prefHeight="60">
             <padding><Insets top="0" left="20" right="20" bottom="0"/></padding>
-            <Label text="ðŸ—º LinguaLearn" styleClass="navbar-logo"/>
+            <Label text="LinguaLearn" styleClass="navbar-logo"/>
             <Region HBox.hgrow="ALWAYS"/>
             <Button fx:id="btnNotifications"
-                    text="ðŸ”” Notifications (0)"
+                    text="Notifications (0)"
                     styleClass="btn-notifications"
                     onAction="#toggleNotificationPanel"/>
         </HBox>
