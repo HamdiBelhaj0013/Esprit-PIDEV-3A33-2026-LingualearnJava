@@ -23,6 +23,7 @@ import org.example.entity.tests.TestResult;
 import org.example.repository.tests.TestAnswerRepository;
 import org.example.service.tests.AntiCheatGuard;
 import org.example.service.tests.ExamTimeGuardService;
+import org.example.service.tests.GroqWritingService;
 import org.example.service.tests.MockTestService;
 import org.example.service.tests.TestResultService;
 
@@ -111,6 +112,17 @@ public class UserTestDetailController implements Initializable {
         testQuestionsCountLabel.setText(questions.size() + " question(s)");
         totalPointsLabel.setText("Sur 20 pts");
 
+        // ── Détecter si test 100% Speaking → rediriger ────────────────────────
+        boolean toutSpeaking = !questions.isEmpty()
+                && questions.stream()
+                .allMatch(q -> "Speaking".equals(q.getSectionCategory()));
+
+        if (toutSpeaking) {
+            // Naviguer après que la scène soit prête
+            Platform.runLater(this::naviguerVersSpeaking);
+            return;
+        }
+
         testInProgress = true;
         buildQuestionsUI();
         startChrono();
@@ -120,6 +132,26 @@ public class UserTestDetailController implements Initializable {
             Stage stage = (Stage) testTitleLabel.getScene().getWindow();
             startAntiCheat(stage);
         });
+    }
+
+    /** Redirige vers SpeakingTestController si le test est 100% Speaking. */
+    private void naviguerVersSpeaking() {
+        try {
+            Stage stage = (Stage) testTitleLabel.getScene().getWindow();
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/fxml/tests/SpeakingTestView.fxml"));
+            Parent root = loader.load();
+            SpeakingTestController ctrl = loader.getController();
+            ctrl.init(mockTestService, currentTest, currentUser, listController);
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(
+                    getClass().getResource("/css/style.css").toExternalForm());
+            stage.setScene(scene);
+            stage.setTitle("LinguaLearn — Speaking Test");
+        } catch (IOException e) {
+            new Alert(Alert.AlertType.ERROR,
+                    "Erreur navigation Speaking : " + e.getMessage()).showAndWait();
+        }
     }
 
     // ── Anti-Cheat ────────────────────────────────────────────────────────────
@@ -313,29 +345,112 @@ public class UserTestDetailController implements Initializable {
 
     private void buildOpenAnswer(VBox card, TestQuestion q, String color) {
         toggleGroups.add(null);
-        VBox wrapper = new VBox(6);
-        Label hint = new Label("Writing".equals(q.getSectionCategory())
-                ? "Rédigez votre réponse (quelques phrases minimum) :"
-                : "Décrivez votre réponse oralement ou par écrit :");
-        hint.setStyle("-fx-font-size:11px;-fx-text-fill:#6c7a99;-fx-font-style:italic;");
-        TextArea ta = new TextArea();
-        ta.setPromptText("Writing".equals(q.getSectionCategory())
-                ? "Votre réponse ici..."
-                : "Décrivez votre réponse...");
-        ta.setWrapText(true);
-        ta.setPrefHeight("Writing".equals(q.getSectionCategory()) ? 120 : 90);
-        ta.setStyle("-fx-font-size:13px;-fx-border-color:#d1d5db;-fx-border-radius:6;");
+        VBox wrapper = new VBox(8);
 
-        // ── Bloquer copier / coller / couper ─────────────────────────────────
-        bloquerCopierColler(ta);
+        boolean isWriting = "Writing".equals(q.getSectionCategory());
 
-        openAnswers.add(ta);
-        Label noPaste = new Label("🚫 Copier-coller désactivé dans cet exercice");
-        noPaste.setStyle("-fx-font-size:10px;-fx-text-fill:#d63939;-fx-font-style:italic;-fx-opacity:0.8;");
-        Label auto = new Label("ℹ️ Toute réponse non vide sera automatiquement créditée");
-        auto.setStyle("-fx-font-size:10px;-fx-text-fill:" + color + ";-fx-opacity:0.75;");
-        wrapper.getChildren().addAll(hint, ta, noPaste, auto);
+        if (isWriting) {
+            // ── Zone sujet Groq ─────────────────────────────────────────────
+            VBox sujetBox = new VBox(6);
+            sujetBox.setStyle("-fx-background-color:#f0f7ff;-fx-background-radius:8;" +
+                    "-fx-border-color:#90caf9;-fx-border-radius:8;-fx-border-width:1;" +
+                    "-fx-padding:14;");
+
+            Label sujetTitre = new Label("📝 Sujet de rédaction");
+            sujetTitre.setStyle("-fx-font-size:12px;-fx-font-weight:bold;-fx-text-fill:#1565c0;");
+
+            Label sujetLabel = new Label("⏳ Génération du sujet par l'IA...");
+            sujetLabel.setWrapText(true);
+            sujetLabel.setStyle("-fx-font-size:13px;-fx-text-fill:#1a1f36;-fx-font-style:italic;");
+
+            String niveau = currentTest.getLevel() != null ? currentTest.getLevel() : "B1";
+            String langue = currentTest.getPlatformLanguage() != null
+                    ? currentTest.getPlatformLanguage().getName() : "Français";
+            int motsCibles = GroqWritingService.motsCiblesParNiveau(niveau);
+
+            Label nbMotsInfo = new Label("Longueur attendue : ~" + motsCibles + " mots");
+            nbMotsInfo.setStyle("-fx-font-size:11px;-fx-text-fill:#1976d2;-fx-font-weight:bold;");
+
+            sujetBox.getChildren().addAll(sujetTitre, sujetLabel, nbMotsInfo);
+            wrapper.getChildren().add(sujetBox);
+
+            // Charger le sujet en arrière-plan
+            new Thread(() -> {
+                try {
+                    GroqWritingService gemini = new GroqWritingService();
+                    String sujet = gemini.genererSujet(niveau, langue, motsCibles);
+                    // Stocker le sujet dans la question pour le récupérer à la soumission
+                    q.setWritingSubject(sujet);
+                    Platform.runLater(() -> {
+                        sujetLabel.setStyle("-fx-font-size:13px;-fx-text-fill:#1a1f36;");
+                        sujetLabel.setText(sujet);
+                    });
+                } catch (Exception ex) {
+                    String fallback = "Décrivez votre journée idéale en " + motsCibles + " mots.";
+                    q.setWritingSubject(fallback);
+                    Platform.runLater(() -> {
+                        sujetLabel.setStyle("-fx-font-size:13px;-fx-text-fill:#c62828;");
+                        sujetLabel.setText("⚠️ IA indisponible — sujet par défaut :\n" + fallback);
+                    });
+                }
+            }).start();
+
+            // ── TextArea rédaction ────────────────────────────────────────────
+            Label hint = new Label("Votre rédaction (" + motsCibles + " mots minimum) :");
+            hint.setStyle("-fx-font-size:11px;-fx-text-fill:#6c7a99;-fx-font-style:italic;");
+
+            TextArea ta = new TextArea();
+            ta.setPromptText("Rédigez votre texte ici...");
+            ta.setWrapText(true);
+            ta.setPrefHeight(180);
+            ta.setStyle("-fx-font-size:13px;-fx-border-color:#d1d5db;-fx-border-radius:6;");
+            bloquerCopierColler(ta);
+
+            // ── Compteur de mots ──────────────────────────────────────────────
+            Label compteurLabel = new Label("0 mot(s)");
+            compteurLabel.setStyle("-fx-font-size:11px;-fx-text-fill:#6c7a99;");
+
+            final int motMin = motsCibles;
+            ta.textProperty().addListener((obs, oldVal, newVal) -> {
+                int nb = compterMots(newVal);
+                String style = nb >= motMin
+                        ? "-fx-font-size:11px;-fx-text-fill:#2e7d32;-fx-font-weight:bold;"
+                        : "-fx-font-size:11px;-fx-text-fill:#e65100;";
+                compteurLabel.setStyle(style);
+                compteurLabel.setText(nb + " mot(s) — objectif : " + motMin);
+            });
+
+            Label noPaste = new Label("🚫 Copier-coller désactivé");
+            noPaste.setStyle("-fx-font-size:10px;-fx-text-fill:#d63939;-fx-font-style:italic;");
+
+            openAnswers.add(ta);
+            wrapper.getChildren().addAll(hint, ta, compteurLabel, noPaste);
+
+        } else {
+            // ── Réponse ouverte standard (Speaking) ───────────────────────────
+            Label hint = new Label("Décrivez votre réponse oralement ou par écrit :");
+            hint.setStyle("-fx-font-size:11px;-fx-text-fill:#6c7a99;-fx-font-style:italic;");
+            TextArea ta = new TextArea();
+            ta.setPromptText("Décrivez votre réponse...");
+            ta.setWrapText(true);
+            ta.setPrefHeight(90);
+            ta.setStyle("-fx-font-size:13px;-fx-border-color:#d1d5db;-fx-border-radius:6;");
+            bloquerCopierColler(ta);
+            openAnswers.add(ta);
+            Label noPaste = new Label("🚫 Copier-coller désactivé dans cet exercice");
+            noPaste.setStyle("-fx-font-size:10px;-fx-text-fill:#d63939;-fx-font-style:italic;-fx-opacity:0.8;");
+            Label auto = new Label("ℹ️ Toute réponse non vide sera automatiquement créditée");
+            auto.setStyle("-fx-font-size:10px;-fx-text-fill:" + color + ";-fx-opacity:0.75;");
+            wrapper.getChildren().addAll(hint, ta, noPaste, auto);
+        }
+
         card.getChildren().add(wrapper);
+    }
+
+    /** Compte le nombre de mots dans un texte. */
+    private int compterMots(String text) {
+        if (text == null || text.isBlank()) return 0;
+        return text.trim().split("\\s+").length;
     }
 
     /**
@@ -387,9 +502,73 @@ public class UserTestDetailController implements Initializable {
         stopChrono();
         testInProgress = false;
 
-        // Calcul score
+        // ── Vérifier s'il y a des questions Writing avec Groq ───────────────
+        boolean hasWriting = questions.stream()
+                .anyMatch(q -> "Writing".equals(q.getSectionCategory()));
+
+        if (hasWriting && !isAutoOrCheat) {
+            // Désactiver le bouton pendant la correction IA
+            submitBtn.setDisable(true);
+            submitBtn.setText("⏳ Correction IA en cours...");
+            doSubmitAsync();
+        } else {
+            // Flux normal (pas de Writing ou soumission forcée)
+            doSubmitSync(isAutoOrCheat, null);
+        }
+    }
+
+    /** Correction Groq en thread séparé, puis affichage résultat sur FX thread. */
+    private void doSubmitAsync() {
+        // Collecter d'abord les réponses sur le FX thread
+        List<String> userAnswers = new ArrayList<>();
+        for (int i = 0; i < questions.size(); i++)
+            userAnswers.add(getUserAnswer(i, questions.get(i)));
+
+        new Thread(() -> {
+            GroqWritingService gemini = new GroqWritingService();
+            // Map questionIndex → WritingFeedback
+            Map<Integer, GroqWritingService.WritingFeedback> feedbacks = new LinkedHashMap<>();
+
+            for (int i = 0; i < questions.size(); i++) {
+                TestQuestion q = questions.get(i);
+                if ("Writing".equals(q.getSectionCategory())) {
+                    String sujet    = q.getWritingSubject() != null ? q.getWritingSubject() : "";
+                    String redaction = userAnswers.get(i);
+                    String niveau   = currentTest.getLevel() != null ? currentTest.getLevel() : "B1";
+                    String langue   = currentTest.getPlatformLanguage() != null
+                            ? currentTest.getPlatformLanguage().getName() : "Français";
+                    try {
+                        feedbacks.put(i, gemini.corrigerRedaction(sujet, redaction, niveau, langue));
+                    } catch (Exception ex) {
+                        // En cas d'erreur Groq → note neutre 10/20
+                        feedbacks.put(i, new GroqWritingService.WritingFeedback(
+                                10, 50f,
+                                "Correction IA indisponible.",
+                                "Correction IA indisponible.",
+                                "Correction IA indisponible.",
+                                "Réessayez ultérieurement.",
+                                "Note automatique : 10/20 (service IA temporairement indisponible)."
+                        ));
+                    }
+                }
+            }
+            Platform.runLater(() -> doSubmitSync(false, feedbacks));
+        }).start();
+    }
+
+    /**
+     * Calcul du score + sauvegarde + navigation.
+     * @param feedbacks  Map index → WritingFeedback (null si pas de Writing ou soumission forcée)
+     */
+    private void doSubmitSync(boolean isAutoOrCheat,
+                              Map<Integer, GroqWritingService.WritingFeedback> feedbacks) {
         int totalPoints = 0, obtainedPoints = 0;
         List<TestAnswer> answers = new ArrayList<>();
+        StringBuilder aiCorrectionGlobale = new StringBuilder();
+
+        // Pour la navigation Writing : garder le premier feedback et le nombre de mots
+        GroqWritingService.WritingFeedback firstWritingFeedback = null;
+        int motsEcrits = 0;
 
         for (int i = 0; i < questions.size(); i++) {
             TestQuestion q    = questions.get(i);
@@ -409,11 +588,30 @@ public class UserTestDetailController implements Initializable {
                         }
                     }
                 }
+            } else if ("Writing".equals(section)) {
+                GroqWritingService.WritingFeedback fb =
+                        feedbacks != null ? feedbacks.get(i) : null;
+                if (fb != null) {
+                    // ── Score = note Groq /20 directement (pas de conversion par ptsMax)
+                    // On stocke le score en % pour le TestResult
+                    ptsObt  = ptsMax; // points pleins — le vrai score est dans scoreFinal
+                    correct = fb.noteSur20() >= 10;
+                    aiCorrectionGlobale.append(buildFeedbackText(fb, i + 1));
+                    if (firstWritingFeedback == null) {
+                        firstWritingFeedback = fb;
+                        motsEcrits = compterMots(userAnswer);
+                    }
+                } else {
+                    if (userAnswer != null && !userAnswer.trim().isEmpty()) {
+                        ptsObt = ptsMax / 2; correct = true;
+                    }
+                }
             } else {
                 if (userAnswer != null && !userAnswer.trim().isEmpty()) {
                     ptsObt = ptsMax; correct = true;
                 }
             }
+
             obtainedPoints += ptsObt;
             if (q.getId() != null) {
                 TestAnswer ta = new TestAnswer();
@@ -427,30 +625,69 @@ public class UserTestDetailController implements Initializable {
             }
         }
 
-        float scoreBrut = totalPoints > 0 ? (float) obtainedPoints / totalPoints * 100f : 0f;
-
-        // Si soumission forcée par anti-triche → pénalité -50% directe
+        // ── Score final : pour Writing = note Groq directement en %
         float scoreFinal;
         String noteFinale;
 
-        if (noteTriche != null) {
-            // Triche détectée : pénalité -50% sur le score brut
+        if (firstWritingFeedback != null && feedbacks != null) {
+            // Score Writing = note Groq /20 → pourcentage
+            scoreFinal = firstWritingFeedback.scorePct();
+            noteFinale = "Correction IA — Note : " + firstWritingFeedback.noteSur20() + "/20";
+        } else if (noteTriche != null) {
+            float scoreBrut = totalPoints > 0 ? (float) obtainedPoints / totalPoints * 100f : 0f;
             scoreFinal = scoreBrut * 0.50f;
             noteFinale = noteTriche + "\nScore brut avant pénalité : " + Math.round(scoreBrut) + "%";
         } else {
-            // Flux normal : pénalité temporelle via ExamTimeGuardService
+            float scoreBrut = totalPoints > 0 ? (float) obtainedPoints / totalPoints * 100f : 0f;
             ExamTimeGuardService.RapportTemporel rapport =
                     timeGuard.analyser(startTime, currentTest.getDurationMinutes(), scoreBrut);
             scoreFinal = rapport.scoreFinal;
             noteFinale = rapport.toRapportTexte();
         }
 
-        saveTestResult(scoreFinal, noteFinale, answers);
+        String aiCorrection = aiCorrectionGlobale.length() > 0
+                ? aiCorrectionGlobale.toString() : null;
 
-        // ── Affichage ─────────────────────────────────────────────────────────
+        saveTestResultWithAI(scoreFinal, noteFinale, answers, aiCorrection);
+
+        // ── Navigation : Writing → WritingResultView, sinon affichage inline ──
+        if (firstWritingFeedback != null && feedbacks != null) {
+            navigateToWritingResult(firstWritingFeedback, motsEcrits);
+        } else {
+            // Affichage inline pour les tests non-Writing
+            afficherResultatInline(scoreFinal);
+        }
+    }
+
+    /** Naviguer vers la belle page résultat Writing. */
+    private void navigateToWritingResult(GroqWritingService.WritingFeedback feedback,
+                                         int motsEcrits) {
+        stopAntiCheat();
+        try {
+            Stage stage = (Stage) testTitleLabel.getScene().getWindow();
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/fxml/tests/WritingResultView.fxml"));
+            Parent root = loader.load();
+            WritingResultController ctrl = loader.getController();
+            ctrl.init(mockTestService, currentTest, currentUser,
+                    listController, feedback, motsEcrits);
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(
+                    getClass().getResource("/css/style.css").toExternalForm());
+            stage.setScene(scene);
+            stage.setTitle("LinguaLearn — Résultat Writing");
+        } catch (IOException e) {
+            new Alert(Alert.AlertType.ERROR,
+                    "Erreur navigation résultat : " + e.getMessage()).showAndWait();
+        }
+    }
+
+    /** Affichage inline dans le panneau gauche (tests QCM classiques). */
+    private void afficherResultatInline(float scoreFinal) {
         resultBox.setVisible(true);
         resultBox.setManaged(true);
         submitBtn.setDisable(true);
+        submitBtn.setText("Soumettre");
 
         String color = scoreFinal >= 75 ? "#2fb344" : scoreFinal >= 50 ? "#f59f00" : "#d63939";
         float  sur20  = Math.round(scoreFinal / 100f * 20f * 10f) / 10f;
@@ -473,7 +710,6 @@ public class UserTestDetailController implements Initializable {
         scoreDetailLabel.setStyle("-fx-text-fill:" +
                 (noteTriche != null ? "#d63939" : "#a0aec0") + ";-fx-font-size:13px;");
 
-        // Pénalité triche dans le label
         if (penaliteLabel != null && noteTriche != null) {
             penaliteLabel.setText("⛔ Comportement suspect détecté — Pénalité -50% appliquée");
             penaliteLabel.setStyle("-fx-text-fill:white;-fx-font-size:12px;-fx-font-weight:bold;" +
@@ -490,9 +726,56 @@ public class UserTestDetailController implements Initializable {
         Platform.runLater(() -> questionsScroll.setVvalue(0.0));
     }
 
+    /** Construit le texte de feedback Writing pour une question donnée. */
+    private String buildFeedbackText(GroqWritingService.WritingFeedback fb, int qNum) {
+        return "=== CORRECTION ÉCRITURE — Question " + qNum + " ===\n"
+                + "📊 Note : " + fb.noteSur20() + "/20\n\n"
+                + "📖 Grammaire :\n" + fb.grammaire() + "\n\n"
+                + "🔗 Cohérence & Structure :\n" + fb.coherence() + "\n\n"
+                + "📚 Vocabulaire :\n" + fb.vocabulaire() + "\n\n"
+                + "💡 Conseils :\n" + fb.suggestions() + "\n\n"
+                + "✅ Bilan :\n" + fb.correctionGlobale() + "\n\n";
+    }
+
+    /** Affiche le feedback Writing IA dans la resultBox (sous le score). */
+    private void afficherFeedbackWritingDansResultBox(String feedbackText) {
+        VBox feedbackBox = new VBox(10);
+        feedbackBox.setStyle("-fx-background-color:#f0f7ff;-fx-background-radius:12;" +
+                "-fx-border-color:#90caf9;-fx-border-radius:12;-fx-border-width:1;" +
+                "-fx-padding:18;-fx-margin-top:12;");
+
+        Label titre = new Label("🤖 Feedback de l'IA — Correction Writing");
+        titre.setStyle("-fx-font-size:14px;-fx-font-weight:bold;-fx-text-fill:#1565c0;");
+        feedbackBox.getChildren().add(titre);
+
+        // Découper en sections pour un affichage structuré
+        for (String ligne : feedbackText.split("\n")) {
+            if (ligne.isBlank()) continue;
+            Label lbl = new Label(ligne);
+            lbl.setWrapText(true);
+
+            if (ligne.startsWith("===")) {
+                lbl.setStyle("-fx-font-size:12px;-fx-font-weight:bold;" +
+                        "-fx-text-fill:#0d47a1;-fx-padding:8 0 4 0;");
+            } else if (ligne.startsWith("📊") || ligne.startsWith("📖") ||
+                    ligne.startsWith("🔗") || ligne.startsWith("📚") ||
+                    ligne.startsWith("💡") || ligne.startsWith("✅")) {
+                lbl.setStyle("-fx-font-size:13px;-fx-font-weight:bold;-fx-text-fill:#1a237e;" +
+                        "-fx-padding:6 0 2 0;");
+            } else {
+                lbl.setStyle("-fx-font-size:12px;-fx-text-fill:#1a1f36;-fx-padding:0 0 0 12;");
+            }
+            feedbackBox.getChildren().add(lbl);
+        }
+
+        // Ajouter dans resultBox
+        if (resultBox != null) resultBox.getChildren().add(feedbackBox);
+    }
+
     // ── Sauvegarde ────────────────────────────────────────────────────────────
 
-    private void saveTestResult(float score, String note, List<TestAnswer> answers) {
+    private void saveTestResultWithAI(float score, String note,
+                                      List<TestAnswer> answers, String aiCorrection) {
         try {
             if (currentUser == null || currentUser.getId() == null) return;
             if (currentTest == null || currentTest.getId() == null) return;
@@ -503,6 +786,7 @@ public class UserTestDetailController implements Initializable {
             result.setAiPredictedScore(score);
             result.setDateTaken(LocalDateTime.now());
             result.setAiNote(note);
+            if (aiCorrection != null) result.setAiCorrection(aiCorrection);
             resultService.create(result);
             if (result.getId() != null && !answers.isEmpty()) {
                 answers.forEach(a -> a.setTestResultId(result.getId()));

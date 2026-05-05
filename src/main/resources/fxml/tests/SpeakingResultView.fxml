@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.controller.tests.SpeakingResultController"
+      spacing="0"
+      style="-fx-background-color:#f0f4f8;">
+
+    <!-- ══ HEADER ══════════════════════════════════════════════════════════════ -->
+    <HBox alignment="CENTER_LEFT" spacing="16"
+          style="-fx-background-color:linear-gradient(to right,#0f172a,#1e293b);
+                 -fx-padding:16 28;">
+        <Label text="🎙 LinguaLearn — Speaking"
+               style="-fx-text-fill:white;-fx-font-size:18px;-fx-font-weight:bold;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="← Retour aux tests" onAction="#handleBack"
+                style="-fx-background-color:rgba(255,255,255,0.12);-fx-text-fill:white;
+                       -fx-font-size:12px;-fx-cursor:hand;-fx-background-radius:8;
+                       -fx-border-color:rgba(255,255,255,0.3);-fx-border-radius:8;
+                       -fx-border-width:1;-fx-padding:7 16;"/>
+    </HBox>
+
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                style="-fx-background-color:transparent;-fx-background:transparent;
+                       -fx-border-width:0;">
+        <VBox spacing="24" style="-fx-padding:32 80;">
+
+            <!-- ══ SCORE CARD ══════════════════════════════════════════════════ -->
+            <VBox alignment="CENTER" spacing="0"
+                  style="-fx-background-color:linear-gradient(to bottom right,#0f172a,#1e293b);
+                         -fx-background-radius:20;-fx-padding:40 60;
+                         -fx-effect:dropshadow(gaussian,rgba(0,0,0,0.3),20,0,0,8);">
+
+                <Label fx:id="testTitleLabel" text="Speaking Test"
+                       style="-fx-text-fill:rgba(255,255,255,0.6);-fx-font-size:14px;
+                              -fx-padding:0 0 10 0;"/>
+
+                <HBox alignment="CENTER" spacing="10" style="-fx-padding:0 0 16 0;">
+                    <Label text="🤖 Analysé par IA"
+                           style="-fx-background-color:rgba(99,102,241,0.3);
+                                  -fx-text-fill:#a5b4fc;-fx-font-size:12px;-fx-font-weight:bold;
+                                  -fx-background-radius:20;-fx-padding:5 14;
+                                  -fx-border-color:rgba(99,102,241,0.5);
+                                  -fx-border-radius:20;-fx-border-width:1;"/>
+                    <Label text="🎙 AssemblyAI"
+                           style="-fx-background-color:rgba(47,179,68,0.2);
+                                  -fx-text-fill:#86efac;-fx-font-size:12px;-fx-font-weight:bold;
+                                  -fx-background-radius:20;-fx-padding:5 14;
+                                  -fx-border-color:rgba(47,179,68,0.4);
+                                  -fx-border-radius:20;-fx-border-width:1;"/>
+                </HBox>
+
+                <Label fx:id="scoreLabel" text="—"
+                       style="-fx-font-size:72px;-fx-font-weight:bold;-fx-text-fill:#2fb344;"/>
+                <Label fx:id="scorePctLabel" text=""
+                       style="-fx-font-size:22px;-fx-font-weight:bold;
+                              -fx-text-fill:rgba(255,255,255,0.6);-fx-padding:0 0 8 0;"/>
+                <Label fx:id="perfLabel" text=""
+                       style="-fx-font-size:18px;-fx-font-weight:bold;-fx-text-fill:white;
+                              -fx-padding:10 24;-fx-background-radius:30;
+                              -fx-background-color:rgba(255,255,255,0.1);"/>
+
+                <HBox alignment="CENTER" spacing="32" style="-fx-padding:20 0 0 0;">
+                    <VBox alignment="CENTER" spacing="4">
+                        <Label fx:id="niveauCEFRLabel" text="Niveau estimé : B1"
+                               style="-fx-font-size:16px;-fx-font-weight:bold;-fx-text-fill:#a5b4fc;"/>
+                        <Label text="par l'IA"
+                               style="-fx-font-size:11px;-fx-text-fill:rgba(255,255,255,0.4);"/>
+                    </VBox>
+                    <Separator orientation="VERTICAL"
+                               style="-fx-background-color:rgba(255,255,255,0.15);"/>
+                    <VBox alignment="CENTER" spacing="4">
+                        <Label fx:id="niveauTestLabel" text="B1"
+                               style="-fx-font-size:16px;-fx-font-weight:bold;-fx-text-fill:white;"/>
+                        <Label text="niveau du test"
+                               style="-fx-font-size:11px;-fx-text-fill:rgba(255,255,255,0.4);"/>
+                    </VBox>
+                    <Separator orientation="VERTICAL"
+                               style="-fx-background-color:rgba(255,255,255,0.15);"/>
+                    <VBox alignment="CENTER" spacing="4">
+                        <Label text="5"
+                               style="-fx-font-size:16px;-fx-font-weight:bold;-fx-text-fill:white;"/>
+                        <Label text="échanges"
+                               style="-fx-font-size:11px;-fx-text-fill:rgba(255,255,255,0.4);"/>
+                    </VBox>
+                </HBox>
+            </VBox>
+
+            <!-- ══ FEEDBACK DÉTAILLÉ ══════════════════════════════════════════ -->
+            <Label text="📋 Analyse détaillée de votre performance orale"
+                   style="-fx-font-size:18px;-fx-font-weight:bold;-fx-text-fill:#1a1f36;"/>
+
+            <!-- Grammaire -->
+            <VBox spacing="10"
+                  style="-fx-background-color:white;-fx-background-radius:16;-fx-padding:22;
+                         -fx-border-color:#fee2e2;-fx-border-radius:16;-fx-border-width:1;
+                         -fx-effect:dropshadow(gaussian,rgba(0,0,0,0.06),10,0,0,3);">
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="📖" style="-fx-font-size:22px;-fx-background-color:#fef2f2;
+                                           -fx-background-radius:10;-fx-padding:8 10;"/>
+                    <VBox spacing="2">
+                        <Label text="Grammaire"
+                               style="-fx-font-size:15px;-fx-font-weight:bold;-fx-text-fill:#991b1b;"/>
+                        <Label text="Structures grammaticales utilisées à l'oral"
+                               style="-fx-font-size:11px;-fx-text-fill:#9ca3af;"/>
+                    </VBox>
+                </HBox>
+                <Separator style="-fx-background-color:#fee2e2;"/>
+                <Label fx:id="grammaireLabel" text="" wrapText="true"
+                       style="-fx-font-size:13px;-fx-text-fill:#374151;-fx-line-spacing:4;"/>
+            </VBox>
+
+            <!-- Vocabulaire -->
+            <VBox spacing="10"
+                  style="-fx-background-color:white;-fx-background-radius:16;-fx-padding:22;
+                         -fx-border-color:#d1fae5;-fx-border-radius:16;-fx-border-width:1;
+                         -fx-effect:dropshadow(gaussian,rgba(0,0,0,0.06),10,0,0,3);">
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="📚" style="-fx-font-size:22px;-fx-background-color:#ecfdf5;
+                                           -fx-background-radius:10;-fx-padding:8 10;"/>
+                    <VBox spacing="2">
+                        <Label text="Vocabulaire"
+                               style="-fx-font-size:15px;-fx-font-weight:bold;-fx-text-fill:#065f46;"/>
+                        <Label text="Richesse et pertinence"
+                               style="-fx-font-size:11px;-fx-text-fill:#9ca3af;"/>
+                    </VBox>
+                </HBox>
+                <Separator style="-fx-background-color:#d1fae5;"/>
+                <Label fx:id="vocabulaireLabel" text="" wrapText="true"
+                       style="-fx-font-size:13px;-fx-text-fill:#374151;-fx-line-spacing:4;"/>
+            </VBox>
+
+            <!-- Fluidité -->
+            <VBox spacing="10"
+                  style="-fx-background-color:white;-fx-background-radius:16;-fx-padding:22;
+                         -fx-border-color:#dbeafe;-fx-border-radius:16;-fx-border-width:1;
+                         -fx-effect:dropshadow(gaussian,rgba(0,0,0,0.06),10,0,0,3);">
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="🌊" style="-fx-font-size:22px;-fx-background-color:#eff6ff;
+                                           -fx-background-radius:10;-fx-padding:8 10;"/>
+                    <VBox spacing="2">
+                        <Label text="Fluidité &amp; Aisance"
+                               style="-fx-font-size:15px;-fx-font-weight:bold;-fx-text-fill:#1e40af;"/>
+                        <Label text="Débit et aisance de l'expression orale"
+                               style="-fx-font-size:11px;-fx-text-fill:#9ca3af;"/>
+                    </VBox>
+                </HBox>
+                <Separator style="-fx-background-color:#dbeafe;"/>
+                <Label fx:id="fluiditeLabel" text="" wrapText="true"
+                       style="-fx-font-size:13px;-fx-text-fill:#374151;-fx-line-spacing:4;"/>
+            </VBox>
+
+            <!-- Cohérence -->
+            <VBox spacing="10"
+                  style="-fx-background-color:white;-fx-background-radius:16;-fx-padding:22;
+                         -fx-border-color:#fef3c7;-fx-border-radius:16;-fx-border-width:1;
+                         -fx-effect:dropshadow(gaussian,rgba(0,0,0,0.06),10,0,0,3);">
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="🔗" style="-fx-font-size:22px;-fx-background-color:#fffbeb;
+                                           -fx-background-radius:10;-fx-padding:8 10;"/>
+                    <VBox spacing="2">
+                        <Label text="Cohérence &amp; Pertinence"
+                               style="-fx-font-size:15px;-fx-font-weight:bold;-fx-text-fill:#92400e;"/>
+                        <Label text="Logique et pertinence des réponses"
+                               style="-fx-font-size:11px;-fx-text-fill:#9ca3af;"/>
+                    </VBox>
+                </HBox>
+                <Separator style="-fx-background-color:#fef3c7;"/>
+                <Label fx:id="coherenceLabel" text="" wrapText="true"
+                       style="-fx-font-size:13px;-fx-text-fill:#374151;-fx-line-spacing:4;"/>
+            </VBox>
+
+            <!-- Prononciation -->
+            <VBox spacing="10"
+                  style="-fx-background-color:white;-fx-background-radius:16;-fx-padding:22;
+                         -fx-border-color:#ede9fe;-fx-border-radius:16;-fx-border-width:1;
+                         -fx-effect:dropshadow(gaussian,rgba(0,0,0,0.06),10,0,0,3);">
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="🗣" style="-fx-font-size:22px;-fx-background-color:#f5f3ff;
+                                          -fx-background-radius:10;-fx-padding:8 10;"/>
+                    <VBox spacing="2">
+                        <Label text="Prononciation"
+                               style="-fx-font-size:15px;-fx-font-weight:bold;-fx-text-fill:#5b21b6;"/>
+                        <Label text="Basée sur l'analyse de la transcription AssemblyAI"
+                               style="-fx-font-size:11px;-fx-text-fill:#9ca3af;"/>
+                    </VBox>
+                </HBox>
+                <Separator style="-fx-background-color:#ede9fe;"/>
+                <Label fx:id="prononciationLabel" text="" wrapText="true"
+                       style="-fx-font-size:13px;-fx-text-fill:#374151;-fx-line-spacing:4;"/>
+            </VBox>
+
+            <!-- Conseils -->
+            <VBox spacing="10"
+                  style="-fx-background-color:white;-fx-background-radius:16;-fx-padding:22;
+                         -fx-border-color:#d1fae5;-fx-border-radius:16;-fx-border-width:1;
+                         -fx-effect:dropshadow(gaussian,rgba(0,0,0,0.06),10,0,0,3);">
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="💡" style="-fx-font-size:22px;-fx-background-color:#ecfdf5;
+                                           -fx-background-radius:10;-fx-padding:8 10;"/>
+                    <VBox spacing="2">
+                        <Label text="Conseils d'amélioration"
+                               style="-fx-font-size:15px;-fx-font-weight:bold;-fx-text-fill:#065f46;"/>
+                        <Label text="Pour progresser à l'oral"
+                               style="-fx-font-size:11px;-fx-text-fill:#9ca3af;"/>
+                    </VBox>
+                </HBox>
+                <Separator style="-fx-background-color:#d1fae5;"/>
+                <Label fx:id="suggestionsLabel" text="" wrapText="true"
+                       style="-fx-font-size:13px;-fx-text-fill:#374151;-fx-line-spacing:4;"/>
+            </VBox>
+
+            <!-- Bilan -->
+            <VBox spacing="10"
+                  style="-fx-background-color:linear-gradient(to right,#0f172a,#1e293b);
+                         -fx-background-radius:16;-fx-padding:22;
+                         -fx-effect:dropshadow(gaussian,rgba(0,0,0,0.2),14,0,0,5);">
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="✅" style="-fx-font-size:22px;-fx-background-color:rgba(255,255,255,0.1);
+                                           -fx-background-radius:10;-fx-padding:8 10;"/>
+                    <VBox spacing="2">
+                        <Label text="Bilan global"
+                               style="-fx-font-size:15px;-fx-font-weight:bold;-fx-text-fill:white;"/>
+                        <Label text="Résumé de votre performance orale"
+                               style="-fx-font-size:11px;-fx-text-fill:rgba(255,255,255,0.4);"/>
+                    </VBox>
+                </HBox>
+                <Separator style="-fx-background-color:rgba(255,255,255,0.15);"/>
+                <Label fx:id="bilanLabel" text="" wrapText="true"
+                       style="-fx-font-size:13px;-fx-text-fill:rgba(255,255,255,0.9);
+                              -fx-line-spacing:4;"/>
+            </VBox>
+
+            <!-- Bouton retour -->
+            <HBox alignment="CENTER" style="-fx-padding:8 0 16 0;">
+                <Button text="← Retour aux tests" onAction="#handleBack"
+                        style="-fx-background-color:#0f172a;-fx-text-fill:white;
+                               -fx-font-size:14px;-fx-font-weight:bold;-fx-cursor:hand;
+                               -fx-background-radius:10;-fx-padding:12 32;
+                               -fx-effect:dropshadow(gaussian,rgba(0,0,0,0.3),8,0,0,3);"/>
+            </HBox>
+
+        </VBox>
+    </ScrollPane>
+</VBox>

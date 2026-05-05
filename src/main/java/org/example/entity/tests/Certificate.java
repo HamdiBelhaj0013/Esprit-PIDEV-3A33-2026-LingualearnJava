@@ -59,6 +59,6 @@ public class Certificate {
 
     /** URL de vérification — utilisée dans le QR Code */
     public String getVerifyUrl() {
-        return "http://localhost:8080/api/certificate/verify/" + uuid;
+        return "http://localhost:9090/api/certificate/verify/" + uuid;
     }
 }

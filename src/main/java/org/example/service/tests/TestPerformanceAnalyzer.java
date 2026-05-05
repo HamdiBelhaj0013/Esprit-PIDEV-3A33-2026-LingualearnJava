@@ -125,7 +125,7 @@ public class TestPerformanceAnalyzer {
 
     public Map<String, Double> getPerformanceParNiveau() {
         String sql = """
-                SELECT m.level, AVG(r.overall_score) as avg_score
+                SELECT m.level, MAX(r.overall_score) as best_score
                 FROM test_result r JOIN mock_test m ON r.mock_test_id = m.id
                 WHERE r.user_id = ? GROUP BY m.level ORDER BY m.level ASC
                 """;
@@ -134,7 +134,30 @@ public class TestPerformanceAnalyzer {
             ps.setLong(1, userId);
             ResultSet rs = ps.executeQuery();
             while (rs.next())
-                result.put(rs.getString("level"), rs.getDouble("avg_score"));
+                result.put(rs.getString("level"), rs.getDouble("best_score"));
+        } catch (SQLException e) { /* empty */ }
+        return result;
+    }
+
+    /**
+     * Performance par niveau filtrée sur une langue donnée.
+     * Utilise MAX(score) pour valoriser le meilleur passage de l'user.
+     */
+    public Map<String, Double> getPerformanceParNiveauEtLangue(Long langId) {
+        String sql = """
+                SELECT m.level, MAX(r.overall_score) as best_score
+                FROM test_result r
+                JOIN mock_test m ON r.mock_test_id = m.id
+                WHERE r.user_id = ? AND m.platform_language_id = ?
+                GROUP BY m.level ORDER BY m.level ASC
+                """;
+        Map<String, Double> result = new LinkedHashMap<>();
+        try (PreparedStatement ps = getConn().prepareStatement(sql)) {
+            ps.setLong(1, userId);
+            ps.setLong(2, langId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next())
+                result.put(rs.getString("level"), rs.getDouble("best_score"));
         } catch (SQLException e) { /* empty */ }
         return result;
     }
@@ -197,8 +220,9 @@ public class TestPerformanceAnalyzer {
      */
     public Resume calculerResumePourLangue(Long langId) {
         Resume r = calculerResume();
-        // Remplacer parSection par les scores filtrés sur la langue
+        // Remplacer parSection ET parNiveau par les scores filtrés sur la langue
         r.parSection = getPerformanceParSectionEtLangue(langId);
+        r.parNiveau  = getPerformanceParNiveauEtLangue(langId);
         return r;
     }
 }
