@@ -17,7 +17,7 @@ public class GroqService {
 
     // Clé de secours — fonctionne même sans variable d'environnement
     private static final String FALLBACK_API_KEY =
-            "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";
+            "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";
 
     // Plusieurs modèles testés en cascade si l'un est indisponible
     private static final String[] MODELS = {

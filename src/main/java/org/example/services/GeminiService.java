@@ -14,7 +14,7 @@ import java.net.http.HttpResponse;
 public class GeminiService {
 
     private static final String API_URL = "https://api.groq.com/openai/v1/chat/completions";
-    private static final String AMELIORATION_API_KEY = "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";
+    private static final String AMELIORATION_API_KEY = "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";
     private static final String MODEL = "llama-3.3-70b-versatile";
     private final HttpClient client = HttpClient.newHttpClient();
 
