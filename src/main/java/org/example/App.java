@@ -35,7 +35,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         StageManager.setPrimaryStage(stage);
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/login.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/user/UserMain.fxml"));
         Scene scene = new Scene(loader.load());
         stage.setTitle("LinguaLearn");
         stage.setMinWidth(400);
