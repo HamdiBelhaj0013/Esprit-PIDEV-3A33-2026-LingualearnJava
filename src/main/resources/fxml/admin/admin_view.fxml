@@ -7,14 +7,12 @@
       styleClass="root-pane"
       stylesheets="@../../css/style.css">
 
-    <!-- Header -->
     <HBox styleClass="header-bar secondary" alignment="CENTER_LEFT">
         <Label text="LinguaLearn - Administration" styleClass="header-title"/>
         <Region HBox.hgrow="ALWAYS"/>
         <Button text="Gerer les FAQ" onAction="#ouvrirGestionFAQ" styleClass="btn-light"/>
     </HBox>
 
-    <!-- Stats -->
     <HBox spacing="10" styleClass="stats-row">
         <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
             <Label text="Total" styleClass="stat-label"/>
@@ -44,51 +42,52 @@
 
     <VBox spacing="12" styleClass="page-content" VBox.vgrow="ALWAYS">
 
-        <!-- Filtres -->
         <HBox spacing="8" alignment="CENTER_LEFT">
             <TextField fx:id="searchReclamation" promptText="Rechercher reclamation..."
                        prefWidth="220" styleClass="input-field"/>
-            <ComboBox fx:id="filtreStatut"   promptText="Statut"    prefWidth="160"/>
-            <ComboBox fx:id="filtrePriorite" promptText="Priorite"  prefWidth="130"/>
-            <ComboBox fx:id="reclSortBox"    promptText="Tri"       prefWidth="130" onAction="#trier"/>
+            <ComboBox fx:id="filtreStatut"   promptText="Statut"   prefWidth="160"/>
+            <ComboBox fx:id="filtrePriorite" promptText="Priorite" prefWidth="130"/>
+            <ComboBox fx:id="reclSortBox"    promptText="Tri"      prefWidth="130"
+                      onAction="#trier"/>
             <Button text="Rechercher" onAction="#rechercher" styleClass="btn-secondary"/>
             <Button text="Filtrer"    onAction="#filtrer"    styleClass="btn-primary"/>
             <Button text="Tout voir"  onAction="#charger"    styleClass="btn-light"/>
         </HBox>
 
-        <!-- Table + pagination -->
         <VBox styleClass="card" VBox.vgrow="ALWAYS">
             <Label text="Double-cliquez sur une réclamation pour la gérer."
                    styleClass="hint-label" style="-fx-padding: 4 0 4 0;"/>
             <TableView fx:id="reclTable" minHeight="350" prefHeight="500"
                        styleClass="clean-table" VBox.vgrow="ALWAYS">
                 <columns>
-                    <TableColumn fx:id="rColSubject"  text="Sujet"       prefWidth="185"/>
-                    <TableColumn fx:id="rColStatus"   text="Statut"      prefWidth="115"/>
-                    <TableColumn fx:id="rColPriority" text="Priorite"    prefWidth="85"/>
-                    <TableColumn fx:id="rColDate"     text="Date"        prefWidth="145"/>
-                    <TableColumn fx:id="rColSLA"      text="SLA Restant" prefWidth="120"/>
+                    <TableColumn fx:id="rColSubject"   text="Sujet"       prefWidth="165"/>
+                    <TableColumn fx:id="rColStatus"    text="Statut"      prefWidth="105"/>
+                    <TableColumn fx:id="rColPriority"  text="Priorite"    prefWidth="80"/>
+                    <TableColumn fx:id="rColDate"      text="Date"        prefWidth="130"/>
+                    <TableColumn fx:id="rColSLA"       text="SLA Restant" prefWidth="100"/>
+                    <!-- ← NOUVEAU -->
+                    <TableColumn fx:id="rColSentiment" text="Sentiment"   prefWidth="90"/>
                 </columns>
                 <placeholder>
                     <Label text="Aucune reclamation." styleClass="hint-label"/>
                 </placeholder>
             </TableView>
 
-            <!-- Pagination -->
             <HBox spacing="8" styleClass="toolbar-row" alignment="CENTER_RIGHT">
-                <Button fx:id="btnPrev" text="◀" onAction="#pagePrecedente" styleClass="btn-light"/>
+                <Button fx:id="btnPrev" text="◀" onAction="#pagePrecedente"
+                        styleClass="btn-light"/>
                 <Label  fx:id="labelPage" text="Page 1 / 1" styleClass="hint-label"/>
-                <Button fx:id="btnNext" text="▶" onAction="#pageSuivante"   styleClass="btn-light"/>
+                <Button fx:id="btnNext" text="▶" onAction="#pageSuivante"
+                        styleClass="btn-light"/>
             </HBox>
         </VBox>
 
     </VBox>
 
-    <!-- Champs cachés pour compatibilité controller (non visibles) -->
-    <Label fx:id="reponseMsg"  visible="false" managed="false"/>
-    <ComboBox fx:id="statutBox" visible="false" managed="false"/>
+    <Label    fx:id="reponseMsg"    visible="false" managed="false"/>
+    <ComboBox fx:id="statutBox"     visible="false" managed="false"/>
     <ListView fx:id="reponsesList"  visible="false" managed="false"/>
     <ListView fx:id="historiqueList" visible="false" managed="false"/>
-    <Label fx:id="slaTimerLabel"    visible="false" managed="false"/>
+    <Label    fx:id="slaTimerLabel" visible="false" managed="false"/>
 
 </VBox>

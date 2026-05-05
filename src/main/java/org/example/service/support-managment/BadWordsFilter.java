@@ -15,16 +15,27 @@ public class BadWordsFilter {
     public static boolean containsBadWord(String text) {
         if (text == null) return false;
         String lower = text.toLowerCase();
-        return BAD_WORDS.stream().anyMatch(lower::contains);
+        // Vérification par mot entier uniquement
+        String[] words = lower.split("\\s+|[.,!?;:]");
+        for (String word : words) {
+            String cleanWord = word.replaceAll("[^a-záàâéèêëîïôùûüç]", "");
+            if (BAD_WORDS.stream().anyMatch(bw -> cleanWord.equals(bw))) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    // Retourne le mot interdit trouvé
     public static String getFoundBadWord(String text) {
         if (text == null) return null;
         String lower = text.toLowerCase();
-        return BAD_WORDS.stream()
-            .filter(lower::contains)
-            .findFirst()
-            .orElse(null);
+        String[] words = lower.split("\\s+|[.,!?;:]");
+        for (String word : words) {
+            String cleanWord = word.replaceAll("[^a-záàâéèêëîïôùûüç]", "");
+            for (String bw : BAD_WORDS) {
+                if (cleanWord.equals(bw)) return bw;
+            }
+        }
+        return null;
     }
 }

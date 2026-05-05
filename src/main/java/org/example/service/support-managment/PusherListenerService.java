@@ -3,9 +3,6 @@ package org.example.service.supportManagment;
 import com.pusher.client.Pusher;
 import com.pusher.client.PusherOptions;
 import com.pusher.client.channel.Channel;
-import com.pusher.client.connection.ConnectionEventListener;
-import com.pusher.client.connection.ConnectionState;
-import com.pusher.client.connection.ConnectionStateChange;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import javafx.application.Platform;
@@ -14,71 +11,45 @@ public class PusherListenerService {
 
     private static final String KEY     = "5f6021b614f01111799d";
     private static final String CLUSTER = "eu";
-    private static Pusher pusher;
+
+    private static Pusher  pusher;
+    private static int     currentUserId = -1;  // ✅ évite double subscribe
 
     public static void demarrer(int userId, NotificationCallback callback) {
-        if (pusher != null) arreter();
+        // ✅ Si déjà connecté pour ce user — ne pas re-subscribe
+        if (pusher != null && currentUserId == userId) return;
 
-        PusherOptions options = new PusherOptions();
-        options.setCluster(CLUSTER);
-        options.setUseTLS(true);
+        arreter();
+        currentUserId = userId;
 
+        PusherOptions options = new PusherOptions().setCluster(CLUSTER);
         pusher = new Pusher(KEY, options);
+        pusher.connect();
 
         String channelName = "user-" + userId;
+        Channel channel = pusher.subscribe(channelName);
 
-        // ── Connexion avec listener — s'abonne APRÈS connexion établie ──
-        pusher.connect(new ConnectionEventListener() {
-            @Override
-            public void onConnectionStateChange(ConnectionStateChange change) {
-                System.out.println("Pusher état : "
-                        + change.getPreviousState()
-                        + " → " + change.getCurrentState());
-
-                // S'abonner seulement quand CONNECTED
-                if (change.getCurrentState() == ConnectionState.CONNECTED) {
-                    Channel channel = pusher.subscribe(channelName);
-
-                    channel.bind("nouvelle-reponse", event -> {
-                        try {
-                            String dataStr = event.getData();
-                            System.out.println("Pusher reçu : " + dataStr);
-
-                            JsonObject data = JsonParser.parseString(dataStr)
-                                    .getAsJsonObject();
-                            String message = data.has("message")
-                                    ? data.get("message").getAsString()
-                                    : "Nouvelle réponse reçue";
-
-                            Platform.runLater(() -> callback.onNotification(message));
-
-                        } catch (Exception e) {
-                            System.err.println("Pusher parse erreur : " + e.getMessage());
-                            Platform.runLater(() ->
-                                    callback.onNotification("Nouvelle notification reçue"));
-                        }
-                    });
-
-                    System.out.println("Pusher abonné sur : " + channelName);
-                }
+        channel.bind("nouvelle-reponse", event -> {
+            try {
+                String dataStr = event.getData();
+                JsonObject data = JsonParser.parseString(dataStr).getAsJsonObject();
+                String message = data.has("message")
+                        ? data.get("message").getAsString()
+                        : "Nouvelle réponse reçue";
+                Platform.runLater(() -> callback.onNotification(message));
+            } catch (Exception e) {
+                System.err.println("Erreur parsing Pusher: " + e.getMessage());
             }
+        });
 
-            @Override
-            public void onError(String message, String code, Exception e) {
-                System.out.println("Pusher erreur : " + message + " code=" + code);
-            }
-
-        }, ConnectionState.ALL);
+        System.out.println("Pusher: écoute sur channel " + channelName);
     }
 
     public static void arreter() {
         if (pusher != null) {
-            try {
-                pusher.disconnect();
-            } catch (Exception e) {
-                System.out.println("Pusher arrêt : " + e.getMessage());
-            }
+            try { pusher.disconnect(); } catch (Exception ignored) {}
             pusher = null;
+            currentUserId = -1;
         }
     }
 
