@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background: #f8f9fa;
+        }
+        #status {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        #btn {
+            font-size: 40px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            padding: 20px;
+            border-radius: 50%;
+            background: #e8f0fe;
+        }
+        #btn:hover { background: #d2e3fc; }
+        #result {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #1a73e8;
+            text-align: center;
+            padding: 10px;
+            max-width: 400px;
+        }
+    </style>
+</head>
+<body>
+<div id="status">Cliquez sur le microphone pour parler</div>
+<button id="btn" onclick="startListening()">🎤</button>
+<div id="result"></div>
+
+<script>
+    var recognition;
+    var listening = false;
+
+    function startListening() {
+        if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+            document.getElementById('status').innerText = 'Non supporté dans ce navigateur';
+            return;
+        }
+
+        if (listening) {
+            recognition.stop();
+            return;
+        }
+
+        var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.lang = 'fr-FR';
+        recognition.continuous = false;
+        recognition.interimResults = false;
+
+        recognition.onstart = function() {
+            listening = true;
+            document.getElementById('btn').innerText = '⏹️';
+            document.getElementById('status').innerText = '🔴 Écoute en cours...';
+        };
+
+        recognition.onresult = function(event) {
+            var text = event.results[0][0].transcript;
+            document.getElementById('result').innerText = text;
+            document.getElementById('status').innerText = '✅ Texte reconnu !';
+            // Envoie le texte à Java
+            window.javaConnector.setText(text);
+        };
+
+        recognition.onerror = function(event) {
+            document.getElementById('status').innerText = 'Erreur: ' + event.error;
+            listening = false;
+            document.getElementById('btn').innerText = '🎤';
+        };
+
+        recognition.onend = function() {
+            listening = false;
+            document.getElementById('btn').innerText = '🎤';
+        };
+
+        recognition.start();
+    }
+</script>
+</body>
+</html>

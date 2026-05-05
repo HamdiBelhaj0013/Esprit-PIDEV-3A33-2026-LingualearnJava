@@ -63,10 +63,23 @@ public class ReclamationUserDetailController implements Initializable {
         langueBox.setValue("Français");
     }
 
+    // ── Auto-refresh toutes les 30 secondes ──────────────────────────────
+    private javafx.animation.Timeline autoRefresh;
+
     public void setReclamation(Reclamation r, Runnable onCloseCallback) {
         this.reclamation = r;
         this.onClose     = onCloseCallback;
         rafraichir();
+
+        // ✅ Rafraîchit les réponses toutes les 30 secondes
+        autoRefresh = new javafx.animation.Timeline(
+            new javafx.animation.KeyFrame(
+                javafx.util.Duration.seconds(30),
+                e -> chargerReponses()
+            )
+        );
+        autoRefresh.setCycleCount(javafx.animation.Timeline.INDEFINITE);
+        autoRefresh.play();
     }
 
     private void rafraichir() {
@@ -252,7 +265,9 @@ public class ReclamationUserDetailController implements Initializable {
         });
     }
 
+    // ── Arrêter le timer quand on ferme ──────────────────────────────────
     @FXML public void fermer() {
+        if (autoRefresh != null) autoRefresh.stop();
         ((Stage) labelSujet.getScene().getWindow()).close();
     }
 
