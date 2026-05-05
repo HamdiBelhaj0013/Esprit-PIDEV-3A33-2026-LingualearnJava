@@ -1,4 +1,4 @@
-﻿package org.example.service.forum;
+package org.example.service.forum;
 
 import java.net.URI;
 import java.net.http.HttpClient;

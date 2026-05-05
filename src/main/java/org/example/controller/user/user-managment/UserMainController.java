@@ -1,4 +1,4 @@
-﻿package org.example.controller.user;
+package org.example.controller.user;
 
 import org.example.entity.User;
 import org.example.service.NotificationService;

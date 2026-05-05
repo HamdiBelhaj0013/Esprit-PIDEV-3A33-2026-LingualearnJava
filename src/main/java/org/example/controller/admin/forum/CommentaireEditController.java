@@ -1,4 +1,4 @@
-﻿package org.example.controller.admin.forum;
+package org.example.controller.admin.forum;
 
 import org.example.entities.forum.Commentaire;
 import javafx.fxml.FXML;

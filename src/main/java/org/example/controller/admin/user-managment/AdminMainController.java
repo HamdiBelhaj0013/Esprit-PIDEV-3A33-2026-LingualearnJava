@@ -1,4 +1,4 @@
-﻿package org.example.controller.admin;
+package org.example.controller.admin;
 
 import org.example.entity.User;
 import javafx.event.ActionEvent;

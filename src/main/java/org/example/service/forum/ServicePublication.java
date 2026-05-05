@@ -1,4 +1,4 @@
-﻿package org.example.service.forum;
+package org.example.service.forum;
 
 import org.example.interfaces.IServices;
 import org.example.entities.forum.Publication;

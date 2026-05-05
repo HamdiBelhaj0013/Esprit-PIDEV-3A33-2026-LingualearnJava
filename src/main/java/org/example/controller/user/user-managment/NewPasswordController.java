@@ -1,4 +1,4 @@
-﻿package org.example.controller;
+package org.example.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

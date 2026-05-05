@@ -1,4 +1,4 @@
-﻿package org.example.controller.admin.forum;
+package org.example.controller.admin.forum;
 
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;

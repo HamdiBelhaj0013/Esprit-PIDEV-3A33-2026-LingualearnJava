@@ -1,4 +1,4 @@
-﻿package org.example.service.forum;
+package org.example.service.forum;
 
 import org.json.JSONObject;
 

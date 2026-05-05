@@ -1,4 +1,4 @@
-﻿package org.example.controller.admin.forum;
+package org.example.controller.admin.forum;
 
 public final class BackofficeContext {
     private static Integer selectedPublicationId;
