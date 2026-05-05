@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.controller.admin.DashboardViewController"
+      spacing="20.0">
+
+    <!-- Page header -->
+    <VBox spacing="4.0">
+        <Label text="Dashboard" styleClass="page-title"/>
+        <Label text="Live overview of your platform" styleClass="page-subtitle"/>
+    </VBox>
+
+    <!-- Stats cards row -->
+    <HBox spacing="16.0">
+        <VBox styleClass="stat-card,stat-card-blue" spacing="8.0">
+            <Label fx:id="totalUsersLabel" text="—" styleClass="stat-number"/>
+            <Label text="Total Users" styleClass="stat-label"/>
+        </VBox>
+        <VBox styleClass="stat-card,stat-card-green" spacing="8.0">
+            <Label fx:id="activeUsersLabel" text="—" styleClass="stat-number"/>
+            <Label text="Active" styleClass="stat-label"/>
+        </VBox>
+        <VBox styleClass="stat-card,stat-card-orange" spacing="8.0">
+            <Label fx:id="suspendedLabel" text="—" styleClass="stat-number"/>
+            <Label text="Suspended" styleClass="stat-label"/>
+        </VBox>
+        <VBox styleClass="stat-card,stat-card-red" spacing="8.0">
+            <Label fx:id="premiumLabel" text="—" styleClass="stat-number"/>
+            <Label text="Premium" styleClass="stat-label"/>
+        </VBox>
+        <VBox styleClass="stat-card,stat-card-purple" spacing="8.0">
+            <Label fx:id="newThisMonthLabel" text="—" styleClass="stat-number"/>
+            <Label text="New This Month" styleClass="stat-label"/>
+        </VBox>
+    </HBox>
+
+    <!-- Recent registrations -->
+    <VBox styleClass="table-card" VBox.vgrow="ALWAYS" spacing="0.0">
+        <padding>
+            <Insets top="16.0" right="16.0" bottom="0.0" left="16.0"/>
+        </padding>
+        <Label text="Recent Registrations" styleClass="form-section-title"/>
+        <TableView fx:id="recentTable" VBox.vgrow="ALWAYS" styleClass="table-view">
+            <columns>
+                <TableColumn fx:id="colName"   text="Full Name" prefWidth="200.0"/>
+                <TableColumn fx:id="colEmail"  text="Email"     prefWidth="260.0"/>
+                <TableColumn fx:id="colStatus" text="Status"    prefWidth="120.0"/>
+                <TableColumn fx:id="colPlan"   text="Plan"      prefWidth="120.0"/>
+                <TableColumn fx:id="colJoined" text="Joined"    prefWidth="170.0"/>
+            </columns>
+            <placeholder>
+                <Label text="No users found" styleClass="page-subtitle"/>
+            </placeholder>
+        </TableView>
+    </VBox>
+</VBox>
