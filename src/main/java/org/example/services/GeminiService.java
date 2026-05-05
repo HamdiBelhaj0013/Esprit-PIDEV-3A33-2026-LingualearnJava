@@ -6,6 +6,10 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import java.security.cert.X509Certificate;
 
 /**
  * Service d'amélioration de publications via GROQ (LLaMA 3).
@@ -14,9 +18,26 @@ import java.net.http.HttpResponse;
 public class GeminiService {
 
     private static final String API_URL = "https://api.groq.com/openai/v1/chat/completions";
-    private static final String AMELIORATION_API_KEY = "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";
+    private static final String AMELIORATION_API_KEY = "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";
     private static final String MODEL = "llama-3.3-70b-versatile";
-    private final HttpClient client = HttpClient.newHttpClient();
+    private final HttpClient client = createTrustAllClient();
+
+    private static HttpClient createTrustAllClient() {
+        try {
+            TrustManager[] trustAll = new TrustManager[]{
+                new X509TrustManager() {
+                    public X509Certificate[] getAcceptedIssuers() { return new X509Certificate[0]; }
+                    public void checkClientTrusted(X509Certificate[] certs, String t) {}
+                    public void checkServerTrusted(X509Certificate[] certs, String t) {}
+                }
+            };
+            SSLContext sc = SSLContext.getInstance("TLS");
+            sc.init(null, trustAll, new java.security.SecureRandom());
+            return HttpClient.newBuilder().sslContext(sc).build();
+        } catch (Exception e) {
+            return HttpClient.newHttpClient();
+        }
+    }
 
     /**
      * Améliore le titre et le contenu d'une publication via GROQ.
