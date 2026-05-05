@@ -1,4 +1,4 @@
-package org.example.controller;
+﻿package org.example.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -12,7 +12,7 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import netscape.javascript.JSObject;
-import org.example.service.HCaptchaService;
+import org.example.service.forum.HCaptchaService;
 import org.example.service.PasswordResetService;
 
 import java.io.IOException;
@@ -60,7 +60,7 @@ public class NewPasswordController {
     private void handleReset(ActionEvent event) {
         clearAllErrors();
 
-        // ── CAPTCHA verification ─────────────────────
+        // â”€â”€ CAPTCHA verification â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         String token = getCaptchaToken();
         if (token.isEmpty() || !captchaService.verify(token)) {
             captchaError.setVisible(true);
@@ -71,7 +71,7 @@ public class NewPasswordController {
         captchaError.setVisible(false);
         captchaError.setManaged(false);
 
-        // ── Password validation ──────────────────────
+        // â”€â”€ Password validation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         String password = passwordField.getText();
         String confirm  = confirmField.getText();
 
@@ -129,3 +129,4 @@ public class NewPasswordController {
         }
     }
 }
+

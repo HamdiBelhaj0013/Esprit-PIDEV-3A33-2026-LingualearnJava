@@ -1,4 +1,4 @@
-package org.example.controller.admin;
+﻿package org.example.controller.admin;
 
 import org.example.entity.User;
 import javafx.event.ActionEvent;
@@ -27,7 +27,7 @@ public class AdminMainController {
     private User   loggedInUser;
     private Button activeButton;
 
-    // ── Entry point from LoginController ─────────────────────────────────────
+    // â”€â”€ Entry point from LoginController â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     public void setUser(User user) {
         this.loggedInUser = user;
@@ -35,7 +35,7 @@ public class AdminMainController {
         showDashboard(null);
     }
 
-    // ── Sidebar navigation ────────────────────────────────────────────────────
+    // â”€â”€ Sidebar navigation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     @FXML
     private void showDashboard(ActionEvent event) {
@@ -58,7 +58,7 @@ public class AdminMainController {
         });
     }
 
-    // ── Called by child controllers to open dialogs ───────────────────────────
+    // â”€â”€ Called by child controllers to open dialogs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /** Open the user detail popup window for the given user. */
     public void openUserDetail(User user) {
@@ -83,7 +83,7 @@ public class AdminMainController {
 
     /** Open edit-user form dialog for a given user. */
     public void openEditUser(User user, Runnable onSaved) {
-        openStage("/fxml/admin/UserFormDialog.fxml", "Edit User — " + user.getFullName(),
+        openStage("/fxml/admin/UserFormDialog.fxml", "Edit User â€” " + user.getFullName(),
             500, 560, ctrl -> {
                 if (ctrl instanceof UserFormController c) {
                     c.initForEdit(user, onSaved);
@@ -97,7 +97,32 @@ public class AdminMainController {
         else showDashboard(null);
     }
 
-    // ── Logout ───────────────────────────────────────────────────────────────
+
+    @FXML
+    private void goToForum(ActionEvent event) {
+        try {
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/fxml/admin/forum/fxml/dashboard.fxml"));
+            javafx.scene.Parent root = loader.load();
+            javafx.stage.Stage stage = (javafx.stage.Stage) contentArea.getScene().getWindow();
+            stage.setScene(new javafx.scene.Scene(root, 1400, 800));
+            stage.setTitle("LinguaLearn - Forum");
+        } catch (java.io.IOException e) {
+            showError("Navigation impossible: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void goToPublications(ActionEvent event) {
+        try {
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/fxml/admin/forum/fxml/publication_manager.fxml"));
+            javafx.scene.Parent root = loader.load();
+            javafx.stage.Stage stage = (javafx.stage.Stage) contentArea.getScene().getWindow();
+            stage.setScene(new javafx.scene.Scene(root, 1400, 800));
+            stage.setTitle("LinguaLearn - Publications");
+        } catch (java.io.IOException e) {
+            showError("Navigation impossible: " + e.getMessage());
+        }
+    }
 
     @FXML
     private void handleLogout(ActionEvent event) {
@@ -115,7 +140,7 @@ public class AdminMainController {
         }
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────────
+    // â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     private void setActive(Button btn, String title) {
         if (activeButton != null)
@@ -162,3 +187,5 @@ public class AdminMainController {
         alert.showAndWait();
     }
 }
+
+

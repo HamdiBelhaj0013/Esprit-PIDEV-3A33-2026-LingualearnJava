@@ -1,6 +1,5 @@
-package org.example.controller.user;
+﻿package org.example.controller.user;
 
-import org.example.controller.user.PlansController;
 import org.example.entity.User;
 import org.example.service.NotificationService;
 import org.example.service.UserService;
@@ -8,7 +7,6 @@ import org.example.util.SessionManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -16,8 +14,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -51,7 +47,7 @@ public class UserMainController {
         instance = this;
     }
 
-    // ── Entry point from LoginController ─────────────────────────────────────
+    // â”€â”€ Entry point from LoginController â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     public void setUser(User user) {
         SessionManager.setCurrentUser(user);
@@ -59,7 +55,7 @@ public class UserMainController {
         showDashboard(null);
     }
 
-    // ── Static refresh — called after profile save ────────────────────────────
+    // â”€â”€ Static refresh â€” called after profile save â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     public static void refreshUserInfo() {
         if (instance == null) return;
@@ -76,7 +72,7 @@ public class UserMainController {
         );
     }
 
-    // ── Sidebar navigation ────────────────────────────────────────────────────
+    // â”€â”€ Sidebar navigation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     @FXML
     private void showDashboard(ActionEvent event) {
@@ -124,7 +120,7 @@ public class UserMainController {
 
     @FXML private void showForum(ActionEvent e) {
         setActive((Button) e.getSource(), "Forum");
-        showComingSoonContent();
+        loadView("/fxml/user/forum/fxml/MainView.fxml");
     }
 
     @FXML private void showFAQ(ActionEvent e) {
@@ -133,7 +129,7 @@ public class UserMainController {
     }
 
     @FXML private void showReclamations(ActionEvent e) {
-        setActive((Button) e.getSource(), "Mes réclamations");
+        setActive((Button) e.getSource(), "Mes rÃ©clamations");
         showComingSoonContent();
     }
 
@@ -178,7 +174,7 @@ public class UserMainController {
                     msgLbl.setStyle("-fx-font-size: 13px; -fx-text-fill: #374151;");
                     msgLbl.setWrapText(true);
 
-                    Label dateLbl = new Label(n.createdAt + (n.isRead ? " · Read" : " · Unread"));
+                    Label dateLbl = new Label(n.createdAt + (n.isRead ? " Â· Read" : " Â· Unread"));
                     dateLbl.setStyle("-fx-font-size: 11px; -fx-text-fill: #6c7a99;");
 
                     row.getChildren().addAll(typeLbl, msgLbl, dateLbl);
@@ -225,7 +221,7 @@ public class UserMainController {
         showBilling(null);
     }
 
-    // ── Logout ────────────────────────────────────────────────────────────────
+    // â”€â”€ Logout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     @FXML
     private void handleLogout(ActionEvent event) {
@@ -240,11 +236,11 @@ public class UserMainController {
             stage.setMinHeight(500);
             stage.centerOnScreen();
         } catch (IOException e) {
-            // nothing to do — login screen unavailable
+            // nothing to do â€” login screen unavailable
         }
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────────
+    // â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /** Called from UserDashboardController quick actions (same package). */
     void showComingSoonFor(String title) {
@@ -294,3 +290,5 @@ public class UserMainController {
         return AVATAR_COLORS[idx];
     }
 }
+
+
