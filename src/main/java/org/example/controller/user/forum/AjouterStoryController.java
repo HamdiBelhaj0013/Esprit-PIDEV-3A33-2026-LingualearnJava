@@ -1,4 +1,4 @@
-﻿package org.example.controller.user.forum;
+package org.example.controller.user.forum;
 
 
 import javafx.fxml.FXML;

@@ -1,4 +1,4 @@
-﻿package org.example.controller.admin.forum;
+package org.example.controller.admin.forum;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;

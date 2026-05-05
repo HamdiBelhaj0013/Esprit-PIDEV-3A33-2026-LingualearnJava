@@ -1,4 +1,4 @@
-﻿package org.example.entities.forum;
+package org.example.entities.forum;
 
 import java.time.LocalDateTime;
 

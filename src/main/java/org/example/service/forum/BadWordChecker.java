@@ -1,4 +1,4 @@
-﻿package org.example.service.forum;
+package org.example.service.forum;
 
 import java.util.Arrays;
 import java.util.List;
