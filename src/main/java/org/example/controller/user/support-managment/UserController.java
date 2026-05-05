@@ -153,8 +153,8 @@ public class UserController implements Initializable {
         if (file != null) {
             // ── Vérification contenu violent (sang) ────────────────────────────
             if (ViolenceDetector.contientSang(file.getAbsolutePath())) {
-                banUserLocally("Image violente détectée");
-                reclErreur("❌ Image refusée : contenu violent. Compte suspendu.");
+                banUserLocally("Image violente detectee");
+                reclErreur("Image violente detectee");
                 return;
             }
             // ✅ Image OK
@@ -560,7 +560,7 @@ public class UserController implements Initializable {
             messageField.setDisable(true);
             if (btnSupprimerImage != null) btnSupprimerImage.setDisable(true);
             reclMsg.setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
-            reclMsg.setText("🚫 Compte suspendu 3 jours : " + raison);
+            reclMsg.setText("Image violente detectee");
         });
     }
 }

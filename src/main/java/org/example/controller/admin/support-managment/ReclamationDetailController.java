@@ -47,6 +47,10 @@ public class ReclamationDetailController implements Initializable {
     @FXML private ListView<String> reponsesList;
     @FXML private ListView<String> auditList;
 
+    // ── Résumé IA ────────────────────────────────────────────────────
+    @FXML private Label labelResume;
+    @FXML private Label msgResume;
+
     private final ReclamationDAO     reclDao     = new ReclamationDAO();
     private final SupportResponseDAO responseDao = new SupportResponseDAO();
 
@@ -306,6 +310,49 @@ public class ReclamationDetailController implements Initializable {
     private void showMsg(Label label, String txt, String color) {
         label.setStyle("-fx-text-fill: " + color + "; -fx-font-weight: bold;");
         label.setText(txt);
+    }
+
+    // ── Résumer avec IA ──────────────────────────────────────────────────
+    @FXML public void resumerReclamation() {
+        if (msgResume != null) {
+            msgResume.setStyle("-fx-text-fill: gray;");
+            msgResume.setText("⏳ Résumé en cours...");
+        }
+        if (labelResume != null) labelResume.setText("");
+
+        new Thread(() -> {
+            String prompt =
+                "Résume cette réclamation en MAXIMUM 2 phrases courtes en français. " +
+                "Sois très concis. Maximum 50 mots. " +
+                "Sujet: '" + reclamation.getSubject() + "'. " +
+                "Message: '" + reclamation.getMessageBody() + "'. " +
+                "Réponds UNIQUEMENT avec le résumé court, sans introduction, sans 'Langue utilisée'.";
+
+            String resume = callOllama(prompt);
+
+            javafx.application.Platform.runLater(() -> {
+                if (resume != null && !resume.isBlank()) {
+                    if (labelResume != null) {
+                        labelResume.setText("📝 " + resume);
+                        labelResume.setStyle(
+                            "-fx-text-fill: #1a73e8; " +
+                            "-fx-font-style: italic; " +
+                            "-fx-padding: 8; " +
+                            "-fx-background-color: #e8f0fe; " +
+                            "-fx-background-radius: 6;");
+                    }
+                    if (msgResume != null) {
+                        msgResume.setStyle("-fx-text-fill: green;");
+                        msgResume.setText("✅ Résumé généré !");
+                    }
+                } else {
+                    if (msgResume != null) {
+                        msgResume.setStyle("-fx-text-fill: orange;");
+                        msgResume.setText("⚠️ Ollama non disponible.");
+                    }
+                }
+            });
+        }).start();
     }
 
     // ── Text-to-Speech Windows natif ─────────────────────────────────────
