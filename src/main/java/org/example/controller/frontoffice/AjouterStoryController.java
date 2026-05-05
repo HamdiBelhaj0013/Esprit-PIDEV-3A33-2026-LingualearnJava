@@ -1,10 +1,8 @@
-package org.example.controllers.frontoffice;
+package org.example.controller.frontoffice;
 
 
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -13,27 +11,21 @@ import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.example.entities.Publication;
-import org.example.services.GeminiService;
-import org.example.services.ServicePublication;
+import org.example.service.ServicePublication;
 
 import java.io.File;
 import java.time.LocalDateTime;
 
-public class AjouterPublicationController {
+public class AjouterStoryController {
 
     @FXML private TextField titreField;
     @FXML private TextArea contenuArea;
     @FXML private TextField imagePathField;
     @FXML private ImageView imagePreview;
-
     @FXML private Label titreError;
     @FXML private Label contenuError;
-    @FXML private Label imageError;
-    @FXML private Button ameliorerBtn;
-    @FXML private Label ameliorerStatus;
 
     private ServicePublication servicePublication = new ServicePublication();
-    private GeminiService geminiService = new GeminiService();
     private String selectedImagePath = "";
     private PublicationController publicationController;
 
@@ -43,7 +35,6 @@ public class AjouterPublicationController {
 
     @FXML
     public void initialize() {
-        // Validation en temps réel
         titreField.textProperty().addListener((obs, old, val) -> validerTitre());
         contenuArea.textProperty().addListener((obs, old, val) -> validerContenu());
     }
@@ -60,11 +51,6 @@ public class AjouterPublicationController {
             titreField.getStyleClass().removeAll("field-valid");
             titreField.getStyleClass().add("field-error");
             return false;
-        } else if (titre.length() > 100) {
-            titreError.setText("⚠ Le titre ne doit pas dépasser 100 caractères.");
-            titreField.getStyleClass().removeAll("field-valid");
-            titreField.getStyleClass().add("field-error");
-            return false;
         } else {
             titreError.setText("");
             titreField.getStyleClass().removeAll("field-error");
@@ -77,11 +63,6 @@ public class AjouterPublicationController {
         String contenu = contenuArea.getText().trim();
         if (contenu.isEmpty()) {
             contenuError.setText("⚠ Le contenu est obligatoire.");
-            contenuArea.getStyleClass().removeAll("field-valid");
-            contenuArea.getStyleClass().add("field-error");
-            return false;
-        } else if (contenu.length() < 10) {
-            contenuError.setText("⚠ Le contenu doit contenir au moins 10 caractères.");
             contenuArea.getStyleClass().removeAll("field-valid");
             contenuArea.getStyleClass().add("field-error");
             return false;
@@ -106,7 +87,6 @@ public class AjouterPublicationController {
             imagePathField.setText(file.getName());
             imagePreview.setImage(new Image(file.toURI().toString()));
             imagePreview.setVisible(true);
-            imageError.setText("");
         }
     }
 
@@ -114,13 +94,12 @@ public class AjouterPublicationController {
     private void handlePublier() {
         boolean titreOk = validerTitre();
         boolean contenuOk = validerContenu();
-
         if (!titreOk || !contenuOk) return;
 
         try {
             Publication p = new Publication();
             p.setTitrePub(titreField.getText().trim());
-            p.setTypePub("Article");
+            p.setTypePub("story"); // ← type story
             p.setLienPub(selectedImagePath);
             p.setContenuPub(contenuArea.getText().trim());
             p.setDatePub(LocalDateTime.now());
@@ -131,55 +110,18 @@ public class AjouterPublicationController {
             servicePublication.add(p);
 
             if (publicationController != null) {
-                publicationController.loadPublications();
+                publicationController.loadStories();
             }
 
-            showAlert(Alert.AlertType.INFORMATION, "Succès", "Publication ajoutée avec succès !");
+            showAlert(Alert.AlertType.INFORMATION, "Succès", "Story ajoutée !");
             fermerFenetre();
-
         } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur DB", e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Erreur", e.getMessage());
         }
     }
 
     @FXML
-    private void handleAmeliorer() {
-        String titre = titreField.getText().trim();
-        String contenu = contenuArea.getText().trim();
-
-        if (titre.isEmpty() && contenu.isEmpty()) {
-            ameliorerStatus.setText("⚠️ Veuillez saisir un titre ou un contenu avant d'améliorer.");
-            return;
-        }
-
-        ameliorerBtn.setDisable(true);
-        ameliorerStatus.setText("⏳ Amélioration en cours...");
-
-        new Thread(() -> {
-            try {
-                String[] result = geminiService.ameliorerPublication(
-                    titre.isEmpty() ? "Sans titre" : titre,
-                    contenu.isEmpty() ? "Sans contenu" : contenu
-                );
-                Platform.runLater(() -> {
-                    titreField.setText(result[0]);
-                    contenuArea.setText(result[1]);
-                    ameliorerStatus.setText("✅ Publication améliorée par l'IA !");
-                    ameliorerBtn.setDisable(false);
-                });
-            } catch (Exception e) {
-                Platform.runLater(() -> {
-                    ameliorerStatus.setText("❌ Erreur IA : " + e.getMessage());
-                    ameliorerBtn.setDisable(false);
-                });
-            }
-        }).start();
-    }
-
-    @FXML
-    private void handleAnnuler() {
-        fermerFenetre();
-    }
+    private void handleAnnuler() { fermerFenetre(); }
 
     private void fermerFenetre() {
         Stage stage = (Stage) titreField.getScene().getWindow();
@@ -192,4 +134,6 @@ public class AjouterPublicationController {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
+
 }

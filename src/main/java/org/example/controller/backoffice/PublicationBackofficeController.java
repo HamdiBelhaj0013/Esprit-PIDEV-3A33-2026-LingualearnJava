@@ -1,4 +1,4 @@
-package org.example.controllers.backoffice;
+package org.example.controller.backoffice;
 
 import org.example.entities.Publication;
 import javafx.collections.FXCollections;
@@ -17,7 +17,7 @@ import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.example.services.ServicePublication;
+import org.example.service.ServicePublication;
 
 import java.util.ArrayList;
 import java.util.List;

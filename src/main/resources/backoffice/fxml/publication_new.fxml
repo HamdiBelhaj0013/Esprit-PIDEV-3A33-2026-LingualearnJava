@@ -5,7 +5,7 @@
 <?import javafx.collections.*?>
 
 <VBox xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="org.example.controllers.backoffice.PublicationNewController"
+      fx:controller="org.example.controller.backoffice.PublicationNewController"
       spacing="10" style="-fx-padding: 16; -fx-background-color: #f8fafc;" prefWidth="520">
 
     <Label text="Ajouter Publication" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2563eb;"/>

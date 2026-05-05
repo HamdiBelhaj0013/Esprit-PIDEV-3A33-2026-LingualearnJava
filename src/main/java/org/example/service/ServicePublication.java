@@ -1,4 +1,4 @@
-package org.example.services;
+package org.example.service;
 
 import org.example.interfaces.IServices;
 import org.example.entities.Publication;

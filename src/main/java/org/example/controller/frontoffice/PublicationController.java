@@ -1,8 +1,8 @@
-package org.example.controllers.frontoffice;
+package org.example.controller.frontoffice;
 
 import org.example.entities.Publication;
-import org.example.services.NotificationManager;
-import org.example.services.ServicePublication;
+import org.example.service.NotificationManager;
+import org.example.service.ServicePublication;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;

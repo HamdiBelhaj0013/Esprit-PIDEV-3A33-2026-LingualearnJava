@@ -1,4 +1,4 @@
-package org.example.controllers.backoffice;
+package org.example.controller.backoffice;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;

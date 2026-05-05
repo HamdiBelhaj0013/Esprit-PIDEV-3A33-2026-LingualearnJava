@@ -1,4 +1,4 @@
-package org.example.controllers.backoffice;
+package org.example.controller.backoffice;
 
 public final class BackofficeContext {
     private static Integer selectedPublicationId;

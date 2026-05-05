@@ -1,4 +1,4 @@
-package org.example.controllers.backoffice;
+package org.example.controller.backoffice;
 
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -25,8 +25,8 @@ import javafx.stage.FileChooser;
 import javafx.stage.Window;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.example.services.ServiceCommentaire;
-import org.example.services.ServicePublication;
+import org.example.service.ServiceCommentaire;
+import org.example.service.ServicePublication;
 
 import java.io.File;
 import java.io.FileOutputStream;

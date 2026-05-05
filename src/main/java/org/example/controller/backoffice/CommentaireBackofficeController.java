@@ -1,4 +1,4 @@
-package org.example.controllers.backoffice;
+package org.example.controller.backoffice;
 
 import org.example.entities.Commentaire;
 import javafx.collections.FXCollections;
@@ -12,7 +12,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.example.services.ServiceCommentaire;
+import org.example.service.ServiceCommentaire;
 
 import java.util.ArrayList;
 import java.util.Comparator;

@@ -1,4 +1,4 @@
-package org.example.controllers.backoffice;
+package org.example.controller.backoffice;
 
 import org.example.entities.Publication;
 import javafx.fxml.FXML;

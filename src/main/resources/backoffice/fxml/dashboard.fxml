@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.*?>
 
 <HBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="org.example.controllers.backoffice.DashboardController"
+      fx:controller="org.example.controller.backoffice.DashboardController"
       stylesheets="@../css/style.css"
       prefWidth="1400" prefHeight="800">
 
