@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+
+<StackPane xmlns="http://javafx.com/javafx/21"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="org.example.controller.tests.SpeakingTestController"
+           style="-fx-background-color:#080c14;">
+
+    <VBox spacing="0">
+
+        <!-- HEADER -->
+        <HBox alignment="CENTER_LEFT" spacing="0"
+              style="-fx-background-color:rgba(8,12,20,0.98);
+                     -fx-border-color:rgba(99,102,241,0.25);-fx-border-width:0 0 1 0;
+                     -fx-padding:0 28;">
+            <HBox alignment="CENTER" spacing="10" style="-fx-padding:16 0;">
+                <Circle fx:id="recIndicator" radius="6"
+                        fill="transparent" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5"/>
+                <Label text="LinguaLearn"
+                       style="-fx-text-fill:white;-fx-font-size:17px;-fx-font-weight:bold;"/>
+                <Label text="SPEAKING"
+                       style="-fx-background-color:rgba(99,102,241,0.25);
+                              -fx-text-fill:#818cf8;-fx-font-size:9px;-fx-font-weight:bold;
+                              -fx-background-radius:3;-fx-padding:3 8;
+                              -fx-border-color:rgba(99,102,241,0.4);-fx-border-radius:3;
+                              -fx-border-width:1;"/>
+            </HBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <HBox spacing="16" alignment="CENTER" style="-fx-padding:16 0;">
+                <VBox alignment="CENTER_RIGHT" spacing="3">
+                    <Label fx:id="testTitleLabel" text="Speaking Test"
+                           style="-fx-text-fill:rgba(255,255,255,0.85);-fx-font-size:13px;
+                                  -fx-font-weight:bold;"/>
+                    <HBox spacing="8" alignment="CENTER_RIGHT">
+                        <Label fx:id="niveauLabel" text="A1"
+                               style="-fx-background-color:#6366f1;-fx-text-fill:white;
+                                      -fx-font-size:10px;-fx-font-weight:bold;
+                                      -fx-background-radius:4;-fx-padding:2 8;"/>
+                        <Label fx:id="langueLabel" text="Francais"
+                               style="-fx-text-fill:rgba(255,255,255,0.4);-fx-font-size:11px;"/>
+                    </HBox>
+                </VBox>
+                <Button text="Quitter" onAction="#handleBack"
+                        style="-fx-background-color:rgba(239,68,68,0.15);
+                               -fx-text-fill:#f87171;-fx-font-size:11px;-fx-cursor:hand;
+                               -fx-background-radius:6;-fx-padding:7 14;
+                               -fx-border-color:rgba(239,68,68,0.3);-fx-border-radius:6;
+                               -fx-border-width:1;"/>
+            </HBox>
+        </HBox>
+
+        <!-- CORPS -->
+        <HBox VBox.vgrow="ALWAYS">
+
+            <!-- PANNEAU GAUCHE -->
+            <VBox prefWidth="640" spacing="0" alignment="TOP_CENTER"
+                  style="-fx-padding:36 48;">
+
+                <!-- Progress -->
+                <HBox spacing="12" alignment="CENTER_LEFT" style="-fx-padding:0 0 24 0;">
+                    <Label fx:id="progressLabel" text="01 / 05"
+                           style="-fx-text-fill:#6366f1;-fx-font-size:13px;
+                                  -fx-font-weight:bold;-fx-font-family:'Courier New';"/>
+                    <ProgressBar fx:id="progressBar" progress="0.0"
+                                 HBox.hgrow="ALWAYS" prefHeight="4"
+                                 style="-fx-accent:#6366f1;
+                                        -fx-background-color:rgba(99,102,241,0.15);
+                                        -fx-background-radius:2;"/>
+                    <Label fx:id="statutLabel" text="En attente..."
+                           style="-fx-text-fill:rgba(255,255,255,0.3);-fx-font-size:11px;"/>
+                </HBox>
+
+                <!-- Carte Question -->
+                <VBox spacing="16" style="-fx-background-color:rgba(255,255,255,0.04);
+                             -fx-background-radius:20;
+                             -fx-border-color:rgba(99,102,241,0.3);
+                             -fx-border-radius:20;-fx-border-width:1;
+                             -fx-padding:28 32;">
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+                        <Label text="EXAMINATEUR"
+                               style="-fx-text-fill:#6366f1;-fx-font-size:10px;
+                                      -fx-font-weight:bold;-fx-font-family:'Courier New';"/>
+                        <Button fx:id="btnEcouter" text="Ecouter la question"
+                                onAction="#handleEcouter"
+                                style="-fx-background-color:rgba(99,102,241,0.2);
+                                       -fx-text-fill:#a5b4fc;-fx-font-size:10px;
+                                       -fx-cursor:hand;-fx-background-radius:20;
+                                       -fx-padding:4 14;
+                                       -fx-border-color:rgba(99,102,241,0.4);
+                                       -fx-border-radius:20;-fx-border-width:1;"/>
+                    </HBox>
+                    <Label fx:id="questionLabel" text="Chargement de la question..."
+                           wrapText="true"
+                           style="-fx-text-fill:white;-fx-font-size:22px;
+                                  -fx-font-weight:bold;-fx-line-spacing:6;"/>
+                </VBox>
+
+                <!-- BOUTON MICRO CENTRAL -->
+                <VBox alignment="CENTER" spacing="14" style="-fx-padding:32 0 20 0;">
+
+                    <StackPane prefWidth="140" prefHeight="140">
+                        <Circle fx:id="wave3" radius="65"
+                                fill="transparent"
+                                stroke="rgba(99,102,241,0.08)" strokeWidth="1"/>
+                        <Circle fx:id="wave2" radius="52"
+                                fill="transparent"
+                                stroke="rgba(99,102,241,0.15)" strokeWidth="1.5"/>
+                        <Circle fx:id="wave1" radius="38"
+                                fill="transparent"
+                                stroke="rgba(99,102,241,0.3)" strokeWidth="2"/>
+                        <Circle fx:id="micCircle" radius="50"
+                                fill="#6366f1"
+                                style="-fx-effect:dropshadow(gaussian,rgba(99,102,241,0.7),24,0,0,0);"/>
+                        <Label fx:id="micIcon" text="🎙" style="-fx-font-size:30px;"/>
+                    </StackPane>
+
+                    <Button fx:id="btnEnregistrer" text="Appuyer pour parler"
+                            onAction="#handleEnregistrer"
+                            style="-fx-background-color:transparent;
+                                   -fx-text-fill:rgba(255,255,255,0.45);
+                                   -fx-font-size:12px;-fx-cursor:hand;
+                                   -fx-border-color:transparent;-fx-padding:0;"/>
+
+                    <!-- Transcription -->
+                    <VBox spacing="6" maxWidth="480"
+                          style="-fx-background-color:rgba(255,255,255,0.04);
+                                 -fx-background-radius:12;
+                                 -fx-border-color:rgba(255,255,255,0.07);
+                                 -fx-border-radius:12;-fx-border-width:1;
+                                 -fx-padding:14 18;" minHeight="70">
+                        <Label text="TRANSCRIPTION"
+                               style="-fx-text-fill:rgba(255,255,255,0.2);-fx-font-size:9px;
+                                      -fx-font-family:'Courier New';-fx-font-weight:bold;"/>
+                        <Label fx:id="transcriptionLabel" text=""
+                               wrapText="true"
+                               style="-fx-text-fill:rgba(255,255,255,0.8);-fx-font-size:13px;
+                                      -fx-font-style:italic;-fx-line-spacing:3;"/>
+                    </VBox>
+                </VBox>
+
+                <!-- Bouton Suivant -->
+                <Button fx:id="btnSuivant" text="Question suivante"
+                        onAction="#handleSuivant"
+                        style="-fx-background-color:#10b981;-fx-text-fill:white;
+                               -fx-font-size:14px;-fx-font-weight:bold;-fx-cursor:hand;
+                               -fx-background-radius:12;-fx-padding:14 0;
+                               -fx-effect:dropshadow(gaussian,rgba(16,185,129,0.45),14,0,0,4);"
+                        maxWidth="Infinity"/>
+            </VBox>
+
+            <!-- SEPARATEUR -->
+            <VBox style="-fx-background-color:rgba(255,255,255,0.05);
+                         -fx-min-width:1;-fx-max-width:1;"/>
+
+            <!-- PANNEAU DROIT — Historique -->
+            <VBox HBox.hgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT"
+                      style="-fx-padding:20 24 14 24;
+                             -fx-border-color:rgba(255,255,255,0.05);
+                             -fx-border-width:0 0 1 0;">
+                    <Label text="HISTORIQUE DE LA CONVERSATION"
+                           style="-fx-text-fill:rgba(255,255,255,0.2);-fx-font-size:9px;
+                                  -fx-font-family:'Courier New';-fx-font-weight:bold;"/>
+                </HBox>
+                <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                            style="-fx-background-color:transparent;
+                                   -fx-background:transparent;-fx-border-width:0;">
+                    <VBox fx:id="historiqueBox" spacing="14" style="-fx-padding:16 24;"/>
+                </ScrollPane>
+            </VBox>
+
+        </HBox>
+    </VBox>
+</StackPane>

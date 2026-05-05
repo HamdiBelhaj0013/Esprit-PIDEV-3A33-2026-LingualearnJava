@@ -89,7 +89,9 @@ public class ProfileController implements Initializable {
 
     private void loadProfile() {
         loadIdentite();
-        TestPerformanceAnalyzer.Resume resume = analyzer.calculerResume();
+        TestPerformanceAnalyzer.Resume resume = (selectedLanguage != null)
+                ? analyzer.calculerResumePourLangue(selectedLanguage.getId())
+                : analyzer.calculerResume();
         loadStats(resume);
         loadGraphique(resume);
         loadFaiblesses(resume);   // ← seulement les faiblesses
@@ -604,7 +606,9 @@ public class ProfileController implements Initializable {
                 ? selectedLanguage.getName() : "Toutes langues";
 
         // Score moyen du niveau
-        TestPerformanceAnalyzer.Resume r = analyzer.calculerResume();
+        TestPerformanceAnalyzer.Resume r = (selectedLanguage != null)
+                ? analyzer.calculerResumePourLangue(selectedLanguage.getId())
+                : analyzer.calculerResume();
         double scoreMoyen = switch (niveau) {
             case "BEGINNER"     -> (r.parNiveau.getOrDefault("A1", 0.0)
                     + r.parNiveau.getOrDefault("A2", 0.0)) / 2.0;
