@@ -18,7 +18,7 @@ import java.util.Map;
 public class MockTestService implements IMockTestService {
 
     private static final List<String> VALID_TYPES =
-            List.of("TOEFL", "IELTS", "DELF", "DALF", "TCF", "Cambridge");
+            List.of("TOEFL", "IELTS", "DELF", "DALF", "TCF", "Cambridge", "WRITING");
     private static final List<String> VALID_LEVELS =
             List.of("A1", "A2", "B1", "B2", "C1", "C2");
 
