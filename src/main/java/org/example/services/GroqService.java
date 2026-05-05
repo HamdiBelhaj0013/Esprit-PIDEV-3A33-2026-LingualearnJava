@@ -7,6 +7,10 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import java.security.cert.X509Certificate;
 
 /**
  * Service d'appel à l'API GROQ (LLaMA 3) — utilisé pour le chatbot.
@@ -17,7 +21,7 @@ public class GroqService {
 
     // Clé de secours — fonctionne même sans variable d'environnement
     private static final String FALLBACK_API_KEY =
-            "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";
+            "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";
 
     // Plusieurs modèles testés en cascade si l'un est indisponible
     private static final String[] MODELS = {
@@ -27,9 +31,29 @@ public class GroqService {
             "llama3-70b-8192"
     };
 
-    private final HttpClient client = HttpClient.newBuilder()
-            .connectTimeout(Duration.ofSeconds(15))
-            .build();
+    private final HttpClient client = createTrustAllClient();
+
+    private static HttpClient createTrustAllClient() {
+        try {
+            TrustManager[] trustAll = new TrustManager[]{
+                new X509TrustManager() {
+                    public X509Certificate[] getAcceptedIssuers() { return new X509Certificate[0]; }
+                    public void checkClientTrusted(X509Certificate[] certs, String t) {}
+                    public void checkServerTrusted(X509Certificate[] certs, String t) {}
+                }
+            };
+            SSLContext sc = SSLContext.getInstance("TLS");
+            sc.init(null, trustAll, new java.security.SecureRandom());
+            return HttpClient.newBuilder()
+                    .sslContext(sc)
+                    .connectTimeout(Duration.ofSeconds(15))
+                    .build();
+        } catch (Exception e) {
+            return HttpClient.newBuilder()
+                    .connectTimeout(Duration.ofSeconds(15))
+                    .build();
+        }
+    }
 
     private final List<String[]> history = new ArrayList<>();
 
