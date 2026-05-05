@@ -29,12 +29,12 @@
             <Button fx:id="btnUsers" text="  Users"
                     styleClass="sidebar-item" onAction="#showUsers"
                     maxWidth="Infinity"/>
-
-            <Label text="COMING SOON" styleClass="sidebar-section"/>
             <Button text="  Courses" styleClass="sidebar-item"
                     disable="true" maxWidth="Infinity"/>
+            <Button text="  Forum Dashboard" styleClass="sidebar-item"
+                    onAction="#goToForum" maxWidth="Infinity"/>
             <Button text="  Forum" styleClass="sidebar-item"
-                    disable="true" maxWidth="Infinity"/>
+                    onAction="#goToPublications" maxWidth="Infinity"/>
             <Button text="  Tests" styleClass="sidebar-item"
                     disable="true" maxWidth="Infinity"/>
             <Button text="  Reports" styleClass="sidebar-item"
