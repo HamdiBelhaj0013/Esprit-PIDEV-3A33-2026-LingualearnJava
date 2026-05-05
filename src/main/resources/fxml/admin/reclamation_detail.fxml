@@ -31,6 +31,17 @@
         <Label fx:id="labelImageInfo" text="Aucune image jointe." styleClass="hint-label"/>
         <ImageView fx:id="imageReclamation" fitWidth="300" fitHeight="200" preserveRatio="true" visible="false" managed="false"/>
       </VBox>
+      <!-- ── Résumé IA ── -->
+      <VBox styleClass="card" spacing="8">
+        <Label text="Résumé IA" styleClass="section-title"/>
+        <HBox spacing="8" alignment="CENTER_LEFT">
+          <Button text="📝 Résumer avec IA" onAction="#resumerReclamation" styleClass="btn-light"/>
+          <Label fx:id="msgResume" text="" style="-fx-text-fill: gray;"/>
+        </HBox>
+        <Label fx:id="labelResume" text="" wrapText="true"
+               style="-fx-text-fill: #333; -fx-font-style: italic; -fx-padding: 8;"
+               maxWidth="580"/>
+      </VBox>
       <VBox styleClass="card" spacing="8">
         <Label text="Actions" styleClass="section-title"/>
         <HBox spacing="10" alignment="CENTER_LEFT">
