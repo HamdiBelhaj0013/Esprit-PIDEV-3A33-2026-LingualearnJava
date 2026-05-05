@@ -1,4 +1,4 @@
-package org.example.controllers.frontoffice;
+package org.example.controller.frontoffice;
 
 
 import javafx.fxml.FXML;
@@ -7,7 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.example.entities.Notification;
-import org.example.services.NotificationManager;
+import org.example.service.NotificationManager;
 
 import java.util.List;
 

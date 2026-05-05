@@ -1,4 +1,4 @@
-package org.example.services;
+package org.example.service;
 
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
@@ -10,7 +10,7 @@ import java.util.Properties;
  * Service d'envoi d'emails via Gmail SMTP.
  * Utilise la configuration validée de l'équipe (benali.mohamedzh@gmail.com).
  */
-public class EmailService {
+public class ForumEmailService {
 
     private static final String SMTP_HOST  = "smtp.gmail.com";
     private static final String SMTP_PORT  = "587";

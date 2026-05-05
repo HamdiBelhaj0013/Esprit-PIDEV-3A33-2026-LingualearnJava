@@ -4,7 +4,7 @@
 <?import javafx.geometry.Insets?>
 
 <StackPane xmlns:fx="http://javafx.com/fxml"
-           fx:controller="org.example.controllers.frontoffice.MainController"
+           fx:controller="org.example.controller.frontoffice.MainController"
            stylesheets="@../css/style.css">
 
     <VBox spacing="0">

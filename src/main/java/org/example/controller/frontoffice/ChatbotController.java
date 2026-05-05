@@ -1,4 +1,4 @@
-package org.example.controllers.frontoffice;
+package org.example.controller.frontoffice;
 
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -8,7 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
-import org.example.services.GroqService;
+import org.example.service.GroqService;
 
 import java.util.ArrayList;
 import java.util.List;

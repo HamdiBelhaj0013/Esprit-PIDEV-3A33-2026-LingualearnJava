@@ -1,4 +1,4 @@
-package org.example.controllers.backoffice;
+package org.example.controller.backoffice;
 
 import org.example.entities.Commentaire;
 import javafx.fxml.FXML;
@@ -7,35 +7,31 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import org.example.services.ServiceCommentaire;
+import org.example.service.ServiceCommentaire;
 
-public class CommentaireEditController {
-    @FXML private TextField idField;
+import java.time.LocalDateTime;
+
+public class CommentaireNewController {
     @FXML private TextField publicationIdField;
     @FXML private TextArea contenuField;
     @FXML private Label statusLabel;
 
     private final ServiceCommentaire serviceCommentaire = new ServiceCommentaire();
-    private Commentaire commentaire;
 
-    public void setCommentaire(Commentaire commentaire) {
-        this.commentaire = commentaire;
-        idField.setText(String.valueOf(commentaire.getId()));
-        publicationIdField.setText(String.valueOf(commentaire.getPublicationId()));
-        contenuField.setText(commentaire.getContenuC());
+    @FXML
+    public void initialize() {
+        Integer selectedPublicationId = BackofficeContext.getSelectedPublicationId();
+        if (selectedPublicationId != null) {
+            publicationIdField.setText(String.valueOf(selectedPublicationId));
+        }
     }
 
     @FXML
     public void save() {
-        if (commentaire == null) {
-            setStatus("Commentaire non charge.", true);
-            return;
-        }
         if (contenuField.getText() == null || contenuField.getText().isBlank()) {
             setStatus("Le contenu est obligatoire.", true);
             return;
         }
-
         int pubId;
         try {
             pubId = Integer.parseInt(publicationIdField.getText());
@@ -46,13 +42,13 @@ public class CommentaireEditController {
 
         try {
             Commentaire c = new Commentaire();
-            c.setId(commentaire.getId());
             c.setContenuC(contenuField.getText());
+            c.setDateCom(LocalDateTime.now());
             c.setPublicationId(pubId);
-            serviceCommentaire.update(c);
+            serviceCommentaire.add(c);
             closeWindow();
         } catch (Exception e) {
-            showError("Modification commentaire impossible", e.getMessage());
+            showError("Ajout commentaire impossible", e.getMessage());
         }
     }
 
@@ -69,7 +65,7 @@ public class CommentaireEditController {
     }
 
     private void closeWindow() {
-        Stage stage = (Stage) idField.getScene().getWindow();
+        Stage stage = (Stage) publicationIdField.getScene().getWindow();
         stage.close();
     }
 

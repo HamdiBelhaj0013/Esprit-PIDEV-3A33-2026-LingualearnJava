@@ -1,4 +1,4 @@
-package org.example.controllers.frontoffice;
+package org.example.controller.frontoffice;
 
 
 import javafx.beans.property.SimpleIntegerProperty;
@@ -14,8 +14,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.example.entities.Commentaire;
 import org.example.entities.Publication;
-import org.example.services.ServiceCommentaire;
-import org.example.services.ServicePublication;
+import org.example.service.ServiceCommentaire;
+import org.example.service.ServicePublication;
 
 import java.io.IOException;
 import java.util.List;

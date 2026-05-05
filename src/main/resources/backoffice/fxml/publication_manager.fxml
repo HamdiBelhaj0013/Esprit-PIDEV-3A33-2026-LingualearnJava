@@ -4,7 +4,7 @@
 <?import javafx.scene.image.ImageView?>
 
 <VBox xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="org.example.controllers.backoffice.PublicationBackofficeController"
+      fx:controller="org.example.controller.backoffice.PublicationBackofficeController"
       stylesheets="@../css/style.css"
       spacing="12" style="-fx-background-color: #f1f5f9; -fx-padding: 0 12 12 12;">
 

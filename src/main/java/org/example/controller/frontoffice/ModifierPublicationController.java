@@ -1,4 +1,4 @@
-package org.example.controllers.frontoffice;
+package org.example.controller.frontoffice;
 
 
 import javafx.fxml.FXML;
@@ -10,7 +10,7 @@ import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.example.entities.Publication;
-import org.example.services.ServicePublication;
+import org.example.service.ServicePublication;
 
 import java.io.File;
 

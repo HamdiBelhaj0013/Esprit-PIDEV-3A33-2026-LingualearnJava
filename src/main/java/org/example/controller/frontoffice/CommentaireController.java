@@ -1,12 +1,12 @@
-package org.example.controllers.frontoffice;
+package org.example.controller.frontoffice;
 
 import org.example.entities.Commentaire;
 import org.example.entities.Publication;
-import org.example.services.BadWordChecker;
-import org.example.services.EmailService;
-import org.example.services.NotificationManager;
-import org.example.services.ServiceCommentaire;
-import org.example.services.ServicePublication;
+import org.example.service.BadWordChecker;
+import org.example.service.ForumEmailService;
+import org.example.service.NotificationManager;
+import org.example.service.ServiceCommentaire;
+import org.example.service.ServicePublication;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -93,7 +93,7 @@ public class CommentaireController {
                     alert.setContentText("Votre commentaire contient des mots inappropriés et n'a pas été publié. Merci de respecter les règles de la communauté.");
                     alert.showAndWait();
                     // Envoyer email à l'admin
-                    EmailService.sendBadWordWarning(contenu, publicationTitre);
+                    ForumEmailService.sendBadWordWarning(contenu, publicationTitre);
                     commentField.clear();
                     return;
                 }

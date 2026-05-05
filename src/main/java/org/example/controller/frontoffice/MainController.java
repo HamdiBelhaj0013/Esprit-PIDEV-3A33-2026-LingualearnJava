@@ -1,4 +1,4 @@
-package org.example.controllers.frontoffice;
+package org.example.controller.frontoffice;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -15,7 +15,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import org.example.entities.Notification;
-import org.example.services.NotificationManager;
+import org.example.service.NotificationManager;
 
 import java.io.IOException;
 import java.util.List;
