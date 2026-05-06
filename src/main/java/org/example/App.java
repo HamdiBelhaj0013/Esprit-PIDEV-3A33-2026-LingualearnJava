@@ -7,6 +7,7 @@ import javafx.stage.Stage;
 import org.example.service.tests.AntiCheatApiServer;
 import org.example.service.tests.CertificateApiServer;
 import org.example.util.MyDataBase;
+import org.example.util.StageManager;
 
 public class App extends Application {
 
@@ -22,6 +23,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        StageManager.setPrimaryStage(stage);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/login.fxml"));
         Scene scene = new Scene(loader.load());
         stage.setTitle("LinguaLearn");
