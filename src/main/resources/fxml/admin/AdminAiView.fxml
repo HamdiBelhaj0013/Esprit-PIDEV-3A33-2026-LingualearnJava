@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!--
+  AdminAiView.fxml — AI Admin Assistant
+  4 custom tabs: User Search | User Insight | AI Chat | Analytics
+  Stylesheet: /css/ai-assistant.css
+  Controller: org.example.controller.admin.AdminAiController
+-->
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.controller.admin.AdminAiController"
+            styleClass="ai-root"
+            stylesheets="@../../css/ai-assistant.css"
+            maxWidth="Infinity" maxHeight="Infinity">
+
+    <!-- ══════════════════════════════════════════════════════════════
+         CUSTOM TAB BAR
+         ══════════════════════════════════════════════════════════════ -->
+    <top>
+        <HBox styleClass="ai-tab-bar">
+            <Button fx:id="tabBtnSearch"    text="🔍  User Search"
+                    styleClass="ai-tab-btn,ai-tab-active"
+                    onAction="#switchToSearch"/>
+            <Button fx:id="tabBtnInsight"   text="👤  User Insight"
+                    styleClass="ai-tab-btn"
+                    onAction="#switchToInsight"/>
+            <Button fx:id="tabBtnChat"      text="💬  AI Chat"
+                    styleClass="ai-tab-btn"
+                    onAction="#switchToChat"/>
+            <Button fx:id="tabBtnAnalytics" text="📊  Analytics"
+                    styleClass="ai-tab-btn"
+                    onAction="#switchToAnalytics"/>
+        </HBox>
+    </top>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         CONTENT STACK — one pane shown at a time
+         ══════════════════════════════════════════════════════════════ -->
+    <center>
+        <StackPane fx:id="contentStack">
+
+            <!-- ──────────────────────────────────────────────────────
+                 PANE 1 — User Search  (visible by default)
+                 ────────────────────────────────────────────────────── -->
+            <VBox fx:id="searchPane" styleClass="content-pane"
+                  spacing="14" maxWidth="Infinity" maxHeight="Infinity">
+                <padding><Insets top="20" right="20" bottom="16" left="20"/></padding>
+
+                <!-- Header -->
+                <Label text="Natural Language User Search" styleClass="ai-section-title"/>
+                <Label text="Describe the users you want to find in plain English — the AI narrows and summarises results."
+                       styleClass="ai-section-subtitle" wrapText="true"/>
+
+                <!-- Search bar -->
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <TextField fx:id="searchField"
+                               HBox.hgrow="ALWAYS"
+                               promptText='e.g. "show me all suspended premium users" or "rank users by xp"'
+                               styleClass="ai-input"
+                               onAction="#handleSearch"/>
+                    <Button fx:id="searchButton" text="Search"
+                            styleClass="ai-primary-btn"
+                            onAction="#handleSearch"/>
+                    <ProgressIndicator fx:id="searchProgress"
+                                       styleClass="ai-progress"
+                                       prefWidth="24" prefHeight="24"
+                                       visible="false"/>
+                </HBox>
+
+                <!-- Result count -->
+                <Label fx:id="searchCountLabel" text="" styleClass="count-label"/>
+
+                <!-- Results table (fills remaining space) -->
+                <TableView fx:id="searchTable"
+                           VBox.vgrow="ALWAYS"
+                           styleClass="ai-table">
+                    <placeholder>
+                        <Label text="Run a search to see results." styleClass="muted-label"/>
+                    </placeholder>
+                </TableView>
+
+                <!-- AI Summary box -->
+                <VBox styleClass="ai-summary-box" spacing="6">
+                    <Label text="AI SUMMARY" styleClass="ai-summary-title"/>
+                    <Label fx:id="searchReasonLabel"
+                           text="Results and AI reasoning will appear here after a search."
+                           wrapText="true"
+                           styleClass="ai-summary-text"/>
+                </VBox>
+            </VBox>
+
+            <!-- ──────────────────────────────────────────────────────
+                 PANE 2 — User Insight  (hidden initially)
+                 ────────────────────────────────────────────────────── -->
+            <HBox fx:id="insightPane" styleClass="content-pane"
+                  maxWidth="Infinity" maxHeight="Infinity"
+                  visible="false" managed="false">
+
+                <!-- Left: user list (fixed 360px) -->
+                <VBox prefWidth="360" minWidth="280"
+                      styleClass="insight-left-pane" spacing="10"
+                      maxHeight="Infinity">
+                    <Label text="Users" styleClass="ai-section-title"/>
+                    <TextField fx:id="insightSearchField"
+                               promptText="Filter by name or email…"
+                               styleClass="ai-input"/>
+                    <TableView fx:id="insightUserTable"
+                               VBox.vgrow="ALWAYS"
+                               styleClass="ai-table">
+                        <placeholder>
+                            <Label text="Loading users…" styleClass="muted-label"/>
+                        </placeholder>
+                    </TableView>
+                </VBox>
+
+                <!-- Right: insight display -->
+                <StackPane fx:id="insightRightPane"
+                           HBox.hgrow="ALWAYS"
+                           maxHeight="Infinity"
+                           styleClass="insight-right-pane">
+
+                    <!-- State A: placeholder (no user selected) -->
+                    <VBox fx:id="insightPlaceholder" alignment="CENTER" spacing="16">
+                        <Label text="👤" style="-fx-font-size: 56px;"/>
+                        <Label text="Select a user from the list to generate an AI insight."
+                               styleClass="muted-label" wrapText="true"
+                               style="-fx-text-alignment: center; -fx-max-width: 320px;"/>
+                    </VBox>
+
+                    <!-- State B: loading -->
+                    <VBox fx:id="insightLoadingPane" alignment="CENTER" spacing="16"
+                          visible="false" managed="false">
+                        <ProgressIndicator fx:id="insightProgress"
+                                           styleClass="ai-progress"
+                                           prefWidth="48" prefHeight="48"/>
+                        <Label text="Analyzing user…" styleClass="muted-label"/>
+                    </VBox>
+
+                    <!-- State C: insight card -->
+                    <VBox fx:id="insightCardPane" visible="false" managed="false"
+                          styleClass="insight-card" spacing="10"
+                          maxWidth="Infinity" maxHeight="Infinity">
+
+                        <!-- Card header -->
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label fx:id="insightUserNameLabel"
+                                   styleClass="insight-name" HBox.hgrow="ALWAYS"/>
+                            <Button fx:id="regenerateButton" text="↻  Regenerate"
+                                    styleClass="ai-secondary-btn"
+                                    onAction="#handleRegenerateInsight"/>
+                        </HBox>
+                        <Label fx:id="insightUserSubtitleLabel"
+                               styleClass="muted-label"/>
+                        <Separator/>
+
+                        <!-- Insight text (fills remaining height) -->
+                        <TextArea fx:id="insightTextArea"
+                                  VBox.vgrow="ALWAYS"
+                                  editable="false"
+                                  wrapText="true"
+                                  promptText="Insight will appear here…"
+                                  styleClass="ai-text-area"/>
+                    </VBox>
+                </StackPane>
+            </HBox>
+
+            <!-- ──────────────────────────────────────────────────────
+                 PANE 3 — AI Chat  (hidden initially)
+                 ────────────────────────────────────────────────────── -->
+            <VBox fx:id="chatPane" styleClass="content-pane"
+                  maxWidth="Infinity" maxHeight="Infinity"
+                  visible="false" managed="false">
+
+                <!-- Collapsible guide panel -->
+                <VBox fx:id="chatGuidePanel" styleClass="guide-panel" spacing="8">
+                    <padding><Insets top="12" right="16" bottom="12" left="16"/></padding>
+                    <HBox alignment="CENTER_LEFT">
+                        <Label text="What can I ask?" styleClass="guide-main-title" HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="guideToggleButton" text="Hide guide"
+                                styleClass="guide-toggle-btn"
+                                onAction="#toggleGuide"/>
+                    </HBox>
+                    <VBox fx:id="guideContent" spacing="8">
+                        <HBox spacing="12">
+                            <VBox HBox.hgrow="ALWAYS" styleClass="guide-category" spacing="3">
+                                <Label text="READ / SEARCH" styleClass="guide-cat-read"/>
+                                <Label text="• Show all suspended users" styleClass="guide-example"/>
+                                <Label text="• Find users expiring soon" styleClass="guide-example"/>
+                                <Label text="• Who are the top 5 learners by XP?" styleClass="guide-example"/>
+                                <Label text="• Show free users" styleClass="guide-example"/>
+                                <Label text="• Show users with failed payments" styleClass="guide-example"/>
+                            </VBox>
+                            <VBox HBox.hgrow="ALWAYS" styleClass="guide-category" spacing="3">
+                                <Label text="MANAGE" styleClass="guide-cat-manage"/>
+                                <Label text="• Suspend user [ID]" styleClass="guide-example"/>
+                                <Label text="• Activate users [ID1] and [ID2]" styleClass="guide-example"/>
+                                <Label text="• Delete suspended users" styleClass="guide-example"/>
+                                <Label text="• Reset password for user [ID] to Pass123" styleClass="guide-example"/>
+                            </VBox>
+                        </HBox>
+                        <HBox spacing="12">
+                            <VBox HBox.hgrow="ALWAYS" styleClass="guide-category" spacing="3">
+                                <Label text="CREATE" styleClass="guide-cat-create"/>
+                                <Label text="• Create user John Smith john@email.com" styleClass="guide-example"/>
+                                <Label text="• Create a user Maria Garcia maria@test.com" styleClass="guide-example"/>
+                            </VBox>
+                            <VBox HBox.hgrow="ALWAYS" styleClass="guide-category" spacing="3">
+                                <Label text="SUBSCRIPTIONS" styleClass="guide-cat-sub"/>
+                                <Label text="• Give user [ID] a monthly plan" styleClass="guide-example"/>
+                                <Label text="• Revoke premium from user [ID]" styleClass="guide-example"/>
+                                <Label text="• Change user [ID] to yearly" styleClass="guide-example"/>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+                </VBox>
+
+                <!-- Chat messages (grows to fill) -->
+                <ScrollPane fx:id="chatScrollPane"
+                            VBox.vgrow="ALWAYS"
+                            hbarPolicy="NEVER"
+                            vbarPolicy="AS_NEEDED"
+                            fitToWidth="true"
+                            styleClass="chat-area-scroll">
+                    <VBox fx:id="chatVBox"
+                          fillWidth="true"
+                          styleClass="chat-messages-box">
+                        <!-- bubbles added programmatically -->
+                    </VBox>
+                </ScrollPane>
+
+                <!-- Typing indicator (animated dots, hidden initially) -->
+                <Label fx:id="typingDotLabel"
+                       text="AI is thinking  ●○○"
+                       styleClass="typing-indicator"
+                       visible="false" managed="false"/>
+
+                <!-- Input row -->
+                <HBox styleClass="chat-input-bar" spacing="8" alignment="CENTER">
+                    <TextField fx:id="chatInputField"
+                               HBox.hgrow="ALWAYS"
+                               promptText="Type a message… (Enter to send)"
+                               styleClass="chat-input"/>
+                    <Button fx:id="sendButton" text="Send"
+                            styleClass="send-btn"
+                            onAction="#handleSend"/>
+                </HBox>
+            </VBox>
+
+            <!-- ──────────────────────────────────────────────────────
+                 PANE 4 — Analytics  (hidden initially)
+                 ────────────────────────────────────────────────────── -->
+            <VBox fx:id="analyticsPane" styleClass="content-pane"
+                  spacing="16" maxWidth="Infinity" maxHeight="Infinity"
+                  visible="false" managed="false">
+                <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+
+                <!-- Header -->
+                <Label text="Platform Learning Analytics" styleClass="ai-section-title"/>
+                <Label text="AI-powered bird's-eye view of trends, engagement, and recommendations across the entire platform."
+                       styleClass="ai-section-subtitle" wrapText="true"/>
+
+                <!-- Quick stat cards row -->
+                <HBox spacing="16">
+                    <VBox fx:id="statCard1" styleClass="stat-card" HBox.hgrow="ALWAYS"
+                          alignment="CENTER" spacing="8">
+                        <Label fx:id="statTotalUsers" text="—" styleClass="stat-number"/>
+                        <Label text="Total Users" styleClass="stat-label"/>
+                    </VBox>
+                    <VBox fx:id="statCard2" styleClass="stat-card" HBox.hgrow="ALWAYS"
+                          alignment="CENTER" spacing="8">
+                        <Label fx:id="statPremiumUsers" text="—" styleClass="stat-number"/>
+                        <Label text="Premium Users" styleClass="stat-label"/>
+                    </VBox>
+                    <VBox fx:id="statCard3" styleClass="stat-card" HBox.hgrow="ALWAYS"
+                          alignment="CENTER" spacing="8">
+                        <Label fx:id="statAvgXP" text="—" styleClass="stat-number"/>
+                        <Label text="Average XP" styleClass="stat-label"/>
+                    </VBox>
+                </HBox>
+
+                <!-- Analyze button row -->
+                <HBox spacing="14" alignment="CENTER_LEFT">
+                    <Button fx:id="analyzeButton"
+                            text="🚀  Analyze Platform Trends"
+                            styleClass="ai-primary-btn"
+                            onAction="#handleAnalyze"/>
+                    <ProgressIndicator fx:id="analyticsProgress"
+                                       styleClass="ai-progress"
+                                       prefWidth="24" prefHeight="24"
+                                       visible="false"/>
+                    <Label text="Sends aggregate stats to Ollama — results may take 30–60 s."
+                           styleClass="muted-label"/>
+                </HBox>
+
+                <!-- Analysis output -->
+                <TextArea fx:id="analyticsTextArea"
+                          VBox.vgrow="ALWAYS"
+                          editable="false"
+                          wrapText="true"
+                          promptText="Click 'Analyze Platform Trends' to generate an AI report…"
+                          styleClass="ai-text-area"/>
+            </VBox>
+
+        </StackPane>
+    </center>
+</BorderPane>

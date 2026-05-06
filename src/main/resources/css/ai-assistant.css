@@ -1,0 +1,445 @@
+/* ================================================================
+   AI Assistant Stylesheet — LinguaLearn Admin Panel
+   Palette:
+     bg-deep   #0d1117   bg-card   #161b22   bg-input  #21262d
+     border    #30363d   accent    #e94560   dim       #c73652
+     text-pri  #c9d1d9   text-sec  #8b949e   link-blue #58a6ff
+     green     #3fb950   amber     #d29922   red       #f85149
+   ================================================================ */
+
+/* ── Root / layout ───────────────────────────────────────────────── */
+.ai-root {
+    -fx-background-color: #0d1117;
+}
+
+.content-pane {
+    -fx-background-color: #0d1117;
+}
+
+/* ── Custom tab bar ──────────────────────────────────────────────── */
+.ai-tab-bar {
+    -fx-background-color: #161b22;
+    -fx-border-color: transparent transparent #30363d transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 0;
+    -fx-spacing: 0;
+}
+
+.ai-tab-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #8b949e;
+    -fx-font-size: 13px;
+    -fx-font-weight: normal;
+    -fx-padding: 14 24 12 24;
+    -fx-background-radius: 0;
+    -fx-border-color: transparent transparent transparent transparent;
+    -fx-border-width: 0 0 2 0;
+    -fx-cursor: hand;
+}
+
+.ai-tab-btn:hover {
+    -fx-background-color: #21262d;
+    -fx-text-fill: #c9d1d9;
+}
+
+.ai-tab-active {
+    -fx-text-fill: #e94560;
+    -fx-font-weight: bold;
+    -fx-border-color: transparent transparent #e94560 transparent;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────── */
+.ai-primary-btn {
+    -fx-background-color: #e94560;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-background-radius: 8;
+    -fx-border-color: transparent;
+    -fx-padding: 10 20 10 20;
+    -fx-cursor: hand;
+    -fx-min-height: 44px;
+}
+
+.ai-primary-btn:hover {
+    -fx-background-color: #c73652;
+}
+
+.ai-primary-btn:disabled {
+    -fx-background-color: #30363d;
+    -fx-text-fill: #8b949e;
+}
+
+.ai-secondary-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #8b949e;
+    -fx-font-size: 12px;
+    -fx-background-radius: 6;
+    -fx-border-color: #30363d;
+    -fx-border-radius: 6;
+    -fx-border-width: 1;
+    -fx-padding: 6 12 6 12;
+    -fx-cursor: hand;
+}
+
+.ai-secondary-btn:hover {
+    -fx-background-color: #21262d;
+    -fx-text-fill: #c9d1d9;
+}
+
+/* ── Text inputs ─────────────────────────────────────────────────── */
+.ai-input {
+    -fx-background-color: #21262d;
+    -fx-text-fill: #c9d1d9;
+    -fx-prompt-text-fill: #8b949e;
+    -fx-border-color: #30363d;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-border-width: 1;
+    -fx-padding: 10 14 10 14;
+    -fx-font-size: 13px;
+    -fx-min-height: 40px;
+}
+
+.ai-input:focused {
+    -fx-border-color: #e94560;
+}
+
+.chat-input {
+    -fx-background-color: #21262d;
+    -fx-text-fill: #c9d1d9;
+    -fx-prompt-text-fill: #8b949e;
+    -fx-border-color: #30363d;
+    -fx-border-radius: 22;
+    -fx-background-radius: 22;
+    -fx-border-width: 1;
+    -fx-padding: 10 16 10 16;
+    -fx-font-size: 13px;
+    -fx-min-height: 44px;
+}
+
+.chat-input:focused {
+    -fx-border-color: #e94560;
+}
+
+.send-btn {
+    -fx-background-color: #e94560;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-background-radius: 22;
+    -fx-border-color: transparent;
+    -fx-min-width: 80px;
+    -fx-min-height: 44px;
+    -fx-cursor: hand;
+}
+
+.send-btn:hover {
+    -fx-background-color: #c73652;
+}
+
+.send-btn:disabled {
+    -fx-background-color: #30363d;
+    -fx-text-fill: #8b949e;
+}
+
+/* ── Tables ──────────────────────────────────────────────────────── */
+.ai-table {
+    -fx-background-color: #161b22;
+    -fx-control-inner-background: #161b22;
+    -fx-border-color: #30363d;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-border-width: 1;
+}
+
+.ai-table .column-header-background {
+    -fx-background-color: #0d1117;
+    -fx-border-color: transparent transparent #30363d transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.ai-table .column-header {
+    -fx-background-color: transparent;
+    -fx-size: 36px;
+}
+
+.ai-table .column-header .label {
+    -fx-text-fill: #8b949e;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.ai-table .filler {
+    -fx-background-color: #0d1117;
+}
+
+.ai-table .table-row-cell {
+    -fx-background-color: #161b22;
+    -fx-border-color: transparent transparent #21262d transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-cell-size: 44px;
+}
+
+.ai-table .table-row-cell:odd {
+    -fx-background-color: #161b22;
+}
+
+.ai-table .table-row-cell:even {
+    -fx-background-color: #16202a;
+}
+
+.ai-table .table-row-cell:hover {
+    -fx-background-color: #21262d;
+}
+
+.ai-table .table-row-cell:selected {
+    -fx-background-color: #1f3a5f;
+}
+
+.ai-table .table-row-cell:selected .table-cell {
+    -fx-text-fill: #c9d1d9;
+}
+
+.ai-table .table-cell {
+    -fx-text-fill: #c9d1d9;
+    -fx-font-size: 13px;
+    -fx-border-color: transparent;
+    -fx-padding: 0 8 0 8;
+}
+
+.ai-table .placeholder > .label {
+    -fx-text-fill: #8b949e;
+    -fx-font-size: 13px;
+}
+
+/* ── TextArea — CRITICAL fix for white-on-white (BUG 3) ─────────── */
+.ai-text-area {
+    -fx-control-inner-background: #161b22;
+    -fx-background-color: #161b22;
+    -fx-text-fill: #c9d1d9;
+    -fx-border-color: #30363d;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-border-width: 1;
+    -fx-font-size: 13px;
+    -fx-padding: 0;
+}
+
+/* These sub-selectors are the actual fix — inline style on TextArea
+   does NOT cascade into .content, but a CSS class DOES. */
+.ai-text-area .content {
+    -fx-background-color: #161b22;
+    -fx-text-fill: #c9d1d9;
+}
+
+.ai-text-area .scroll-pane {
+    -fx-background-color: #161b22;
+    -fx-border-color: transparent;
+}
+
+.ai-text-area .scroll-pane > .viewport {
+    -fx-background-color: #161b22;
+}
+
+/* ── AI Summary panel ────────────────────────────────────────────── */
+.ai-summary-box {
+    -fx-background-color: #161b22;
+    -fx-border-color: transparent transparent transparent #e94560;
+    -fx-border-width: 0 0 0 3;
+    -fx-padding: 12 16 12 16;
+}
+
+.ai-summary-title {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #e94560;
+}
+
+.ai-summary-text {
+    -fx-font-size: 13px;
+    -fx-text-fill: #c9d1d9;
+}
+
+/* ── Stat cards (Analytics) ──────────────────────────────────────── */
+.stat-card {
+    -fx-background-color: #21262d;
+    -fx-border-color: #30363d;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-border-width: 1;
+    -fx-padding: 20 24 20 24;
+    -fx-alignment: CENTER;
+    -fx-spacing: 8;
+}
+
+.stat-number {
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #c9d1d9;
+}
+
+.stat-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #8b949e;
+}
+
+/* ── Guide panel (Chat) ──────────────────────────────────────────── */
+.guide-panel {
+    -fx-background-color: #161b22;
+    -fx-border-color: #30363d;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-border-width: 1;
+    -fx-padding: 12 16 12 16;
+    -fx-spacing: 10;
+}
+
+.guide-main-title {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #c9d1d9;
+}
+
+.guide-toggle-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #8b949e;
+    -fx-font-size: 11px;
+    -fx-padding: 4 8 4 8;
+    -fx-cursor: hand;
+    -fx-border-color: #30363d;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-border-width: 1;
+}
+
+.guide-toggle-btn:hover {
+    -fx-background-color: #21262d;
+    -fx-text-fill: #c9d1d9;
+}
+
+.guide-category {
+    -fx-background-color: #21262d;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 10 12 10 12;
+    -fx-spacing: 4;
+}
+
+.guide-cat-read    { -fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #58a6ff; }
+.guide-cat-manage  { -fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #d29922; }
+.guide-cat-create  { -fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #3fb950; }
+.guide-cat-sub     { -fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #e94560; }
+
+.guide-example {
+    -fx-font-size: 11px;
+    -fx-text-fill: #8b949e;
+}
+
+/* ── Typing indicator ────────────────────────────────────────────── */
+.typing-indicator {
+    -fx-font-size: 12px;
+    -fx-font-style: italic;
+    -fx-text-fill: #8b949e;
+    -fx-padding: 4 16 4 16;
+}
+
+/* ── Chat area ───────────────────────────────────────────────────── */
+.chat-area-scroll {
+    -fx-background-color: #0d1117;
+    -fx-background: #0d1117;
+    -fx-border-color: transparent;
+}
+
+.chat-area-scroll > .viewport {
+    -fx-background-color: #0d1117;
+}
+
+.chat-messages-box {
+    -fx-background-color: #0d1117;
+    -fx-padding: 16;
+    -fx-spacing: 8;
+}
+
+.chat-input-bar {
+    -fx-background-color: #161b22;
+    -fx-border-color: #30363d transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 10 14 10 14;
+    -fx-spacing: 8;
+    -fx-alignment: CENTER;
+}
+
+/* ── Insight panel ───────────────────────────────────────────────── */
+.insight-left-pane {
+    -fx-background-color: #161b22;
+    -fx-border-color: transparent #30363d transparent transparent;
+    -fx-border-width: 0 1 0 0;
+    -fx-padding: 16;
+    -fx-spacing: 10;
+}
+
+.insight-right-pane {
+    -fx-background-color: #0d1117;
+    -fx-padding: 24;
+}
+
+.insight-card {
+    -fx-background-color: #161b22;
+    -fx-border-color: #30363d;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-border-width: 1;
+    -fx-padding: 20;
+    -fx-spacing: 8;
+}
+
+.insight-name {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #c9d1d9;
+}
+
+/* ── Labels ──────────────────────────────────────────────────────── */
+.ai-section-title    { -fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #c9d1d9; }
+.ai-section-subtitle { -fx-font-size: 12px; -fx-text-fill: #8b949e; }
+.muted-label         { -fx-font-size: 13px; -fx-text-fill: #8b949e; }
+.count-label         { -fx-font-size: 12px; -fx-text-fill: #8b949e; }
+
+/* ── Scrollbars ──────────────────────────────────────────────────── */
+.scroll-bar {
+    -fx-background-color: transparent;
+    -fx-pref-width: 8;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #30363d;
+    -fx-background-radius: 4;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: #8b949e;
+}
+
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow {
+    -fx-shape: " ";
+    -fx-padding: 0;
+}
+
+/* ── Separator ───────────────────────────────────────────────────── */
+.separator .line {
+    -fx-border-color: #30363d;
+    -fx-border-width: 1;
+}
+
+/* ── Progress indicator ──────────────────────────────────────────── */
+.ai-progress {
+    -fx-progress-color: #e94560;
+}
