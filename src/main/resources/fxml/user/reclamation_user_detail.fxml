@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.controller.user.supportmanagement.ReclamationUserDetailController"
+      spacing="0"
+      stylesheets="@../../css/style.css"
+      prefWidth="650" prefHeight="700">
+
+    <HBox styleClass="header-bar" alignment="CENTER_LEFT" spacing="10">
+        <Label text="Ma réclamation" styleClass="header-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="✕ Fermer" onAction="#fermer" styleClass="btn-light"/>
+    </HBox>
+
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                style="-fx-background-color:transparent; -fx-background:transparent;">
+        <VBox spacing="12" styleClass="page-content">
+
+            <!-- Infos -->
+            <VBox styleClass="card" spacing="6">
+                <Label text="Informations" styleClass="section-title"/>
+                <GridPane hgap="16" vgap="5">
+                    <Label text="Sujet :"      GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="hint-label"/>
+                    <Label fx:id="labelSujet"  GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="stat-label"/>
+                    <Label text="Statut :"     GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="hint-label"/>
+                    <Label fx:id="labelStatut" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="stat-label"/>
+                    <Label text="Priorité :"      GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="hint-label"/>
+                    <Label fx:id="labelPriorite"  GridPane.columnIndex="1" GridPane.rowIndex="2" styleClass="stat-label"/>
+                    <Label text="Date :"       GridPane.columnIndex="0" GridPane.rowIndex="3" styleClass="hint-label"/>
+                    <Label fx:id="labelDate"   GridPane.columnIndex="1" GridPane.rowIndex="3" styleClass="stat-label"/>
+                    <Label text="Message :"     GridPane.columnIndex="0" GridPane.rowIndex="4" styleClass="hint-label"/>
+                    <Label fx:id="labelMessage" GridPane.columnIndex="1" GridPane.rowIndex="4"
+                           wrapText="true" maxWidth="400" styleClass="stat-label"/>
+                </GridPane>
+            </VBox>
+
+            <!-- Réponses admin + Traduction -->
+            <VBox styleClass="card" spacing="8">
+                <Label text="Réponses de l'administration" styleClass="section-title"/>
+                <ListView fx:id="reponsesList" prefHeight="110" styleClass="clean-list"/>
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <ComboBox fx:id="langueBox" promptText="Traduire vers..." prefWidth="180"/>
+                    <Button text="🌐 Traduire" onAction="#traduireReponse" styleClass="btn-secondary"/>
+                    <Button text="↩ Original" onAction="#afficherOriginal" styleClass="btn-light"/>
+                </HBox>
+                <Label fx:id="msgTraduction" text=""/>
+                <TextArea fx:id="traductionArea" promptText="Traduction apparaîtra ici..."
+                          prefHeight="80" wrapText="true" editable="false"
+                          visible="false" managed="false" styleClass="input-field"/>
+            </VBox>
+
+            <!-- Évaluation -->
+            <VBox fx:id="evalCard" styleClass="card" spacing="8">
+                <Label text="Évaluer la réponse" styleClass="section-title"/>
+                <Label text="Notez la qualité de la réponse reçue :" styleClass="hint-label"/>
+                <HBox spacing="4" alignment="CENTER_LEFT">
+                    <Button fx:id="star1" text="★" onAction="#noter1"
+                            style="-fx-font-size:28px; -fx-background-color:transparent; -fx-cursor:hand; -fx-text-fill:#ccc; -fx-padding:0;"/>
+                    <Button fx:id="star2" text="★" onAction="#noter2"
+                            style="-fx-font-size:28px; -fx-background-color:transparent; -fx-cursor:hand; -fx-text-fill:#ccc; -fx-padding:0;"/>
+                    <Button fx:id="star3" text="★" onAction="#noter3"
+                            style="-fx-font-size:28px; -fx-background-color:transparent; -fx-cursor:hand; -fx-text-fill:#ccc; -fx-padding:0;"/>
+                    <Button fx:id="star4" text="★" onAction="#noter4"
+                            style="-fx-font-size:28px; -fx-background-color:transparent; -fx-cursor:hand; -fx-text-fill:#ccc; -fx-padding:0;"/>
+                    <Button fx:id="star5" text="★" onAction="#noter5"
+                            style="-fx-font-size:28px; -fx-background-color:transparent; -fx-cursor:hand; -fx-text-fill:#ccc; -fx-padding:0;"/>
+                    <Label fx:id="labelNote" text="" style="-fx-font-size:14px; -fx-padding:0 0 0 8;"/>
+                </HBox>
+                <Label fx:id="msgEval" text=""/>
+            </VBox>
+
+            <!-- Modifier (sans priorité — détectée auto) -->
+            <VBox styleClass="card" spacing="8">
+                <Label text="Modifier ma réclamation" styleClass="section-title"/>
+                <Label text="(Disponible uniquement si statut = PENDING)" styleClass="hint-label"/>
+                <TextField fx:id="editSubject" promptText="Sujet" styleClass="input-field"/>
+                <TextArea  fx:id="editMessage" promptText="Message" prefHeight="80"
+                           wrapText="true" styleClass="input-field"/>
+                <HBox spacing="8">
+                    <Button fx:id="btnModifier"  text="✔ Enregistrer" onAction="#modifier"  styleClass="btn-secondary"/>
+                    <Button fx:id="btnSupprimer" text="🗑 Supprimer"   onAction="#supprimer" styleClass="btn-danger"/>
+                </HBox>
+                <Label fx:id="msgAction" text=""/>
+            </VBox>
+
+        </VBox>
+    </ScrollPane>
+</VBox>
