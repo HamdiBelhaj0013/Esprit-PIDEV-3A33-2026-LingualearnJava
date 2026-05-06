@@ -1,0 +1,851 @@
+/* =============================================
+   LinguaLearn Front Office — Design System
+   All class names verified from controllers
+   ============================================= */
+
+/* ---------- ROOT ---------- */
+.front-root {
+    -fx-background-color: #eef2ff;
+    -fx-font-family: "Segoe UI", "Inter", "Arial", sans-serif;
+}
+
+.page-container {
+    -fx-background-color: #eef2ff;
+}
+
+/* =============================================
+   SIDEBAR LEFT
+   ============================================= */
+.sidebar {
+    -fx-background-color: #1e1e2e;
+    -fx-padding: 0;
+    -fx-spacing: 0;
+}
+
+.sidebar-logo {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+    -fx-padding: 26 22 20 22;
+    -fx-border-color: transparent transparent #2d2d42 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.sidebar-user-card {
+    -fx-background-color: #16213e;
+    -fx-padding: 16 18;
+    -fx-border-color: transparent transparent #2d2d42 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.sidebar-avatar {
+    -fx-background-color: #2563eb;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER;
+    -fx-min-width: 44;
+    -fx-min-height: 44;
+    -fx-max-width: 44;
+    -fx-max-height: 44;
+    -fx-background-radius: 50;
+}
+
+.sidebar-user-name {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+}
+
+.sidebar-user-plan {
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f59e0b;
+    -fx-background-color: #2d1f00;
+    -fx-background-radius: 4;
+    -fx-padding: 2 7;
+}
+
+.sidebar-section-title {
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #5a5a7a;
+    -fx-padding: 18 22 6 22;
+}
+
+.sidebar-link {
+    -fx-background-color: transparent;
+    -fx-text-fill: #a0a0c0;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 11 22;
+    -fx-background-radius: 0;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+    -fx-max-width: Infinity;
+}
+
+.sidebar-link:hover {
+    -fx-background-color: #2a2a3e;
+    -fx-text-fill: #ffffff;
+}
+
+.sidebar-link-active {
+    -fx-background-color: #2563eb;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+}
+
+/* =============================================
+   SCROLL PANE
+   ============================================= */
+.front-page-root {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+
+.front-page-root > .viewport {
+    -fx-background-color: transparent;
+}
+
+/* =============================================
+   HERO BANNER
+   ============================================= */
+.front-hero-section {
+    -fx-background-color: linear-gradient(to bottom right, #1e3a8a, #2563eb);
+    -fx-padding: 44 48;
+    -fx-alignment: CENTER;
+    -fx-spacing: 12;
+    -fx-effect: dropshadow(gaussian, rgba(37,99,235,0.30), 20, 0, 0, 6);
+}
+
+.front-hero-tag {
+    -fx-background-color: rgba(255,255,255,0.18);
+    -fx-background-radius: 20;
+    -fx-padding: 5 14;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #bfdbfe;
+}
+
+.front-hero-title {
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+    -fx-alignment: CENTER;
+}
+
+.front-hero-subtitle {
+    -fx-font-size: 15px;
+    -fx-text-fill: #bfdbfe;
+    -fx-alignment: CENTER;
+    -fx-wrap-text: true;
+}
+
+.front-page-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0f172a;
+}
+
+.front-page-subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: #475569;
+}
+
+.front-small-title {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2563eb;
+}
+
+/* =============================================
+   LANGUAGE CARDS  (FrontLanguagesController)
+   ============================================= */
+.language-card {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 16;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 16;
+    -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.08), 14, 0, 0, 3);
+    -fx-cursor: hand;
+    -fx-pref-width: 200px;
+    -fx-min-width: 180px;
+}
+
+.language-card:hover {
+    -fx-border-color: #2563eb;
+    -fx-effect: dropshadow(gaussian, rgba(37,99,235,0.22), 20, 0, 0, 5);
+}
+
+.language-card .label {
+    -fx-text-fill: #1e293b;
+}
+
+.language-card-header {
+    -fx-background-color: linear-gradient(to bottom, #eff6ff, #dbeafe);
+    -fx-background-radius: 16 16 0 0;
+    -fx-padding: 22 0 18 0;
+    -fx-alignment: CENTER;
+    -fx-min-height: 90;
+}
+
+.language-card-body {
+    -fx-spacing: 8;
+}
+
+.language-card-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0f172a;
+    -fx-wrap-text: true;
+}
+
+.language-code-chip {
+    -fx-background-color: #eff6ff;
+    -fx-background-radius: 8;
+    -fx-padding: 4 12;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2563eb;
+}
+
+.language-card-subtitle {
+    -fx-font-size: 12px;
+    -fx-text-fill: #64748b;
+}
+
+.language-flag-badge {
+    -fx-background-color: #2563eb;
+    -fx-background-radius: 10;
+    -fx-padding: 10 16;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+    -fx-alignment: CENTER;
+}
+
+.enrolled-badge {
+    -fx-background-color: #16a34a;
+    -fx-background-radius: 20;
+    -fx-padding: 4 12;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+}
+
+.view-courses-button {
+    -fx-background-color: #2563eb;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 9;
+    -fx-padding: 8 14;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+    -fx-effect: dropshadow(gaussian, rgba(37,99,235,0.22), 6, 0, 0, 2);
+}
+
+.view-courses-button:hover { -fx-background-color: #1d4ed8; }
+
+.leave-button {
+    -fx-background-color: #fff1f2;
+    -fx-text-fill: #dc2626;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 9;
+    -fx-border-color: #fecaca;
+    -fx-border-radius: 9;
+    -fx-padding: 7 14;
+    -fx-cursor: hand;
+}
+
+.leave-button:hover { -fx-background-color: #fee2e2; }
+
+.enroll-button {
+    -fx-background-color: #2563eb;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-padding: 10 0;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+    -fx-max-width: Infinity;
+    -fx-effect: dropshadow(gaussian, rgba(37,99,235,0.28), 8, 0, 0, 2);
+}
+
+.enroll-button:hover { -fx-background-color: #1d4ed8; }
+
+/* =============================================
+   COURSES PAGE  (FrontCoursesController)
+   ============================================= */
+.front-language-banner {
+    -fx-background-color: linear-gradient(to right, #1e3a8a, #2563eb);
+    -fx-padding: 28 36;
+    -fx-spacing: 10;
+    -fx-effect: dropshadow(gaussian, rgba(37,99,235,0.20), 10, 0, 0, 3);
+}
+
+.front-language-banner .label {
+    -fx-text-fill: #ffffff;
+}
+
+.front-filter-button {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #475569;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 20;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 20;
+    -fx-padding: 7 18;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.05), 4, 0, 0, 1);
+}
+
+.front-filter-button:hover {
+    -fx-background-color: #eff6ff;
+    -fx-border-color: #93c5fd;
+    -fx-text-fill: #2563eb;
+}
+
+.active-filter {
+    -fx-background-color: #2563eb;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #2563eb;
+    -fx-effect: dropshadow(gaussian, rgba(37,99,235,0.30), 8, 0, 0, 2);
+}
+
+.link-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #2563eb;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+}
+
+.link-label:hover { -fx-text-fill: #1d4ed8; }
+
+/* Course card */
+.course-card {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 16;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 16;
+    -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.08), 14, 0, 0, 3);
+    -fx-cursor: hand;
+    -fx-pref-width: 280px;
+    -fx-min-width: 240px;
+}
+
+.course-card:hover {
+    -fx-border-color: #93c5fd;
+    -fx-effect: dropshadow(gaussian, rgba(37,99,235,0.18), 18, 0, 0, 5);
+}
+
+.course-card .label { -fx-text-fill: #1e293b; }
+
+.course-card-top {
+    -fx-background-color: linear-gradient(to bottom right, #1e3a8a, #3b82f6);
+    -fx-background-radius: 16 16 0 0;
+    -fx-padding: 18 18 16 18;
+    -fx-spacing: 8;
+    -fx-min-height: 100;
+}
+
+.course-card-top .label { -fx-text-fill: #ffffff; }
+
+.course-card-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+    -fx-wrap-text: true;
+}
+
+.course-card-bottom {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 0 0 16 16;
+    -fx-padding: 14 16;
+}
+
+.course-card-subtitle {
+    -fx-font-size: 12px;
+    -fx-text-fill: #64748b;
+}
+
+.level-badge {
+    -fx-background-color: rgba(255,255,255,0.22);
+    -fx-background-radius: 6;
+    -fx-padding: 4 10;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+}
+
+/* Start button */
+.lesson-step-button {
+    -fx-background-color: #2563eb;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-padding: 9 20;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+    -fx-effect: dropshadow(gaussian, rgba(37,99,235,0.25), 6, 0, 0, 2);
+}
+
+.lesson-step-button:hover { -fx-background-color: #1d4ed8; }
+
+/* =============================================
+   LESSON PLAYER  (FrontLessonsController)
+   ============================================= */
+.player-shell {
+    -fx-background-color: #eef2ff;
+    -fx-padding: 28 32 36 32;
+}
+
+.player-top-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0f172a;
+}
+
+.player-progress-text {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2563eb;
+}
+
+.player-muted {
+    -fx-font-size: 12px;
+    -fx-text-fill: #64748b;
+    -fx-font-style: italic;
+}
+
+/* Progress bar */
+.progress-bar > .track {
+    -fx-background-color: #e2e8f0;
+    -fx-background-radius: 10;
+}
+
+.progress-bar > .bar {
+    -fx-background-color: #2563eb;
+    -fx-background-radius: 10;
+    -fx-background-insets: 0;
+}
+
+/* Step tabs — pill row full width */
+.player-step-tab {
+    -fx-background-color: transparent;
+    -fx-text-fill: #64748b;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-background-insets: 0;
+    -fx-border-color: transparent;
+    -fx-border-radius: 8;
+    -fx-border-insets: 0;
+    -fx-padding: 10 8;
+    -fx-cursor: hand;
+}
+
+.player-step-tab:hover {
+    -fx-background-color: #eff6ff;
+    -fx-text-fill: #2563eb;
+    -fx-background-radius: 8;
+    -fx-background-insets: 0;
+}
+
+.player-step-tab:focused {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 8;
+}
+
+.player-step-tab-active {
+    -fx-background-color: #2563eb;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: transparent;
+    -fx-background-radius: 8;
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
+    -fx-effect: dropshadow(gaussian, rgba(37,99,235,0.28), 8, 0, 0, 2);
+}
+
+.player-step-tab-active:focused {
+    -fx-background-color: #2563eb;
+    -fx-background-insets: 0;
+    -fx-background-radius: 8;
+}
+
+.player-step-tab-active:hover {
+    -fx-background-color: #1d4ed8;
+    -fx-background-insets: 0;
+    -fx-background-radius: 8;
+}
+
+/* ---- READ CARD ---- */
+.read-card {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 16;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 16;
+    -fx-padding: 28 32;
+    -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.07), 14, 0, 0, 3);
+    -fx-max-width: 760;
+}
+
+.lesson-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0f172a;
+}
+
+.lesson-content {
+    -fx-font-size: 14px;
+    -fx-text-fill: #334155;
+    -fx-wrap-text: true;
+    -fx-line-spacing: 5;
+}
+
+.lesson-placeholder {
+    -fx-font-size: 13px;
+    -fx-text-fill: #94a3b8;
+    -fx-font-style: italic;
+}
+
+/* ---- VOCAB CARD ---- */
+.vocab-card {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 12;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 12;
+    -fx-padding: 16 20;
+    -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.06), 10, 0, 0, 2);
+    -fx-max-width: 760;
+}
+
+.vocab-card .label { -fx-text-fill: #1e293b; }
+
+.vocab-word {
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1e40af;
+}
+
+.vocab-translation {
+    -fx-font-size: 13px;
+    -fx-text-fill: #475569;
+}
+
+/* ---- QUIZ CARD ---- */
+.quiz-card {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 14;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 14;
+    -fx-padding: 22 26;
+    -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.07), 12, 0, 0, 2);
+    -fx-max-width: 760;
+    -fx-spacing: 12;
+}
+
+.quiz-question {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0f172a;
+    -fx-wrap-text: true;
+}
+
+.quiz-option {
+    -fx-background-color: #f8fafc;
+    -fx-text-fill: #334155;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-background-radius: 10;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 10;
+    -fx-padding: 11 18;
+    -fx-cursor: hand;
+    -fx-max-width: Infinity;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.quiz-option:hover {
+    -fx-background-color: #eff6ff;
+    -fx-border-color: #93c5fd;
+    -fx-text-fill: #1e40af;
+}
+
+/* ---- DONE CARD ---- */
+.done-card {
+    -fx-background-color: linear-gradient(to bottom right, #1e3a8a, #2563eb);
+    -fx-background-radius: 20;
+    -fx-padding: 44 40;
+    -fx-alignment: CENTER;
+    -fx-spacing: 16;
+    -fx-effect: dropshadow(gaussian, rgba(37,99,235,0.30), 22, 0, 0, 6);
+    -fx-max-width: 760;
+}
+
+.done-title {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+    -fx-alignment: CENTER;
+}
+
+.done-subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: #bfdbfe;
+    -fx-alignment: CENTER;
+    -fx-wrap-text: true;
+}
+
+/* XP badge inside done card */
+.done-card .xp-badge {
+    -fx-background-color: #f59e0b;
+    -fx-background-radius: 30;
+    -fx-padding: 12 30;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+    -fx-alignment: CENTER;
+    -fx-effect: dropshadow(gaussian, rgba(245,158,11,0.40), 10, 0, 0, 2);
+}
+
+/* ✅ Complete Lesson button */
+.success-button {
+    -fx-background-color: #f59e0b;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 12;
+    -fx-padding: 11 22;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+    -fx-effect: dropshadow(gaussian, rgba(245,158,11,0.35), 8, 0, 0, 2);
+}
+
+.success-button:hover { -fx-background-color: #d97706; }
+
+/* 📚 All Lessons button */
+.secondary-pill-button {
+    -fx-background-color: rgba(255,255,255,0.18);
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 12;
+    -fx-border-color: rgba(255,255,255,0.35);
+    -fx-border-radius: 12;
+    -fx-padding: 10 20;
+    -fx-cursor: hand;
+}
+
+.secondary-pill-button:hover {
+    -fx-background-color: rgba(255,255,255,0.28);
+}
+
+/* Next Lesson button already covered by .lesson-step-button but override inside done-card */
+.done-card .lesson-step-button {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #2563eb;
+    -fx-border-color: transparent;
+    -fx-effect: none;
+}
+
+.done-card .lesson-step-button:hover {
+    -fx-background-color: #eff6ff;
+}
+
+/* =============================================
+   SIDE PANEL RIGHT  (FrontLessonsController)
+   ============================================= */
+.player-side-panel {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 0 0 0 1;
+    -fx-spacing: 4;
+}
+
+.side-title {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #475569;
+    -fx-padding: 0 0 10 0;
+}
+
+/* Side step — bigger, bolder, more visible */
+.side-step {
+    -fx-background-color: transparent;
+    -fx-text-fill: #64748b;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 10 14;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+    -fx-max-width: Infinity;
+}
+
+.side-step:hover {
+    -fx-background-color: #f1f5f9;
+    -fx-text-fill: #1e293b;
+}
+
+.side-step-active {
+    -fx-background-color: #eff6ff;
+    -fx-text-fill: #2563eb;
+    -fx-font-weight: bold;
+    -fx-border-color: #bfdbfe;
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+}
+
+/* XP badge */
+.xp-badge {
+    -fx-background-color: #f59e0b;
+    -fx-background-radius: 10;
+    -fx-padding: 10 14;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+    -fx-alignment: CENTER;
+    -fx-effect: dropshadow(gaussian, rgba(245,158,11,0.30), 8, 0, 0, 2);
+}
+
+/* =============================================
+   STATISTICS PAGE
+   ============================================= */
+
+/* KPI Cards */
+.stats-kpi-card {
+    -fx-background-radius: 16;
+    -fx-padding: 20 22 18 22;
+    -fx-spacing: 6;
+    -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.08), 14, 0, 0, 3);
+    -fx-cursor: default;
+}
+
+.stats-kpi-blue   { -fx-background-color: linear-gradient(to bottom right, #1e3a8a, #2563eb); }
+.stats-kpi-green  { -fx-background-color: linear-gradient(to bottom right, #14532d, #16a34a); }
+.stats-kpi-purple { -fx-background-color: linear-gradient(to bottom right, #4c1d95, #7c3aed); }
+.stats-kpi-orange { -fx-background-color: linear-gradient(to bottom right, #78350f, #d97706); }
+
+.stats-kpi-card .label { -fx-text-fill: #ffffff; }
+
+.stats-kpi-icon {
+    -fx-font-size: 26px;
+}
+
+.stats-kpi-value {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+}
+
+.stats-kpi-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: rgba(255,255,255,0.80);
+    -fx-font-weight: bold;
+}
+
+.stats-kpi-trend-up {
+    -fx-font-size: 11px;
+    -fx-text-fill: rgba(255,255,255,0.75);
+    -fx-background-color: rgba(255,255,255,0.15);
+    -fx-background-radius: 6;
+    -fx-padding: 2 8;
+}
+
+/* Generic stats card */
+.stats-card {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 16;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 16;
+    -fx-padding: 20 22;
+    -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.06), 12, 0, 0, 2);
+}
+
+.stats-card-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0f172a;
+}
+
+/* Level badge */
+.stats-level-badge {
+    -fx-background-color: #16a34a;
+    -fx-text-fill: #ffffff;
+    -fx-background-radius: 20;
+    -fx-padding: 4 14;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+/* Progress bar override */
+.stats-progress-bar > .track {
+    -fx-background-color: #e2e8f0;
+    -fx-background-radius: 10;
+}
+
+.stats-progress-bar > .bar {
+    -fx-background-radius: 10;
+    -fx-background-insets: 0;
+}
+
+/* Level milestones */
+.stats-milestone {
+    -fx-background-color: #f8fafc;
+    -fx-background-radius: 10;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 10;
+    -fx-padding: 10 8;
+    -fx-spacing: 4;
+}
+
+.stats-milestone-label {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #475569;
+    -fx-alignment: CENTER;
+}
+
+.stats-milestone-xp {
+    -fx-font-size: 10px;
+    -fx-text-fill: #94a3b8;
+    -fx-alignment: CENTER;
+}
+
+/* Heatmap dots (legend) */
+.heatmap-dot {
+    -fx-min-width: 14;
+    -fx-min-height: 14;
+    -fx-max-width: 14;
+    -fx-max-height: 14;
+    -fx-background-radius: 3;
+}
+
+.heatmap-0 { -fx-background-color: #e2e8f0; }
+.heatmap-1 { -fx-background-color: #bfdbfe; }
+.heatmap-2 { -fx-background-color: #60a5fa; }
+.heatmap-3 { -fx-background-color: #2563eb; }
+
+/* Last activity label */
+.stats-last-activity {
+    -fx-font-size: 12px;
+    -fx-text-fill: #64748b;
+    -fx-background-color: #f1f5f9;
+    -fx-background-radius: 8;
+    -fx-padding: 5 12;
+}
+
+/* Footer */
+.footer {
+    -fx-font-size: 12px;
+    -fx-text-fill: #94a3b8;
+}

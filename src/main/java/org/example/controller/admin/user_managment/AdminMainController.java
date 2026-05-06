@@ -6,6 +6,7 @@ import org.example.controller.admin.user_managment.UserListController;
 import org.example.controller.admin.user_managment.UserDetailController;
 import org.example.controller.admin.user_managment.UserFormController;
 import org.example.controller.tests.MockTestDashboardController;
+import org.example.controllers.BackofficeStatsController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -59,6 +60,16 @@ public class AdminMainController {
     }
 
     @FXML
+    private void showLearningStats(ActionEvent event) {
+        if (event.getSource() instanceof Button) setActive((Button) event.getSource(), "Learning Statistics");
+        loadView("/fxml/modules/backoffice-stats.fxml", ctrl -> {
+            if (ctrl instanceof BackofficeStatsController c) {
+                // Statistics auto-load via initialize in the controller
+            }
+        });
+    }
+
+    @FXML
     private void showUsers(ActionEvent event) {
         setActive(btnUsers, "User Management");
         loadView("/fxml/admin/UserListView.fxml", ctrl -> {
@@ -101,6 +112,24 @@ public class AdminMainController {
     private void showQuizStats(ActionEvent event) {
         setActive(btnQuizStats, "Quiz & Exercises Statistics");
         loadView("/fxml/StatsView.fxml", ctrl -> {});
+    }
+
+    @FXML
+    private void showLanguages(ActionEvent event) {
+        if (event.getSource() instanceof Button) setActive((Button) event.getSource(), "Languages");
+        loadView("/fxml/modules/platform_language.fxml", ctrl -> {});
+    }
+
+    @FXML
+    private void showCourses(ActionEvent event) {
+        if (event.getSource() instanceof Button) setActive((Button) event.getSource(), "Courses");
+        loadView("/fxml/modules/course.fxml", ctrl -> {});
+    }
+
+    @FXML
+    private void showLessons(ActionEvent event) {
+        if (event.getSource() instanceof Button) setActive((Button) event.getSource(), "Lessons");
+        loadView("/fxml/modules/lesson.fxml", ctrl -> {});
     }
 
     @FXML

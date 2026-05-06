@@ -35,7 +35,12 @@
             <Button fx:id="btnDashboard" text="  Dashboard"
                     styleClass="sidebar-item" onAction="#showDashboard"
                     maxWidth="Infinity"/>
-            <Button text="  My Courses"        styleClass="sidebar-item" onAction="#showCourses"        maxWidth="Infinity"/>
+            <Button text="  📊 Learning Stats"
+                    styleClass="sidebar-item" onAction="#showLearningStats"
+                    maxWidth="Infinity"/>
+            <Button text="  🌍 Languages"        styleClass="sidebar-item" onAction="#showUserLanguages"  maxWidth="Infinity"/>
+            <Button text="  📚 My Courses"       styleClass="sidebar-item" onAction="#showUserCourses"    maxWidth="Infinity"/>
+            <Button text="  📖 My Lessons"       styleClass="sidebar-item" onAction="#showUserLessons"    maxWidth="Infinity"/>
             <Button fx:id="btnQuizzes" text="  🧠 Quizzes" styleClass="sidebar-item" onAction="#showQuizzes" maxWidth="Infinity"/>
             <Button fx:id="btnExercices" text="  📚 Exercices" styleClass="sidebar-item" onAction="#showExercices" maxWidth="Infinity"/>
             <Button text="  Practice"           styleClass="sidebar-item" onAction="#showPractice"       maxWidth="Infinity"/>

@@ -13,7 +13,7 @@ import javafx.stage.Stage;
 import org.example.entities.Exercice;
 import org.example.entities.Quiz;
 import org.example.service.ExerciceService;
-import org.example.service.LessonService;
+import org.example.services.LessonService;
 import org.example.service.QuizStripeService;
 import org.example.entity.User;
 import java.time.LocalDateTime;
