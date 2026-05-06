@@ -14,12 +14,12 @@ public class UserService implements IUserService {
 
     private static final int BCRYPT_ROUNDS = 12;
 
-    private final UserRepository    userRepository;
+    private final UserRepository userRepository;
     private final ValidationService validation;
 
     public UserService() {
         this.userRepository = new UserRepository();
-        this.validation     = new ValidationService();
+        this.validation = new ValidationService();
     }
 
     // ── Password ──────────────────────────────────────────────────────────────
@@ -40,9 +40,9 @@ public class UserService implements IUserService {
     @Override
     public void registerUser(String firstName, String lastName, String email, String password) {
         ValidationService.requireNonBlank(firstName, "First name");
-        ValidationService.requireNonBlank(lastName,  "Last name");
+        ValidationService.requireNonBlank(lastName, "Last name");
         ValidationService.requireMinLength(firstName, "First name", 2);
-        ValidationService.requireMinLength(lastName,  "Last name",  2);
+        ValidationService.requireMinLength(lastName, "Last name", 2);
         ValidationService.requireValidEmail(email);
         ValidationService.requireMinLength(password, "Password", 6);
 
@@ -54,7 +54,7 @@ public class UserService implements IUserService {
         user.setRoles(List.of("ROLE_USER"));
         user.setStatus("active");
         user.setSubscriptionPlan("FREE");
-        user.setVerified(false);
+        user.setVerified(true); // Auto-vérifié : connexion immédiate sans validation email
 
         userRepository.register(user);
     }
@@ -74,11 +74,11 @@ public class UserService implements IUserService {
     // ── CREATE ────────────────────────────────────────────────────────────────
 
     public User createUser(String email, String plainPassword, String confirmPassword,
-                           String firstName, String lastName, List<String> roles) {
+            String firstName, String lastName, List<String> roles) {
 
         ValidationService.requireValidEmail(email);
         ValidationService.requireNonBlank(firstName, "First name");
-        ValidationService.requireNonBlank(lastName,  "Last name");
+        ValidationService.requireNonBlank(lastName, "Last name");
         ValidationService.requireMinLength(plainPassword, "Password", 6);
         ValidationService.requirePasswordsMatch(plainPassword, confirmPassword);
 
@@ -94,7 +94,7 @@ public class UserService implements IUserService {
         user.setRoles(roles);
         user.setStatus("active");
         user.setSubscriptionPlan("FREE");
-        user.setVerified(false);
+        user.setVerified(true); // Auto-vérifié : connexion immédiate sans validation email
 
         validation.validateOrThrow(user);
 
@@ -109,17 +109,25 @@ public class UserService implements IUserService {
 
     // ── READ ──────────────────────────────────────────────────────────────────
 
-    public Optional<User> findById(Long id)         { return userRepository.findById(id); }
-    public Optional<User> findByEmail(String email) { return userRepository.findByEmail(email); }
-    public List<User>     findAll()                 { return userRepository.findAll(); }
+    public Optional<User> findById(Long id) {
+        return userRepository.findById(id);
+    }
+
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
 
     public List<User> findAdvanced(String search, String status, String plan,
-                                   int page, int pageSize) {
+            int page, int pageSize) {
         return userRepository.findAdvanced(search, status, null, plan, null, page, pageSize);
     }
 
     public List<User> findAdvanced(String search, String status, String role,
-                                   String plan, String sort, int page, int pageSize) {
+            String plan, String sort, int page, int pageSize) {
         return userRepository.findAdvanced(search, status, role, plan, sort, page, pageSize);
     }
 
@@ -127,19 +135,29 @@ public class UserService implements IUserService {
         return userRepository.countAdvanced(search, status, role, plan);
     }
 
-    public List<User> search(String term) { return userRepository.search(term); }
+    public List<User> search(String term) {
+        return userRepository.search(term);
+    }
 
-    public long countAll()              { return userRepository.countAll(); }
-    public long countByStatus(String s) { return userRepository.countByStatus(s); }
-    public long countPremium()          { return userRepository.countPremium(); }
+    public long countAll() {
+        return userRepository.countAll();
+    }
+
+    public long countByStatus(String s) {
+        return userRepository.countByStatus(s);
+    }
+
+    public long countPremium() {
+        return userRepository.countPremium();
+    }
 
     // ── UPDATE ────────────────────────────────────────────────────────────────
 
     public void updateName(User user, String firstName, String lastName) {
         ValidationService.requireNonBlank(firstName, "First name");
-        ValidationService.requireNonBlank(lastName,  "Last name");
+        ValidationService.requireNonBlank(lastName, "Last name");
         ValidationService.requireMinLength(firstName, "First name", 2);
-        ValidationService.requireMinLength(lastName,  "Last name",  2);
+        ValidationService.requireMinLength(lastName, "Last name", 2);
         user.setFirstName(firstName.trim());
         user.setLastName(lastName.trim());
         saveAndFlush(user);
@@ -150,11 +168,11 @@ public class UserService implements IUserService {
     }
 
     public void adminUpdateUser(User user, String firstName, String lastName,
-                                String newPassword, String confirmPassword) {
+            String newPassword, String confirmPassword) {
         ValidationService.requireNonBlank(firstName, "First name");
-        ValidationService.requireNonBlank(lastName,  "Last name");
+        ValidationService.requireNonBlank(lastName, "Last name");
         ValidationService.requireMinLength(firstName, "First name", 2);
-        ValidationService.requireMinLength(lastName,  "Last name",  2);
+        ValidationService.requireMinLength(lastName, "Last name", 2);
 
         user.setFirstName(firstName.trim());
         user.setLastName(lastName.trim());
@@ -168,9 +186,17 @@ public class UserService implements IUserService {
         saveAndFlush(user);
     }
 
-    public void activate(User user)  { activateUser(user); }
-    public void suspend(User user)   { suspendUser(user); }
-    public void delete(User user)    { deleteUser(user); }
+    public void activate(User user) {
+        activateUser(user);
+    }
+
+    public void suspend(User user) {
+        suspendUser(user);
+    }
+
+    public void delete(User user) {
+        deleteUser(user);
+    }
 
     public void activateUser(User user) {
         user.setStatus("active");
@@ -212,11 +238,14 @@ public class UserService implements IUserService {
         saveAndFlush(user);
     }
 
-    public int downgradeExpired()          { return checkExpiredSubscriptions(); }
+    public int downgradeExpired() {
+        return checkExpiredSubscriptions();
+    }
 
     public int checkExpiredSubscriptions() {
         List<User> expired = userRepository.findExpiringSubscriptions(LocalDateTime.now());
-        for (User u : expired) downgradeToFree(u);
+        for (User u : expired)
+            downgradeToFree(u);
         return expired.size();
     }
 
@@ -247,7 +276,8 @@ public class UserService implements IUserService {
     // ── LEARNING STATS ────────────────────────────────────────────────────────
 
     public LearningStats initLearningStats(User user) {
-        if (user.getLearningStats() != null) return user.getLearningStats();
+        if (user.getLearningStats() != null)
+            return user.getLearningStats();
         LearningStats stats = new LearningStats();
         stats.setUser(user);
         user.setLearningStats(stats);
@@ -270,15 +300,48 @@ public class UserService implements IUserService {
     // ── AUTH ──────────────────────────────────────────────────────────────────
 
     public Optional<User> authenticate(String email, String plainPassword) {
-        return userRepository.findByEmail(email.trim().toLowerCase())
-                .filter(u -> "active".equals(u.getStatus()))
-                .filter(u -> u.isVerified())
-                .filter(u -> verifyPassword(plainPassword, u.getPassword()));
+        Optional<User> found = userRepository.findByEmail(email.trim().toLowerCase());
+
+        // ── DEBUG : affiche dans la console pourquoi le login échoue ──────────
+        if (found.isEmpty()) {
+            System.err.println("[AUTH] ❌ Email introuvable en base : " + email.trim().toLowerCase());
+            return Optional.empty();
+        }
+        User u = found.get();
+        System.out.println("[AUTH] User trouvé : id=" + u.getId()
+                + " | status='" + u.getStatus() + "'"
+                + " | verified=" + u.isVerified()
+                + " | pwdPrefix="
+                + (u.getPassword() != null ? u.getPassword().substring(0, Math.min(7, u.getPassword().length()))
+                        : "NULL"));
+
+        // FILTRE 1 — statut actif (insensible à la casse pour la compatibilité équipe)
+        if (u.getStatus() == null || !u.getStatus().equalsIgnoreCase("active")) {
+            System.err.println("[AUTH] ❌ Statut bloquant : '" + u.getStatus() + "' (attendu: 'active')");
+            return Optional.empty();
+        }
+
+        // FILTRE 2 — email vérifié
+        if (!u.isVerified()) {
+            System.err.println("[AUTH] ❌ Compte non vérifié (is_verified = false)");
+            return Optional.empty();
+        }
+
+        // FILTRE 3 — mot de passe
+        if (!verifyPassword(plainPassword, u.getPassword())) {
+            System.err.println("[AUTH] ❌ Mot de passe incorrect");
+            return Optional.empty();
+        }
+
+        System.out.println("[AUTH] ✅ Authentification réussie pour " + u.getEmail());
+        return Optional.of(u);
     }
 
     // ── STATISTICS ────────────────────────────────────────────────────────────
 
-    public void printStats()      { printStatistics(); }
+    public void printStats() {
+        printStatistics();
+    }
 
     public void printStatistics() {
         System.out.println("  Total users  : " + countAll());
