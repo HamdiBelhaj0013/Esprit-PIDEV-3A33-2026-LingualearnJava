@@ -1,7 +1,8 @@
-package org.example.controller.admin;
+package org.example.controller.admin.user_managment;
 
 import org.example.entity.LearningStats;
 import org.example.entity.User;
+import org.example.controller.admin.user_managment.AdminMainController;
 import org.example.service.NotificationService;
 import org.example.service.UserService;
 import javafx.event.ActionEvent;
@@ -63,7 +64,7 @@ public class UserDetailController {
     private User                user;
 
     private static final DateTimeFormatter DT_FMT =
-        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     // ── Init ───────────────────────────────────────────────────────────────────
 
@@ -94,9 +95,9 @@ public class UserDetailController {
         planLabel.setText(user.getSubscriptionPlan());
         premiumLabel.setText(user.isPremium() ? "★ Active" : "No");
         expiryLabel.setText(user.getSubscriptionExpiry() != null
-            ? DT_FMT.format(user.getSubscriptionExpiry()) : "—");
+                ? DT_FMT.format(user.getSubscriptionExpiry()) : "—");
         paymentLabel.setText(user.getLastPaymentStatus() != null
-            ? user.getLastPaymentStatus() : "—");
+                ? user.getLastPaymentStatus() : "—");
 
         // Premium action buttons visibility
         boolean premium = user.isPremium();
@@ -114,7 +115,7 @@ public class UserDetailController {
             wordsLabel.setText(String.valueOf(stats.getWordsLearned()));
             minutesLabel.setText(String.valueOf(stats.getTotalMinutesStudied()));
             lastSessionLabel.setText(stats.getLastStudySession() != null
-                ? DT_FMT.format(stats.getLastStudySession()) : "Never");
+                    ? DT_FMT.format(stats.getLastStudySession()) : "Never");
         } else {
             xpLabel.setText("0"); wordsLabel.setText("0");
             minutesLabel.setText("0"); lastSessionLabel.setText("Never");
@@ -124,7 +125,7 @@ public class UserDetailController {
         toggleStatusBtn.setText("active".equals(user.getStatus()) ? "Suspend" : "Activate");
         toggleStatusBtn.getStyleClass().removeAll("btn-warning", "btn-success");
         toggleStatusBtn.getStyleClass().add(
-            "active".equals(user.getStatus()) ? "btn-warning" : "btn-success");
+                "active".equals(user.getStatus()) ? "btn-warning" : "btn-success");
 
         // Notifications
         loadNotifications();
@@ -134,7 +135,7 @@ public class UserDetailController {
         notifList.getChildren().clear();
         try {
             List<NotificationService.NotifRow> notifs =
-                new NotificationService().getRecentForUser(user.getId());
+                    new NotificationService().getRecentForUser(user.getId());
             if (notifs.isEmpty()) {
                 notifList.getChildren().add(new Label("No notifications sent yet.") {{
                     getStyleClass().add("page-subtitle");
@@ -180,8 +181,8 @@ public class UserDetailController {
         boolean suspend = "active".equals(user.getStatus());
         String action = suspend ? "suspend" : "activate";
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
-            "Are you sure you want to " + action + " " + user.getFullName() + "?",
-            ButtonType.OK, ButtonType.CANCEL);
+                "Are you sure you want to " + action + " " + user.getFullName() + "?",
+                ButtonType.OK, ButtonType.CANCEL);
         confirm.setHeaderText(null);
         confirm.showAndWait().ifPresent(btn -> {
             if (btn != ButtonType.OK) return;
@@ -195,13 +196,13 @@ public class UserDetailController {
 
     @FXML private void handleGrantMonthly(ActionEvent e) {
         withService(svc ->
-            svc.grantPremium(user, "MONTHLY", LocalDateTime.now().plusMonths(1)));
+                svc.grantPremium(user, "MONTHLY", LocalDateTime.now().plusMonths(1)));
         reloadAndRefresh();
     }
 
     @FXML private void handleGrantYearly(ActionEvent e) {
         withService(svc ->
-            svc.grantPremium(user, "YEARLY", LocalDateTime.now().plusYears(1)));
+                svc.grantPremium(user, "YEARLY", LocalDateTime.now().plusYears(1)));
         reloadAndRefresh();
     }
 
@@ -228,8 +229,8 @@ public class UserDetailController {
 
     @FXML private void handleDelete(ActionEvent e) {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
-            "Permanently delete " + user.getFullName() + "?\nThis cannot be undone.",
-            ButtonType.OK, ButtonType.CANCEL);
+                "Permanently delete " + user.getFullName() + "?\nThis cannot be undone.",
+                ButtonType.OK, ButtonType.CANCEL);
         confirm.setHeaderText("Confirm Delete");
         confirm.showAndWait().ifPresent(btn -> {
             if (btn != ButtonType.OK) return;

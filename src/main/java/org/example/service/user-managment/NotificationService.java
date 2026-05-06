@@ -15,7 +15,6 @@ public class NotificationService {
         return MyDataBase.getInstance().getConnection();
     }
 
-    /** Insert a new notification for a user. */
     public void sendNotification(Long userId, String type, String message) {
         String sql = "INSERT INTO notifications (user_id, type, message, is_read, created_at) " +
                      "VALUES (?, ?, ?, 0, ?)";
@@ -30,10 +29,6 @@ public class NotificationService {
         }
     }
 
-    /**
-     * Returns the 5 most recent notifications for a user as plain DTOs.
-     * Each NotifRow has: id, type, message, isRead, createdAt.
-     */
     public List<NotifRow> getRecentForUser(Long userId) {
         String sql = "SELECT id, type, message, is_read, created_at " +
                      "FROM notifications WHERE user_id = ? " +

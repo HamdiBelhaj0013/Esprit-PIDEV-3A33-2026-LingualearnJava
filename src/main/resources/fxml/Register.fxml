@@ -12,7 +12,7 @@
            stylesheets="@../css/style.css"
            xmlns="http://javafx.com/javafx/21"
            xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="org.example.controller.RegisterController">
+           fx:controller="org.example.controller.user.user_managment.RegisterController">
 
     <VBox alignment="TOP_CENTER" maxWidth="500.0" prefHeight="680.0" prefWidth="500.0"
           spacing="10.0" styleClass="login-card">

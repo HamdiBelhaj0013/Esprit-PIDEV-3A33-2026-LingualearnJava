@@ -1,4 +1,4 @@
-package org.example.controller.admin;
+package org.example.controller.admin.user_managment;
 
 import org.example.entity.User;
 import org.example.service.UserService;
@@ -23,11 +23,11 @@ public class DashboardViewController {
     @FXML private Label premiumLabel;
     @FXML private Label newThisMonthLabel;
 
-    @FXML private TableView<User>              recentTable;
-    @FXML private TableColumn<User, String>    colName;
-    @FXML private TableColumn<User, String>    colEmail;
-    @FXML private TableColumn<User, String>    colStatus;
-    @FXML private TableColumn<User, String>    colPlan;
+    @FXML private TableView<User>                  recentTable;
+    @FXML private TableColumn<User, String>        colName;
+    @FXML private TableColumn<User, String>        colEmail;
+    @FXML private TableColumn<User, String>        colStatus;
+    @FXML private TableColumn<User, String>        colPlan;
     @FXML private TableColumn<User, LocalDateTime> colJoined;
 
     public void load() {
@@ -39,11 +39,11 @@ public class DashboardViewController {
         long premium   = svc.countPremium();
 
         LocalDateTime start = LocalDateTime.now().withDayOfMonth(1)
-                                           .withHour(0).withMinute(0).withSecond(0).withNano(0);
+                .withHour(0).withMinute(0).withSecond(0).withNano(0);
         List<User> allUsers = svc.getAllUsers();
         long newMonth = allUsers.stream()
-            .filter(u -> u.getCreatedAt() != null && !u.getCreatedAt().isBefore(start))
-            .count();
+                .filter(u -> u.getCreatedAt() != null && !u.getCreatedAt().isBefore(start))
+                .count();
 
         totalUsersLabel.setText(String.valueOf(total));
         activeUsersLabel.setText(String.valueOf(active));
@@ -52,13 +52,13 @@ public class DashboardViewController {
         newThisMonthLabel.setText(String.valueOf(newMonth));
 
         List<User> recent = allUsers.stream()
-            .sorted((a, b) -> {
-                if (a.getCreatedAt() == null) return 1;
-                if (b.getCreatedAt() == null) return -1;
-                return b.getCreatedAt().compareTo(a.getCreatedAt());
-            })
-            .limit(10)
-            .toList();
+                .sorted((a, b) -> {
+                    if (a.getCreatedAt() == null) return 1;
+                    if (b.getCreatedAt() == null) return -1;
+                    return b.getCreatedAt().compareTo(a.getCreatedAt());
+                })
+                .limit(10)
+                .toList();
 
         setupTable();
         recentTable.setItems(FXCollections.observableArrayList(recent));
@@ -68,12 +68,12 @@ public class DashboardViewController {
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
         colName.setCellValueFactory(c ->
-            new SimpleStringProperty(c.getValue().getFullName()));
+                new SimpleStringProperty(c.getValue().getFullName()));
 
         colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
 
         colStatus.setCellValueFactory(c ->
-            new SimpleStringProperty(c.getValue().getStatus()));
+                new SimpleStringProperty(c.getValue().getStatus()));
         colStatus.setCellFactory(col -> new TableCell<>() {
             @Override protected void updateItem(String s, boolean empty) {
                 super.updateItem(s, empty);
@@ -86,7 +86,7 @@ public class DashboardViewController {
         });
 
         colPlan.setCellValueFactory(c ->
-            new SimpleStringProperty(c.getValue().getSubscriptionPlan()));
+                new SimpleStringProperty(c.getValue().getSubscriptionPlan()));
 
         colJoined.setCellValueFactory(new PropertyValueFactory<>("createdAt"));
         colJoined.setCellFactory(col -> new TableCell<>() {

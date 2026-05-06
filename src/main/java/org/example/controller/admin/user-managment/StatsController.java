@@ -1,4 +1,4 @@
-package org.example.controller.admin;
+package org.example.controller.admin.user_managment;
 
 import org.example.entity.LearningStats;
 import org.example.entity.User;
