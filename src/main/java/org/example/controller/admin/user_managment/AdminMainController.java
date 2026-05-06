@@ -1,6 +1,7 @@
 package org.example.controller.admin.user_managment;
 
 import org.example.entity.User;
+import org.example.controller.admin.AdminAiController;
 import org.example.controller.admin.user_managment.DashboardViewController;
 import org.example.controller.admin.user_managment.UserListController;
 import org.example.controller.admin.user_managment.UserDetailController;
@@ -31,6 +32,7 @@ public class AdminMainController {
     @FXML private Button    btnUsers;
     @FXML private Button    btnSupport;
     @FXML private Button    btnTests;
+    @FXML private Button    btnAiAssistant;
     @FXML private Button    btnForumStats;
     @FXML private Button    btnForumPubs;
     @FXML private Button    btnForumComments;
@@ -78,6 +80,14 @@ public class AdminMainController {
             if (ctrl instanceof MockTestDashboardController c) {
                 c.setContentArea(contentArea);
             }
+        });
+    }
+
+    @FXML
+    private void showAiAssistant(ActionEvent event) {
+        setActive(btnAiAssistant, "AI Assistant");
+        loadView("/fxml/admin/AdminAiView.fxml", ctrl -> {
+            // AdminAiController self-initializes in @FXML initialize()
         });
     }
 

@@ -39,6 +39,10 @@
                     styleClass="sidebar-item" onAction="#showTests"
                     maxWidth="Infinity"/>
 
+            <Button fx:id="btnAiAssistant" text="  🤖 AI Assistant"
+                    styleClass="sidebar-item" onAction="#showAiAssistant"
+                    maxWidth="Infinity"/>
+
             <Label text="COMING SOON" styleClass="sidebar-section"/>
             <Button text="  Courses" styleClass="sidebar-item"
                     disable="true" maxWidth="Infinity"/>
