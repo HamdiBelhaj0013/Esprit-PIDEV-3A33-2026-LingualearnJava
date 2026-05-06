@@ -73,6 +73,18 @@
         </VBox>
 
         <Label fx:id="errorLabel" styleClass="form-error" visible="false" managed="false"/>
+
+        <!-- AI-FEATURE: stats-summary -->
+        <Separator/>
+        <VBox spacing="8.0">
+            <Button fx:id="generateStatsBtn"
+                    text="AI Summary ✦"
+                    onAction="#handleGenerateStats"
+                    style="-fx-background-color:#6366f1; -fx-text-fill:white; -fx-background-radius:6; -fx-font-size:12px; -fx-cursor:hand; -fx-padding:6 14 6 14;"/>
+            <Label fx:id="summaryLabel" text="" wrapText="true"
+                   visible="false" managed="false"
+                   style="-fx-font-size:12px; -fx-text-fill:#374151; -fx-background-color:#f3f4f6; -fx-padding:8; -fx-background-radius:6;"/>
+        </VBox>
     </VBox>
 
     <Separator/>

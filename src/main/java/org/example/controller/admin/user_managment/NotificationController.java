@@ -10,6 +10,11 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
+import javafx.application.Platform;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import org.example.repository.UserRepository;
+import org.example.service.ai.AdminAiService;
 
 public class NotificationController {
 
@@ -20,6 +25,11 @@ public class NotificationController {
 
     private User     user;
     private Runnable onSent;
+
+    // AI-FEATURE: notification-writer
+    @FXML private TextField intentField;
+    @FXML private Button    generateMessageBtn;
+    @FXML private Label     aiStatusLabel;
 
     @FXML
     private void initialize() {
@@ -66,5 +76,52 @@ public class NotificationController {
 
     private void closeStage() {
         ((Stage) messageArea.getScene().getWindow()).close();
+    }
+
+    // AI-FEATURE: notification-writer ─────────────────────────────────────────
+
+    @FXML
+    private void handleGenerateMessage(ActionEvent event) {
+        String intent = intentField.getText().trim();
+        if (intent.isBlank()) {
+            showAiStatus("Describe the intent first.", true);
+            return;
+        }
+        String type = typeChoice.getValue() != null ? typeChoice.getValue() : "info";
+        generateMessageBtn.setDisable(true);
+        showAiStatus("Generating…", false);
+
+        Thread t = new Thread(() -> {
+            try {
+                AdminAiService svc = new AdminAiService(new UserRepository());
+                String result = svc.generateNotificationMessage(user.getId(), type, intent);
+                Platform.runLater(() -> {
+                    messageArea.setText(result);
+                    showAiStatus("", false);
+                    generateMessageBtn.setDisable(false);
+                });
+            } catch (Exception ex) {
+                Platform.runLater(() -> {
+                    showAiStatus("AI service unavailable. Make sure Ollama is running.", true);
+                    generateMessageBtn.setDisable(false);
+                });
+            }
+        }, "notification-writer-thread");
+        t.setDaemon(true);
+        t.start();
+    }
+
+    private void showAiStatus(String msg, boolean isError) {
+        if (msg.isBlank()) {
+            aiStatusLabel.setVisible(false);
+            aiStatusLabel.setManaged(false);
+        } else {
+            aiStatusLabel.setText(msg);
+            aiStatusLabel.setStyle(isError
+                ? "-fx-font-size:11px; -fx-text-fill:#ef4444;"
+                : "-fx-font-size:11px; -fx-text-fill:#6b7280;");
+            aiStatusLabel.setVisible(true);
+            aiStatusLabel.setManaged(true);
+        }
     }
 }

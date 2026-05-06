@@ -6,6 +6,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
@@ -51,6 +52,24 @@
         </VBox>
 
         <Label fx:id="errorLabel" styleClass="form-error" visible="false" managed="false"/>
+
+        <!-- AI-FEATURE: notification-writer -->
+        <VBox spacing="6.0">
+            <Label text="AI Message Generator"
+                   style="-fx-font-size:11px; -fx-font-weight:bold; -fx-text-fill:#6b7280;"/>
+            <HBox spacing="8.0" alignment="CENTER_LEFT">
+                <TextField fx:id="intentField"
+                           promptText="Describe the intent (e.g. account suspended for violation)…"
+                           HBox.hgrow="ALWAYS"/>
+                <Button fx:id="generateMessageBtn"
+                        text="Generate ✦"
+                        onAction="#handleGenerateMessage"
+                        style="-fx-background-color:#6366f1; -fx-text-fill:white; -fx-background-radius:6; -fx-font-size:12px; -fx-cursor:hand; -fx-padding:6 12 6 12;"/>
+            </HBox>
+            <Label fx:id="aiStatusLabel" text="" wrapText="true"
+                   visible="false" managed="false"
+                   style="-fx-font-size:11px; -fx-text-fill:#6b7280;"/>
+        </VBox>
     </VBox>
 
     <Separator/>

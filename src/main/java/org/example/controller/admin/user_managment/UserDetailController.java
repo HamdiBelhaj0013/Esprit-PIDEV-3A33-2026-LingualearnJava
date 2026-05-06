@@ -18,6 +18,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.application.Platform;
+import org.example.repository.UserRepository;
+import org.example.service.ai.AdminAiService;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -53,6 +56,10 @@ public class UserDetailController {
     @FXML private Label  wordsLabel;
     @FXML private Label  minutesLabel;
     @FXML private Label  lastSessionLabel;
+
+    // AI-FEATURE: stats-summary
+    @FXML private Button aiSummaryBtn;
+    @FXML private Label  aiSummaryCard;
 
     // Notifications
     @FXML private VBox   notifList;
@@ -288,5 +295,46 @@ public class UserDetailController {
         Alert a = new Alert(Alert.AlertType.ERROR, msg);
         a.setHeaderText(null);
         a.showAndWait();
+    }
+
+    // AI-FEATURE: stats-summary ────────────────────────────────────────────────
+
+    @FXML
+    private void handleGenerateSummary(ActionEvent e) {
+        aiSummaryBtn.setDisable(true);
+        aiSummaryCard.setText("Generating summary…");
+        aiSummaryCard.setStyle(
+            "-fx-font-size:12px; -fx-text-fill:#6b7280;"
+            + "-fx-background-color:#f1f5f9; -fx-padding:10;"
+            + "-fx-background-radius:6;");
+        aiSummaryCard.setVisible(true);
+        aiSummaryCard.setManaged(true);
+
+        Thread t = new Thread(() -> {
+            try {
+                AdminAiService svc = new AdminAiService(new UserRepository());
+                String result = svc.generateStatsSummary(user.getId());
+                Platform.runLater(() -> {
+                    aiSummaryCard.setText(result);
+                    aiSummaryCard.setStyle(
+                        "-fx-font-size:12px; -fx-text-fill:#1e3a5f;"
+                        + "-fx-background-color:#dbeafe; -fx-padding:10;"
+                        + "-fx-background-radius:6;");
+                    aiSummaryBtn.setDisable(false);
+                });
+            } catch (Exception ex) {
+                Platform.runLater(() -> {
+                    aiSummaryCard.setText(
+                        "AI service unavailable. Make sure Ollama is running.");
+                    aiSummaryCard.setStyle(
+                        "-fx-font-size:11px; -fx-text-fill:#ef4444;"
+                        + "-fx-background-color:#fef2f2; -fx-padding:10;"
+                        + "-fx-background-radius:6;");
+                    aiSummaryBtn.setDisable(false);
+                });
+            }
+        }, "stats-summary-thread");
+        t.setDaemon(true);
+        t.start();
     }
 }

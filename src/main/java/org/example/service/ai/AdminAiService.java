@@ -314,4 +314,81 @@ public class AdminAiService {
             + "Current user database (sanitized):\n"
             + datasetJson;
     }
+
+    // ── AI-FEATURE: notification-writer ───────────────────────────────────────
+
+    /**
+     * Generates a ready-to-send notification message for a specific user.
+     * <p>
+     * The {@code intent} parameter lets the admin briefly describe the purpose
+     * (e.g. "account suspended", "welcome back offer"). The model drafts a
+     * professional, 1–3 sentence message whose tone matches the notification type.
+     * <p>
+     * Blocking — must be called from a background thread.
+     *
+     * @param userId           the target user's ID
+     * @param notificationType one of: info, warning, success, system
+     * @param intent           brief description of what the notification is about
+     * @return a ready-to-send notification message string
+     */
+    public String generateNotificationMessage(long userId,
+                                              String notificationType,
+                                              String intent) {
+        User user = userRepo.findById(userId)
+            .orElseThrow(() -> new RuntimeException("User not found: " + userId));
+
+        String userJson = datasetBuilder.toJson(
+            datasetBuilder.buildDataset(List.of(user)));
+
+        List<Map<String, String>> messages = List.of(Map.of(
+            "role",    "user",
+            "content", "Write a \"" + notificationType + "\" notification for this user.\n"
+                     + "Intent: " + intent + "\n\n"
+                     + "User context:\n" + userJson
+        ));
+        return ollama.chat(messages, NOTIFICATION_WRITER_PROMPT);
+    }
+
+    // ── AI-FEATURE: stats-summary ─────────────────────────────────────────────
+
+    /**
+     * Generates a concise plain-English summary of a user's learning stats.
+     * <p>
+     * Describes their progress (XP, words learned, minutes studied) in a
+     * motivational, data-driven paragraph. Safe to display in the admin panel.
+     * <p>
+     * Blocking — must be called from a background thread.
+     *
+     * @param userId the target user's ID
+     * @return a summary paragraph (2–4 sentences)
+     */
+    public String generateStatsSummary(long userId) {
+        User user = userRepo.findById(userId)
+            .orElseThrow(() -> new RuntimeException("User not found: " + userId));
+
+        String userJson = datasetBuilder.toJson(
+            datasetBuilder.buildDataset(List.of(user)));
+
+        List<Map<String, String>> messages = List.of(Map.of(
+            "role",    "user",
+            "content", "Summarize the learning progress for this user:\n" + userJson
+        ));
+        return ollama.chat(messages, STATS_SUMMARY_PROMPT);
+    }
+
+    private static final String NOTIFICATION_WRITER_PROMPT =
+        "You are an admin notification writer for LinguaLearn, a language-learning platform. "
+        + "Given a user's profile, a notification type, and an intent, write a concise, "
+        + "professional notification message (1–3 sentences). "
+        + "Match the tone to the type: warm for 'success', firm for 'warning', "
+        + "neutral for 'info', authoritative for 'system'. "
+        + "Address the user by first name. Never mention passwords or internal IDs. "
+        + "Reply with only the notification text — no quotes, no preamble.";
+
+    private static final String STATS_SUMMARY_PROMPT =
+        "You are a learning analytics assistant for LinguaLearn. "
+        + "Given a user's learning stats (XP, words learned, minutes studied), "
+        + "write a concise (2–4 sentences) plain-English summary of their progress. "
+        + "Be encouraging and data-driven. Never mention passwords or Stripe fields. "
+        + "Reply with only the summary text — no quotes, no preamble.";
 }

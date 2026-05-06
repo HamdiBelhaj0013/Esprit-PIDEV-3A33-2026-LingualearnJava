@@ -10,6 +10,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.stage.Stage;
+import javafx.application.Platform;
+import javafx.scene.control.Button;
+import org.example.repository.UserRepository;
+import org.example.service.ai.AdminAiService;
 
 public class StatsController {
 
@@ -24,6 +28,10 @@ public class StatsController {
 
     private User     user;
     private Runnable onSaved;
+
+    // AI-FEATURE: stats-summary
+    @FXML private Button generateStatsBtn;
+    @FXML private Label  summaryLabel;
 
     public void setUser(User u, Runnable onSaved) {
         this.user    = u;
@@ -98,5 +106,46 @@ public class StatsController {
 
     private void closeStage() {
         ((Stage) xpSpinner.getScene().getWindow()).close();
+    }
+
+    // AI-FEATURE: stats-summary ────────────────────────────────────────────────
+
+    @FXML
+    private void handleGenerateStats(ActionEvent event) {
+        generateStatsBtn.setDisable(true);
+        summaryLabel.setText("Generating summary…");
+        summaryLabel.setStyle(
+            "-fx-font-size:12px; -fx-text-fill:#6b7280;"
+            + "-fx-background-color:#f9fafb; -fx-padding:8;"
+            + "-fx-background-radius:6;");
+        summaryLabel.setVisible(true);
+        summaryLabel.setManaged(true);
+
+        Thread t = new Thread(() -> {
+            try {
+                AdminAiService svc = new AdminAiService(new UserRepository());
+                String result = svc.generateStatsSummary(user.getId());
+                Platform.runLater(() -> {
+                    summaryLabel.setText(result);
+                    summaryLabel.setStyle(
+                        "-fx-font-size:12px; -fx-text-fill:#374151;"
+                        + "-fx-background-color:#f3f4f6; -fx-padding:8;"
+                        + "-fx-background-radius:6;");
+                    generateStatsBtn.setDisable(false);
+                });
+            } catch (Exception ex) {
+                Platform.runLater(() -> {
+                    summaryLabel.setText(
+                        "AI service unavailable. Make sure Ollama is running.");
+                    summaryLabel.setStyle(
+                        "-fx-font-size:11px; -fx-text-fill:#ef4444;"
+                        + "-fx-background-color:#fef2f2; -fx-padding:8;"
+                        + "-fx-background-radius:6;");
+                    generateStatsBtn.setDisable(false);
+                });
+            }
+        }, "stats-summary-thread");
+        t.setDaemon(true);
+        t.start();
     }
 }
