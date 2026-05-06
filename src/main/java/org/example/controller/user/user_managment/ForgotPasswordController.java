@@ -1,4 +1,5 @@
 package org.example.controller.user.user_managment;
+
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -18,7 +19,7 @@ import java.util.regex.Pattern;
 public class ForgotPasswordController {
 
     private static final Pattern EMAIL_PATTERN =
-        Pattern.compile("^[\\w._%+\\-]+@[\\w.\\-]+\\.[a-zA-Z]{2,}$");
+            Pattern.compile("^[\\w._%+\\-]+@[\\w.\\-]+\\.[a-zA-Z]{2,}$");
 
     @FXML private TextField emailField;
     @FXML private Label     errorLabel;
@@ -30,6 +31,7 @@ public class ForgotPasswordController {
         clearMessages();
 
         String email = emailField.getText().trim();
+
         if (email.isBlank()) {
             showError("Email is required.");
             return;
@@ -55,14 +57,14 @@ public class ForgotPasswordController {
             sendButton.setText("Send Reset Code");
             try {
                 FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/fxml/VerifyOTP.fxml"));
+                        getClass().getResource("/fxml/VerifyOTP.fxml"));
                 Parent root = loader.load();
                 VerifyOTPController ctrl = loader.getController();
                 ctrl.setEmail(email);
                 Stage stage = (Stage) emailField.getScene().getWindow();
                 stage.setScene(new Scene(root));
             } catch (IOException ex) {
-                showError("Navigation error: " + ex.getMessage());
+                Platform.runLater(() -> showError("Navigation error: " + ex.getMessage()));
             }
         });
 

@@ -11,12 +11,11 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
-import netscape.javascript.JSObject;
-import org.example.service.forum.HCaptchaService;
+import org.example.service.CaptchaServer;
+import org.example.service.HCaptchaService;
 import org.example.service.PasswordResetService;
 
 import java.io.IOException;
-import java.net.URL;
 
 public class NewPasswordController {
 
@@ -31,27 +30,42 @@ public class NewPasswordController {
     private String email;
     private String otp;
 
-    private HCaptchaService captchaService = new HCaptchaService();
+    private final HCaptchaService captchaService = new HCaptchaService();
     private WebEngine webEngine;
 
     @FXML
     public void initialize() {
         webEngine = captchaWebView.getEngine();
-        URL captchaPage = getClass().getResource("/captcha/captcha.html");
-        if (captchaPage != null) {
-            webEngine.load(captchaPage.toExternalForm());
+        webEngine.setJavaScriptEnabled(true);
+
+        // Suppress JS console errors in production (optional — remove to see JS logs)
+        webEngine.setOnError(event ->
+                System.err.println("[WebView Error] " + event.getMessage()));
+
+        try {
+            String url = CaptchaServer.start();
+            System.out.println("[NewPasswordController] Loading captcha from: " + url);
+            webEngine.load(url);
+        } catch (Exception e) {
+            System.err.println("[NewPasswordController] Failed to start CaptchaServer: " + e.getMessage());
         }
     }
 
     public void setEmail(String email) { this.email = email; }
     public void setOtp(String otp)     { this.otp   = otp;   }
 
+    /**
+     * Reads the hCaptcha token from the WebView by calling the JS getToken() function.
+     */
     private String getCaptchaToken() {
         try {
-            JSObject window = (JSObject) webEngine.executeScript("window");
-            Object token = window.call("getToken");
-            return token != null ? token.toString() : "";
+            Object result = webEngine.executeScript("getToken()");
+            String token = result != null ? result.toString() : "";
+            System.out.println("[NewPasswordController] Token retrieved: "
+                    + (token.isEmpty() ? "<empty>" : token.substring(0, Math.min(20, token.length())) + "..."));
+            return token;
         } catch (Exception e) {
+            System.err.println("[NewPasswordController] Could not get captcha token: " + e.getMessage());
             return "";
         }
     }
@@ -60,18 +74,19 @@ public class NewPasswordController {
     private void handleReset(ActionEvent event) {
         clearAllErrors();
 
-        // â”€â”€ CAPTCHA verification â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── CAPTCHA verification ──────────────────────────
         String token = getCaptchaToken();
         if (token.isEmpty() || !captchaService.verify(token)) {
-            captchaError.setVisible(true);
-            captchaError.setManaged(true);
-            try { webEngine.executeScript("hcaptcha.reset()"); } catch (Exception ignored) {}
+            showFieldError(captchaError, "Please complete the security check.");
+            try {
+                webEngine.executeScript("resetCaptcha()");   // uses the wrapper in captcha.html
+            } catch (Exception ignored) {}
             return;
         }
         captchaError.setVisible(false);
         captchaError.setManaged(false);
 
-        // â”€â”€ Password validation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── Password validation ───────────────────────────
         String password = passwordField.getText();
         String confirm  = confirmField.getText();
 
@@ -88,6 +103,7 @@ public class NewPasswordController {
             return;
         }
 
+        // ── Reset password ────────────────────────────────
         try {
             new PasswordResetService().resetPassword(email, otp, password, confirm);
 
@@ -109,6 +125,8 @@ public class NewPasswordController {
         }
     }
 
+    // ── Helpers ───────────────────────────────────────────
+
     private void showFieldError(Label label, String message) {
         label.setText(message);
         label.setVisible(true);
@@ -129,4 +147,3 @@ public class NewPasswordController {
         }
     }
 }
-

@@ -1,38 +1,79 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="https://js.hcaptcha.com/1/api.js?host=lingualern.local" async defer></script>
+    <meta charset="UTF-8"/>
+    <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
     <style>
-        body {
-            margin: 0; padding: 10px;
-            background: transparent;
-            display: flex; justify-content: center;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body {
+            width: 304px;        /* hCaptcha widget is exactly 303px wide */
+            height: 78px;        /* normal-size widget height */
+            background: #ffffff;
+            overflow: hidden;
+        }
+
+        .captcha-wrapper {
+            width: 304px;
+            height: 78px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        /* Force the iframe hCaptcha injects to fill properly */
+        .h-captcha iframe {
+            width: 304px !important;
+            height: 78px  !important;
         }
     </style>
 </head>
 <body>
-<div class="h-captcha"
-     data-sitekey="e76e241a-a3ba-4a6a-989a-3fbe50840714"
-     data-callback="onCaptchaSuccess"
-     data-theme="light">
+<div class="captcha-wrapper">
+    <div class="h-captcha"
+         data-sitekey="e76e241a-a3ba-4a6a-989a-3fbe50840714"
+         data-callback="onCaptchaSuccess"
+         data-expired-callback="onCaptchaExpired"
+         data-closed-callback="onCaptchaClosed"
+         data-theme="light"
+         data-size="normal">
+    </div>
 </div>
+
 <script>
+    // In-memory token (no localStorage — avoids WebView storage quirks)
     var captchaToken = "";
 
     function onCaptchaSuccess(token) {
         captchaToken = token;
-        console.log("Captcha solved.");
+        console.log("[hCaptcha] Solved. Token starts with: " + token.substring(0, 20));
     }
 
     function onCaptchaExpired() {
         captchaToken = "";
-        console.log("Captcha expired.");
+        console.log("[hCaptcha] Token expired.");
     }
 
+    function onCaptchaClosed() {
+        // Challenge popup closed — token remains valid if already solved
+        console.log("[hCaptcha] Widget closed. Token present: " + (captchaToken !== ""));
+    }
+
+    /** Called by Java via webEngine.executeScript("getToken()") */
     function getToken() {
         return captchaToken;
     }
 
+    /** Called by Java after a failed verification attempt */
+    function resetCaptcha() {
+        captchaToken = "";
+        if (typeof hcaptcha !== "undefined") {
+            hcaptcha.reset();
+        }
+        console.log("[hCaptcha] Reset.");
+    }
+
+    /** Convenience check — not currently used by Java but handy for debugging */
     function isTokenReady() {
         return captchaToken !== "";
     }

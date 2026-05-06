@@ -5,11 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c62684bd-7db6-4266-8409-2a36624f041e" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/CaptchaServer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/HCaptchaService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/LoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/LoginController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/user-managment/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/user-managment/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/user/user_managment/ForgotPasswordController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/user/user_managment/ForgotPasswordController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/user/user_managment/NewPasswordController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/user/user_managment/NewPasswordController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/user-managment/HCaptchaService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/captcha/captcha.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/captcha/captcha.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/NewPassword.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/NewPassword.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,6 +24,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="FxmlFile" />
+        <option value="JavaFXApplication" />
         <option value="Class" />
       </list>
     </option>
@@ -64,7 +69,7 @@
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;module/support&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
@@ -89,11 +94,11 @@
       <recent name="C:\Users\belha\OneDrive\Bureau\LingualearnJava" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\belha\OneDrive\Bureau\Projects\Esprit\LingualearnJava\src\main\java\org\example\service" />
       <recent name="C:\Users\belha\OneDrive\Bureau\LingualearnJava\src\main\java\org\example\repository\user-managment" />
       <recent name="C:\Users\belha\OneDrive\Bureau\LingualearnJava\src\main\java\org\example\controller\admin\user-managment" />
       <recent name="C:\Users\belha\OneDrive\Bureau\LingualearnJava\src\main\resources\META-INF" />
       <recent name="C:\Users\belha\OneDrive\Bureau\LingualearnJava\src\main\java\org\example\validation" />
-      <recent name="C:\Users\belha\OneDrive\Bureau\LingualearnJava\src\main\java\org\example\entity" />
     </key>
   </component>
   <component name="RunManager" selected="Maven.JavaFX Run (Maven)">
@@ -131,7 +136,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.25557.131" />
+        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.28539.33" />
+        <option value="bundled-js-predefined-d6986cc7102b-a71380e98a7c-JavaScript-IU-252.28539.33" />
       </set>
     </attachedChunks>
   </component>
@@ -163,11 +169,23 @@
       <workItem from="1776330047821" duration="104000" />
       <workItem from="1776516100369" duration="1000" />
       <workItem from="1776550541912" duration="1475000" />
+      <workItem from="1778076443217" duration="3274000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
