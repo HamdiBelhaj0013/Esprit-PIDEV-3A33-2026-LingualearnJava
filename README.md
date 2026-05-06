@@ -162,30 +162,6 @@ dependencies. The repository is solely responsible for reading and writing
 them via SQL.
 
 #### `User.java`
-
-| Field | Java type | DB column | Notes |
-|-------|-----------|-----------|-------|
-| `id` | `Long` | `id` BIGINT AUTO | Set by repository after INSERT |
-| `email` | `String` | `email` | Unique; lowercased before save |
-| `password` | `String` | `password` | BCrypt hash (`$2a$12$…`) |
-| `roles` | `String` | `roles` JSON | JSON array: `["ROLE_USER"]` |
-| `firstName` | `String` | `first_name` | |
-| `lastName` | `String` | `last_name` | |
-| `subscriptionPlan` | `String` | `subscription_plan` | `FREE` / `MONTHLY` / `YEARLY` |
-| `subscriptionExpiry` | `LocalDateTime` | `subscription_expiry` | null when FREE |
-| `isPremium` | `boolean` | `is_premium` | **Computed**, never set directly |
-| `lastPaymentStatus` | `String` | `last_payment_status` | `success` / `failed` / null |
-| `status` | `String` | `status` | `active` / `suspended` / `deleted` |
-| `createdAt` | `LocalDateTime` | `created_at` | Set on first INSERT |
-| `isVerified` | `boolean` | `is_verified` | |
-| `stripeCustomerId` | `String` | `stripe_customer_id` | |
-| `stripeSubscriptionId` | `String` | `stripe_subscription_id` | |
-| `isBanned` | `boolean` | `is_banned` | |
-| `banReason` | `String` | `ban_reason` | |
-| `learningStats` | `LearningStats` | — | POJO reference, loaded by JOIN |
-
-**Key methods:**
-- `updatePremiumStatus()` — recalculates `isPremium` from plan + expiry.
   Called by `setSubscriptionPlan()`, `setSubscriptionExpiry()`, and explicitly
   by `UserRepository.mapUser()` after all fields are loaded from the ResultSet.
 - `getRoles()` / `setRoles(List<String>)` — parse/serialize the JSON-array

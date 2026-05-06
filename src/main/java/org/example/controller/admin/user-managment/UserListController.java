@@ -1,47 +1,40 @@
-package org.example.controller.admin;
+package org.example.controller.admin.user_managment;
 
-import org.example.entity.LearningStats;
 import org.example.entity.User;
 import org.example.service.UserService;
+import org.example.controller.admin.user_managment.AdminMainController;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.layout.HBox;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class UserListController {
 
-    // ── FXML refs ──────────────────────────────────────────────────────────────
-    @FXML private TextField  searchField;
+    // ── FXML refs ─────────────────────────────────────────────────────────────
+    @FXML private TextField        searchField;
     @FXML private ComboBox<String> statusFilter;
     @FXML private ComboBox<String> roleFilter;
     @FXML private ComboBox<String> planFilter;
     @FXML private ComboBox<String> sortCombo;
 
-    @FXML private TableView<User>            userTable;
-    @FXML private TableColumn<User, Boolean> colSelect;
-    @FXML private TableColumn<User, Long>    colId;
-    @FXML private TableColumn<User, String>  colName;
-    @FXML private TableColumn<User, String>  colEmail;
-    @FXML private TableColumn<User, String>  colStatus;
-    @FXML private TableColumn<User, String>  colPlan;
-    @FXML private TableColumn<User, Boolean> colPremium;
+    @FXML private TableView<User>                 userTable;
+    @FXML private TableColumn<User, Boolean>      colSelect;
+    @FXML private TableColumn<User, Long>         colId;
+    @FXML private TableColumn<User, String>       colName;
+    @FXML private TableColumn<User, String>       colEmail;
+    @FXML private TableColumn<User, String>       colStatus;
+    @FXML private TableColumn<User, String>       colPlan;
+    @FXML private TableColumn<User, Boolean>      colPremium;
     @FXML private TableColumn<User, LocalDateTime> colJoined;
-    @FXML private TableColumn<User, Void>    colActions;
+    @FXML private TableColumn<User, Void>         colActions;
 
     @FXML private Label  countLabel;
     @FXML private Label  pageLabel;
@@ -51,15 +44,16 @@ public class UserListController {
     @FXML private Button bulkSuspendBtn;
     @FXML private Button bulkDeleteBtn;
 
-    // ── State ──────────────────────────────────────────────────────────────────
-    private AdminMainController      mainController;
+    // ── State ─────────────────────────────────────────────────────────────────
+    private AdminMainController mainController;
+    private final UserService   svc = new UserService();
 
-    private final Set<Long>          selected  = new HashSet<>();
-    private int                      page      = 1;
-    private static final int         PAGE_SIZE = 20;
-    private long                     totalCount = 0;
+    private final Set<Long> selected  = new HashSet<>();
+    private int             page      = 1;
+    private static final int PAGE_SIZE = 20;
+    private long            totalCount = 0;
 
-    // ── Init ───────────────────────────────────────────────────────────────────
+    // ── Init ──────────────────────────────────────────────────────────────────
 
     public void setMainController(AdminMainController mc) { this.mainController = mc; }
 
@@ -71,23 +65,23 @@ public class UserListController {
 
     private void initFilters() {
         statusFilter.setItems(FXCollections.observableArrayList(
-                "All Statuses", "active", "suspended", "deleted"));
+                "All", "active", "suspended", "deleted"));
         statusFilter.getSelectionModel().selectFirst();
 
         roleFilter.setItems(FXCollections.observableArrayList(
-                "All Roles", "ROLE_USER", "ROLE_ADMIN", "ROLE_TEACHER"));
+                "All", "ROLE_USER", "ROLE_ADMIN", "ROLE_TEACHER"));
         roleFilter.getSelectionModel().selectFirst();
 
         planFilter.setItems(FXCollections.observableArrayList(
-                "All Plans", "FREE", "MONTHLY", "YEARLY"));
+                "All", "FREE", "MONTHLY", "YEARLY"));
         planFilter.getSelectionModel().selectFirst();
 
         sortCombo.setItems(FXCollections.observableArrayList(
-                "Sort: Recent", "Sort: Name A→Z", "Sort: Email A→Z", "Sort: Status", "Sort: Premium first"));
+                "Recent", "Name A→Z", "Email A→Z", "Status", "Premium first"));
         sortCombo.getSelectionModel().selectFirst();
     }
 
-    // ── Columns ────────────────────────────────────────────────────────────────
+    // ── Columns ───────────────────────────────────────────────────────────────
 
     private void setupColumns() {
         userTable.setEditable(true);
@@ -203,7 +197,7 @@ public class UserListController {
         });
     }
 
-    // ── Data loading ───────────────────────────────────────────────────────────
+    // ── Data loading ──────────────────────────────────────────────────────────
 
     private void refresh() {
         selected.clear();
@@ -215,29 +209,26 @@ public class UserListController {
         String plan   = filterValue(planFilter);
         String sort   = sortKey();
 
-        UserService svc = new UserService();
         totalCount = svc.countAdvanced(search, status, role, plan);
         List<User> users = svc.findAdvanced(search, status, role, plan, sort, page, PAGE_SIZE);
-
         userTable.setItems(FXCollections.observableArrayList(users));
         updatePagination();
     }
 
     private String filterValue(ComboBox<String> cb) {
         String v = cb.getValue();
-        if (v == null || v.startsWith("All")) return null;
-        return v;
+        return (v == null || v.equals("All")) ? null : v;
     }
 
     private String sortKey() {
         String s = sortCombo.getValue();
         if (s == null) return null;
         return switch (s) {
-            case "Sort: Name A→Z"      -> "name";
-            case "Sort: Email A→Z"     -> "email";
-            case "Sort: Status"        -> "status";
-            case "Sort: Premium first" -> "premium";
-            default                    -> null;
+            case "Name A→Z"      -> "name";
+            case "Email A→Z"     -> "email";
+            case "Status"        -> "status";
+            case "Premium first" -> "premium";
+            default              -> null;
         };
     }
 
@@ -256,9 +247,10 @@ public class UserListController {
         bulkDeleteBtn.setDisable(!hasSelection);
     }
 
-    // ── FXML handlers ──────────────────────────────────────────────────────────
+    // ── FXML handlers ─────────────────────────────────────────────────────────
 
     @FXML private void handleApplyFilters(ActionEvent e) { page = 1; refresh(); }
+
     @FXML private void handleClearFilters(ActionEvent e) {
         searchField.clear();
         statusFilter.getSelectionModel().selectFirst();
@@ -268,6 +260,7 @@ public class UserListController {
         page = 1;
         refresh();
     }
+
     @FXML private void handleRefresh(ActionEvent e)  { refresh(); }
     @FXML private void handlePrevPage(ActionEvent e) { if (page > 1) { page--; refresh(); } }
     @FXML private void handleNextPage(ActionEvent e) {
@@ -302,7 +295,7 @@ public class UserListController {
         confirm.showAndWait().ifPresent(btn -> {
             if (btn == ButtonType.OK) {
                 try {
-                    new UserService().findById(user.getId()).ifPresent(u -> new UserService().deleteUser(u));
+                    svc.findById(user.getId()).ifPresent(svc::deleteUser);
                     refresh();
                 } catch (Exception ex) {
                     showError("Delete failed: " + ex.getMessage());
@@ -314,11 +307,11 @@ public class UserListController {
     // ── Bulk actions ──────────────────────────────────────────────────────────
 
     @FXML private void handleBulkActivate(ActionEvent e) {
-        applyBulkAction("Activate", u -> new UserService().activateUser(u));
+        applyBulkAction(u -> svc.activateUser(u));
     }
 
     @FXML private void handleBulkSuspend(ActionEvent e) {
-        applyBulkAction("Suspend", u -> new UserService().suspendUser(u));
+        applyBulkAction(u -> svc.suspendUser(u));
     }
 
     @FXML private void handleBulkDelete(ActionEvent e) {
@@ -328,26 +321,24 @@ public class UserListController {
         confirm.setHeaderText("Confirm Bulk Delete");
         confirm.showAndWait().ifPresent(btn -> {
             if (btn == ButtonType.OK) {
-                applyBulkAction("Delete", u -> new UserService().deleteUser(u));
+                applyBulkAction(u -> svc.deleteUser(u));
             }
         });
     }
 
-    private void applyBulkAction(String label, java.util.function.Consumer<User> action) {
-        List<Long> ids = new ArrayList<>(selected);
-        for (Long id : ids) {
-            new UserService().findById(id).ifPresent(u -> {
-                try { action.accept(u); }
-                catch (Exception ex) { /* skip individual failures */ }
-            });
-        }
+    private void applyBulkAction(java.util.function.Consumer<User> action) {
+        new ArrayList<>(selected).forEach(id ->
+                svc.findById(id).ifPresent(u -> {
+                    try { action.accept(u); }
+                    catch (Exception ex) { /* skip */ }
+                }));
         refresh();
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     private User reloadUser(Long id) {
-        return new UserService().findById(id).orElse(null);
+        return svc.findById(id).orElse(null);
     }
 
     private void showError(String msg) {

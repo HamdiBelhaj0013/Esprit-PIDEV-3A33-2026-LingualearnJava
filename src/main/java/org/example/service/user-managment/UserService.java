@@ -37,12 +37,6 @@ public class UserService implements IUserService {
 
     // ── REGISTRATION ─────────────────────────────────────────────────────────
 
-    /**
-     * Public-facing user self-registration.
-     * Validates inputs, hashes the password, then delegates to
-     * {@link org.example.repository.UserRepository#register(User)}
-     * which enforces the unique-email constraint at the DB level.
-     */
     @Override
     public void registerUser(String firstName, String lastName, String email, String password) {
         ValidationService.requireNonBlank(firstName, "First name");
@@ -67,13 +61,11 @@ public class UserService implements IUserService {
 
     // ── IUserService aliases ──────────────────────────────────────────────────
 
-    /** Alias for {@link #authenticate(String, String)} — satisfies {@link IUserService}. */
     @Override
     public Optional<User> login(String email, String password) {
         return authenticate(email, password);
     }
 
-    /** Alias for {@link #findAll()} — satisfies {@link IUserService}. */
     @Override
     public List<User> getAllUsers() {
         return findAll();
@@ -280,6 +272,7 @@ public class UserService implements IUserService {
     public Optional<User> authenticate(String email, String plainPassword) {
         return userRepository.findByEmail(email.trim().toLowerCase())
                 .filter(u -> "active".equals(u.getStatus()))
+                .filter(u -> u.isVerified())
                 .filter(u -> verifyPassword(plainPassword, u.getPassword()));
     }
 

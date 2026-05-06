@@ -16,6 +16,9 @@ public class StageManager {
 
     private static Stage primaryStage;
 
+    /** Tracks the FXML path of the scene currently shown, so it can be reloaded. */
+    private static String currentFxmlPath;
+
     private StageManager() {}
 
     /** Called once from App.start(). */
@@ -34,6 +37,7 @@ public class StageManager {
     public static void switchScene(String fxmlPath) throws IOException {
         FXMLLoader loader = new FXMLLoader(StageManager.class.getResource(fxmlPath));
         Parent root = loader.load();
+        currentFxmlPath = fxmlPath;
         primaryStage.setScene(new Scene(root));
         primaryStage.centerOnScreen();
     }
@@ -52,8 +56,35 @@ public class StageManager {
         Parent root = loader.load();
         C controller = loader.getController();
         init.accept(controller);
+        currentFxmlPath = fxmlPath;
         primaryStage.setScene(new Scene(root));
         primaryStage.centerOnScreen();
         return controller;
+    }
+
+    /**
+     * Reloads the currently displayed FXML, replacing the scene in-place.
+     *
+     * <p>Useful after background state changes (e.g. a Stripe payment callback
+     * via {@code StripeWebhookServer} upgrading the user) where the UI must
+     * reflect the new state without navigating to a different screen.</p>
+     *
+     * <pre>
+     * // Called from StripeWebhookServer after handlePaymentSuccess():
+     * javafx.application.Platform.runLater(() -> {
+     *     try { StageManager.refreshCurrentStage(); }
+     *     catch (IOException e) { e.printStackTrace(); }
+     * });
+     * </pre>
+     *
+     * @throws IOException          if the FXML cannot be loaded.
+     * @throws IllegalStateException if no scene has been set yet (nothing to refresh).
+     */
+    public static void refreshCurrentStage() throws IOException {
+        if (currentFxmlPath == null) {
+            throw new IllegalStateException(
+                    "refreshCurrentStage() called before any scene was set.");
+        }
+        switchScene(currentFxmlPath);
     }
 }

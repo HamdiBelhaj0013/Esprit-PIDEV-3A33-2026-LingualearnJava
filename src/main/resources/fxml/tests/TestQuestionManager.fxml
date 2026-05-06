@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!--
+  TestQuestionManager.fxml — redesigned
+  • The FORM takes the full interface (no split layout)
+  • After saving, controller navigates to the questions list view
+  • "Retour" from list goes back to the form
+  Place at: src/main/resources/fxml/tests/TestQuestionManager.fxml
+
+  CONTROLLER NOTE:
+  The existing TestQuestionManagerController already handles the section switching.
+  After handleSaveQuestion() succeeds → call showQuestionsListPanel() (see note below).
+  Add a StackPane wrapper so you can swap between the form panel and the list panel.
+  The simplest approach: keep the existing controller and add a method that calls
+  handleNewQuestion() to "go back to form" from the list.
+-->
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.controller.tests.TestQuestionManagerController"
+      styleClass="admin-root"
+      stylesheets="@../../css/admin.css"
+      spacing="0">
+
+    <VBox styleClass="content-area" VBox.vgrow="ALWAYS" spacing="0">
+
+        <!-- ══ Header ═══════════════════════════════════════════════════════ -->
+        <VBox spacing="0"
+              style="-fx-background-color:linear-gradient(to right,#1a1f36,#252d5c);
+                     -fx-padding:18 28 14 28;">
+            <HBox alignment="CENTER_LEFT" spacing="14">
+                <Button text="← Retour aux tests" onAction="#handleBack"
+                        style="-fx-background-color:rgba(255,255,255,0.10);-fx-text-fill:white;
+                               -fx-font-size:12px;-fx-cursor:hand;-fx-background-radius:8;
+                               -fx-border-color:rgba(255,255,255,0.28);-fx-border-radius:8;
+                               -fx-border-width:1;-fx-padding:6 14;
+                               -fx-font-family:'Segoe UI';"/>
+                <VBox spacing="2" HBox.hgrow="ALWAYS">
+                    <Label fx:id="testTitleLabel" text="📋  Questions du test"
+                           style="-fx-font-size:18px;-fx-font-weight:bold;-fx-text-fill:white;
+                                  -fx-font-family:'Segoe UI';" wrapText="true"/>
+                    <HBox spacing="20">
+                        <Label fx:id="questionCountLabel" text="0 question(s)"
+                               style="-fx-font-size:12px;-fx-text-fill:rgba(255,255,255,0.58);
+                                      -fx-font-family:'Segoe UI';"/>
+                        <Label fx:id="totalPointsLabel" text="Total : 0 pts"
+                               style="-fx-font-size:12px;-fx-text-fill:rgba(255,255,255,0.58);
+                                      -fx-font-family:'Segoe UI';"/>
+                    </HBox>
+                </VBox>
+            </HBox>
+        </VBox>
+
+        <!-- ══ StackPane switching between FORM and LIST ════════════════════ -->
+        <StackPane VBox.vgrow="ALWAYS">
+
+            <!-- ── FORM PANEL (default visible) ───────────────────────────── -->
+            <VBox fx:id="formPanel" spacing="0" VBox.vgrow="ALWAYS">
+
+                <!-- Action bar above form -->
+                <HBox spacing="10" alignment="CENTER_LEFT"
+                      style="-fx-padding:10 20;-fx-background-color:white;
+                             -fx-border-color:#e3e8f0;-fx-border-width:0 0 1 0;">
+                    <Label fx:id="panelTitleLabel" text="➕  Ajouter une question"
+                           style="-fx-font-size:14px;-fx-font-weight:bold;-fx-text-fill:#1a1f36;
+                                  -fx-font-family:'Segoe UI';"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <!-- Bouton API Ninjas -->
+                    <Button text="🤖 Générer via API"
+                            onAction="#handleGenererApi"
+                            style="-fx-background-color:#7048e8;-fx-text-fill:white;
+                                   -fx-font-size:12px;-fx-font-weight:bold;-fx-cursor:hand;
+                                   -fx-background-radius:8;-fx-padding:7 14;
+                                   -fx-effect:dropshadow(gaussian,rgba(112,72,232,0.4),6,0,0,2);"/>
+                    <!-- View existing questions button -->
+                    <Button text="📋  Voir les questions enregistrées"
+                            onAction="#handleShowList"
+                            style="-fx-background-color:white;-fx-text-fill:#3b5bdb;
+                                   -fx-font-size:12px;-fx-font-weight:bold;-fx-cursor:hand;
+                                   -fx-background-radius:6;-fx-border-color:#3b5bdb;
+                                   -fx-border-radius:6;-fx-border-width:1;-fx-padding:6 14;
+                                   -fx-font-family:'Segoe UI';"/>
+                    <Label fx:id="globalSuccess" wrapText="true" visible="false" managed="false"
+                           style="-fx-text-fill:#2fb344;-fx-font-size:12px;-fx-padding:4 12;
+                                  -fx-background-color:#d3f9d8;-fx-background-radius:20;
+                                  -fx-font-weight:bold;"/>
+                </HBox>
+
+                <!-- FULL-WIDTH form area -->
+                <VBox VBox.vgrow="ALWAYS"
+                      style="-fx-background-color:#f4f6fb;-fx-padding:20 32;">
+
+                    <VBox spacing="0"
+                          style="-fx-background-color:white;-fx-background-radius:14;
+                                 -fx-border-color:#e3e8f0;-fx-border-radius:14;-fx-border-width:1;
+                                 -fx-effect:dropshadow(gaussian,rgba(0,0,0,0.05),10,0,0,2);">
+
+                        <ScrollPane fitToWidth="true" styleClass="scroll-pane" VBox.vgrow="ALWAYS"
+                                    style="-fx-background-color:transparent;-fx-background:transparent;">
+                            <VBox spacing="24" style="-fx-padding:28 36;">
+
+                                <!-- ── Step 1: Section selector ────────────── -->
+                                <VBox spacing="10">
+                                    <HBox alignment="CENTER_LEFT" spacing="8">
+                                        <Label text="1"
+                                               style="-fx-background-color:#3b5bdb;-fx-text-fill:white;
+                                                      -fx-font-weight:bold;-fx-font-size:11px;
+                                                      -fx-background-radius:20;-fx-min-width:22;
+                                                      -fx-min-height:22;-fx-alignment:CENTER;"/>
+                                        <Label text="Choisir la section"
+                                               styleClass="form-label"/>
+                                    </HBox>
+
+                                    <GridPane hgap="12" vgap="12">
+                                        <columnConstraints>
+                                            <ColumnConstraints hgrow="ALWAYS" percentWidth="25"/>
+                                            <ColumnConstraints hgrow="ALWAYS" percentWidth="25"/>
+                                            <ColumnConstraints hgrow="ALWAYS" percentWidth="25"/>
+                                            <ColumnConstraints hgrow="ALWAYS" percentWidth="25"/>
+                                        </columnConstraints>
+                                        <ToggleButton fx:id="btnReading" text="📖  Reading"
+                                                      GridPane.columnIndex="0" maxWidth="Infinity"
+                                                      style="-fx-background-color:#eef2ff;-fx-text-fill:#3b5bdb;
+                                                             -fx-font-weight:bold;-fx-font-size:13px;
+                                                             -fx-padding:14 0;-fx-background-radius:10;
+                                                             -fx-cursor:hand;-fx-border-color:#c5d0fc;
+                                                             -fx-border-radius:10;-fx-border-width:2;"/>
+                                        <ToggleButton fx:id="btnListening" text="🎧  Listening"
+                                                      GridPane.columnIndex="1" maxWidth="Infinity"
+                                                      style="-fx-background-color:#fff3e0;-fx-text-fill:#e65100;
+                                                             -fx-font-weight:bold;-fx-font-size:13px;
+                                                             -fx-padding:14 0;-fx-background-radius:10;
+                                                             -fx-cursor:hand;-fx-border-color:#ffcc80;
+                                                             -fx-border-radius:10;-fx-border-width:2;"/>
+                                        <ToggleButton fx:id="btnWriting" text="✍️  Writing"
+                                                      GridPane.columnIndex="2" maxWidth="Infinity"
+                                                      style="-fx-background-color:#e8f5e9;-fx-text-fill:#2e7d32;
+                                                             -fx-font-weight:bold;-fx-font-size:13px;
+                                                             -fx-padding:14 0;-fx-background-radius:10;
+                                                             -fx-cursor:hand;-fx-border-color:#a5d6a7;
+                                                             -fx-border-radius:10;-fx-border-width:2;"/>
+                                        <ToggleButton fx:id="btnSpeaking" text="🎤  Speaking"
+                                                      GridPane.columnIndex="3" maxWidth="Infinity"
+                                                      style="-fx-background-color:#fce4ec;-fx-text-fill:#c2185b;
+                                                             -fx-font-weight:bold;-fx-font-size:13px;
+                                                             -fx-padding:14 0;-fx-background-radius:10;
+                                                             -fx-cursor:hand;-fx-border-color:#f48fb1;
+                                                             -fx-border-radius:10;-fx-border-width:2;"/>
+                                    </GridPane>
+                                    <ComboBox fx:id="sectionCombo" visible="false" managed="false"/>
+                                    <Label fx:id="sectionError" styleClass="form-error"
+                                           visible="false" managed="false"/>
+                                </VBox>
+
+                                <!-- ── Step 2 / Dynamic forms ──────────────── -->
+                                <VBox spacing="0">
+
+                                    <!-- Placeholder -->
+                                    <VBox fx:id="placeholderBox" spacing="10" alignment="CENTER"
+                                          style="-fx-background-color:#f8fafc;-fx-background-radius:12;
+                                                 -fx-border-color:#e3e8f0;-fx-border-radius:12;
+                                                 -fx-border-width:1;-fx-padding:48;">
+                                        <Label text="👆" style="-fx-font-size:36px;"/>
+                                        <Label text="Sélectionnez une section ci-dessus"
+                                               style="-fx-font-size:14px;-fx-text-fill:#6c7a99;
+                                                      -fx-font-weight:bold;-fx-font-family:'Segoe UI';"/>
+                                        <Label text="Reading, Listening, Writing ou Speaking"
+                                               style="-fx-font-size:12px;-fx-text-fill:#9ca3af;
+                                                      -fx-font-family:'Segoe UI';"/>
+                                    </VBox>
+
+                                    <!-- READING form -->
+                                    <VBox fx:id="readingForm" spacing="20"
+                                          visible="false" managed="false">
+
+                                        <HBox style="-fx-padding:0 0 4 0;">
+                                            <Label text="📖  Section Reading  —  QCM"
+                                                   style="-fx-background-color:#eef2ff;-fx-text-fill:#3b5bdb;
+                                                          -fx-font-weight:bold;-fx-font-size:12px;
+                                                          -fx-background-radius:20;-fx-padding:5 16;"/>
+                                        </HBox>
+
+                                        <VBox spacing="6">
+                                            <HBox alignment="CENTER_LEFT" spacing="8">
+                                                <Label text="2"
+                                                       style="-fx-background-color:#3b5bdb;-fx-text-fill:white;
+                                                              -fx-font-weight:bold;-fx-font-size:11px;
+                                                              -fx-background-radius:20;-fx-min-width:22;
+                                                              -fx-min-height:22;-fx-alignment:CENTER;"/>
+                                                <Label text="Texte de la question *"
+                                                       styleClass="form-label"/>
+                                            </HBox>
+                                            <TextArea fx:id="questionTextArea"
+                                                      promptText="Saisissez le texte de la question..."
+                                                      wrapText="true" prefHeight="90"
+                                                      styleClass="form-input" maxWidth="Infinity"/>
+                                            <Label fx:id="questionTextError" styleClass="form-error"
+                                                   visible="false" managed="false"/>
+                                        </VBox>
+
+                                        <VBox spacing="8">
+                                            <HBox alignment="CENTER_LEFT" spacing="8">
+                                                <Label text="3"
+                                                       style="-fx-background-color:#3b5bdb;-fx-text-fill:white;
+                                                              -fx-font-weight:bold;-fx-font-size:11px;
+                                                              -fx-background-radius:20;-fx-min-width:22;
+                                                              -fx-min-height:22;-fx-alignment:CENTER;"/>
+                                                <Label text="Options de réponse *  (min. 2)"
+                                                       styleClass="form-label"/>
+                                                <Region HBox.hgrow="ALWAYS"/>
+                                                <Button text="+ Ajouter une option"
+                                                        onAction="#handleAddOption"
+                                                        style="-fx-background-color:#eef2ff;
+                                                               -fx-text-fill:#3b5bdb;
+                                                               -fx-font-size:11px;-fx-cursor:hand;
+                                                               -fx-background-radius:6;-fx-padding:4 10;"/>
+                                            </HBox>
+                                            <VBox fx:id="optionsContainer" spacing="8"/>
+                                            <Label fx:id="optionsError" styleClass="form-error"
+                                                   visible="false" managed="false"/>
+                                        </VBox>
+
+                                        <VBox spacing="8">
+                                            <HBox alignment="CENTER_LEFT" spacing="8">
+                                                <Label text="4"
+                                                       style="-fx-background-color:#3b5bdb;-fx-text-fill:white;
+                                                              -fx-font-weight:bold;-fx-font-size:11px;
+                                                              -fx-background-radius:20;-fx-min-width:22;
+                                                              -fx-min-height:22;-fx-alignment:CENTER;"/>
+                                                <Label text="Réponse(s) correcte(s) *"
+                                                       styleClass="form-label"/>
+                                            </HBox>
+                                            <VBox fx:id="correctAnswersContainer" spacing="6"/>
+                                            <Label fx:id="answerError" styleClass="form-error"
+                                                   visible="false" managed="false"/>
+                                        </VBox>
+
+                                        <VBox spacing="6">
+                                            <HBox alignment="CENTER_LEFT" spacing="8">
+                                                <Label text="5"
+                                                       style="-fx-background-color:#3b5bdb;-fx-text-fill:white;
+                                                              -fx-font-weight:bold;-fx-font-size:11px;
+                                                              -fx-background-radius:20;-fx-min-width:22;
+                                                              -fx-min-height:22;-fx-alignment:CENTER;"/>
+                                                <Label text="Points (1 à 10)" styleClass="form-label"/>
+                                            </HBox>
+                                            <Spinner fx:id="pointsSpinner" styleClass="form-input"
+                                                     maxWidth="200"/>
+                                        </VBox>
+                                    </VBox>
+
+                                    <!-- LISTENING form -->
+                                    <VBox fx:id="listeningForm" spacing="16"
+                                          visible="false" managed="false">
+                                        <HBox>
+                                            <Label text="🎧  Section Listening  —  Généré par IA"
+                                                   style="-fx-background-color:#fff3e0;-fx-text-fill:#e65100;
+                                                          -fx-font-weight:bold;-fx-font-size:12px;
+                                                          -fx-background-radius:20;-fx-padding:5 16;"/>
+                                        </HBox>
+                                        <VBox spacing="12"
+                                              style="-fx-background-color:#fff8f0;-fx-background-radius:12;
+                                                     -fx-border-color:#ffcc80;-fx-border-radius:12;
+                                                     -fx-border-width:1;-fx-padding:18 20;">
+                                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                                <Label text="🤖" style="-fx-font-size:22px;"/>
+                                                <VBox spacing="2">
+                                                    <Label text="Contenu généré automatiquement par l'IA"
+                                                           style="-fx-font-weight:bold;-fx-text-fill:#bf360c;
+                                                                  -fx-font-size:13px;"/>
+                                                    <Label text="L'IA générera un exercice audio et évaluera les réponses."
+                                                           style="-fx-text-fill:#6d3b00;-fx-font-size:12px;"
+                                                           wrapText="true"/>
+                                                </VBox>
+                                            </HBox>
+                                        </VBox>
+                                        <VBox spacing="6">
+                                            <Label text="Points (1 à 10)" styleClass="form-label"/>
+                                            <Spinner fx:id="pointsSpinnerListening"
+                                                     styleClass="form-input" maxWidth="200"/>
+                                        </VBox>
+                                    </VBox>
+
+                                    <!-- WRITING form -->
+                                    <VBox fx:id="writingForm" spacing="16"
+                                          visible="false" managed="false">
+                                        <HBox>
+                                            <Label text="✍️  Section Writing  —  Généré par IA"
+                                                   style="-fx-background-color:#e8f5e9;-fx-text-fill:#2e7d32;
+                                                          -fx-font-weight:bold;-fx-font-size:12px;
+                                                          -fx-background-radius:20;-fx-padding:5 16;"/>
+                                        </HBox>
+                                        <VBox spacing="12"
+                                              style="-fx-background-color:#f1f8f1;-fx-background-radius:12;
+                                                     -fx-border-color:#a5d6a7;-fx-border-radius:12;
+                                                     -fx-border-width:1;-fx-padding:18 20;">
+                                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                                <Label text="🤖" style="-fx-font-size:22px;"/>
+                                                <VBox spacing="2">
+                                                    <Label text="Contenu généré automatiquement par l'IA"
+                                                           style="-fx-font-weight:bold;-fx-text-fill:#2e7d32;
+                                                                  -fx-font-size:13px;"/>
+                                                    <Label text="L'IA générera un sujet de rédaction et évaluera les réponses."
+                                                           style="-fx-text-fill:#1b5e20;-fx-font-size:12px;"
+                                                           wrapText="true"/>
+                                                </VBox>
+                                            </HBox>
+                                        </VBox>
+                                        <VBox spacing="6">
+                                            <Label text="Points (1 à 10)" styleClass="form-label"/>
+                                            <Spinner fx:id="pointsSpinnerWriting"
+                                                     styleClass="form-input" maxWidth="200"/>
+                                        </VBox>
+                                    </VBox>
+
+                                    <!-- SPEAKING form -->
+                                    <VBox fx:id="speakingForm" spacing="16"
+                                          visible="false" managed="false">
+                                        <HBox>
+                                            <Label text="🎤  Section Speaking  —  Généré par IA"
+                                                   style="-fx-background-color:#fce4ec;-fx-text-fill:#c2185b;
+                                                          -fx-font-weight:bold;-fx-font-size:12px;
+                                                          -fx-background-radius:20;-fx-padding:5 16;"/>
+                                        </HBox>
+                                        <VBox spacing="12"
+                                              style="-fx-background-color:#fdf0f5;-fx-background-radius:12;
+                                                     -fx-border-color:#f48fb1;-fx-border-radius:12;
+                                                     -fx-border-width:1;-fx-padding:18 20;">
+                                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                                <Label text="🤖" style="-fx-font-size:22px;"/>
+                                                <VBox spacing="2">
+                                                    <Label text="Contenu généré automatiquement par l'IA"
+                                                           style="-fx-font-weight:bold;-fx-text-fill:#c2185b;
+                                                                  -fx-font-size:13px;"/>
+                                                    <Label text="L'IA générera un exercice oral et évaluera la prononciation."
+                                                           style="-fx-text-fill:#880e4f;-fx-font-size:12px;"
+                                                           wrapText="true"/>
+                                                </VBox>
+                                            </HBox>
+                                        </VBox>
+                                        <VBox spacing="6">
+                                            <Label text="Points (1 à 10)" styleClass="form-label"/>
+                                            <Spinner fx:id="pointsSpinnerSpeaking"
+                                                     styleClass="form-input" maxWidth="200"/>
+                                        </VBox>
+                                    </VBox>
+
+                                </VBox>
+
+                                <!-- Global error -->
+                                <Label fx:id="globalError" styleClass="form-error" wrapText="true"
+                                       visible="false" managed="false"
+                                       style="-fx-font-size:12px;-fx-background-color:#fff5f5;
+                                              -fx-padding:10 14;-fx-background-radius:8;
+                                              -fx-border-color:#ffc9c9;-fx-border-radius:8;
+                                              -fx-border-width:1;"/>
+                            </VBox>
+                        </ScrollPane>
+
+                        <!-- Footer -->
+                        <HBox alignment="CENTER_RIGHT" spacing="12"
+                              style="-fx-padding:14 28;-fx-background-color:#f8fafc;
+                                     -fx-border-color:#e3e8f0;-fx-border-width:1 0 0 0;
+                                     -fx-background-radius:0 0 14 14;">
+                            <Button text="Réinitialiser" onAction="#handleNewQuestion"
+                                    style="-fx-background-color:white;-fx-text-fill:#6c7a99;
+                                           -fx-font-size:13px;-fx-cursor:hand;-fx-background-radius:8;
+                                           -fx-border-color:#d1d5db;-fx-border-radius:8;
+                                           -fx-border-width:1;-fx-padding:9 18;
+                                           -fx-font-family:'Segoe UI';"/>
+                            <Button text="💾  Enregistrer la question" onAction="#handleSaveQuestion"
+                                    style="-fx-background-color:#3b5bdb;-fx-text-fill:white;
+                                           -fx-font-size:14px;-fx-font-weight:bold;-fx-cursor:hand;
+                                           -fx-background-radius:8;-fx-padding:9 24;
+                                           -fx-effect:dropshadow(gaussian,rgba(59,91,219,0.4),8,0,0,2);
+                                           -fx-font-family:'Segoe UI';"/>
+                        </HBox>
+                    </VBox>
+                </VBox>
+            </VBox>
+
+            <!-- ── LIST PANEL (hidden by default, shown after save) ─────────── -->
+            <VBox fx:id="listPanel" spacing="0" visible="false" managed="false">
+
+                <!-- List toolbar -->
+                <HBox spacing="10" alignment="CENTER_LEFT"
+                      style="-fx-padding:12 20;-fx-background-color:white;
+                             -fx-border-color:#e3e8f0;-fx-border-width:0 0 1 0;">
+                    <Button text="← Ajouter une autre question" onAction="#handleNewQuestion"
+                            style="-fx-background-color:#3b5bdb;-fx-text-fill:white;
+                                   -fx-font-size:13px;-fx-font-weight:bold;-fx-cursor:hand;
+                                   -fx-background-radius:8;-fx-padding:8 18;
+                                   -fx-font-family:'Segoe UI';"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="✏️  Modifier" onAction="#handleEditSelected"
+                            styleClass="btn-warning btn-sm"/>
+                    <Button text="🗑️  Supprimer" onAction="#handleDeleteQuestion"
+                            styleClass="btn-danger btn-sm"/>
+                </HBox>
+
+                <!-- Table of questions -->
+                <VBox VBox.vgrow="ALWAYS"
+                      style="-fx-background-color:#f4f6fb;-fx-padding:16;">
+                    <VBox VBox.vgrow="ALWAYS"
+                          style="-fx-background-color:white;-fx-background-radius:12;
+                                 -fx-border-color:#e3e8f0;-fx-border-radius:12;-fx-border-width:1;
+                                 -fx-effect:dropshadow(gaussian,rgba(0,0,0,0.05),10,0,0,2);">
+                        <TableView fx:id="questionsTable" VBox.vgrow="ALWAYS" styleClass="table-view"
+                                   style="-fx-background-color:white;-fx-background-radius:12;
+                                          -fx-border-color:transparent;">
+                            <columns>
+                                <TableColumn fx:id="colSection"  text="SECTION"  prefWidth="130"/>
+                                <TableColumn fx:id="colQuestion" text="QUESTION" prefWidth="380"/>
+                                <TableColumn fx:id="colAnswer"   text="RÉPONSE"  prefWidth="180"/>
+                                <TableColumn fx:id="colPoints"   text="PTS"      prefWidth="70"/>
+                            </columns>
+                            <placeholder>
+                                <VBox alignment="CENTER" spacing="12" style="-fx-padding:60;">
+                                    <Label text="📝" style="-fx-font-size:40px;"/>
+                                    <Label text="Aucune question pour ce test."
+                                           style="-fx-font-size:14px;-fx-text-fill:#374151;
+                                                  -fx-font-weight:bold;-fx-font-family:'Segoe UI';"/>
+                                    <Label text="Utilisez le bouton ci-dessus pour en ajouter."
+                                           style="-fx-font-size:12px;-fx-text-fill:#9ca3af;
+                                                  -fx-font-family:'Segoe UI';"/>
+                                </VBox>
+                            </placeholder>
+                        </TableView>
+                    </VBox>
+                </VBox>
+            </VBox>
+
+        </StackPane>
+    </VBox>
+</VBox>

@@ -103,6 +103,18 @@ public class UserRepository {
         }
     }
 
+    public Optional<User> findByStripeCustomerId(String customerId) {
+        String sql = SELECT_BASE + " WHERE u.stripe_customer_id = ?";
+        try (PreparedStatement ps = conn().prepareStatement(sql)) {
+            ps.setString(1, customerId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? Optional.of(mapUser(rs)) : Optional.empty();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("findByStripeCustomerId failed", e);
+        }
+    }
+
     public List<User> findAll() {
         String sql = SELECT_BASE + " ORDER BY u.created_at DESC";
         try (PreparedStatement ps = conn().prepareStatement(sql);

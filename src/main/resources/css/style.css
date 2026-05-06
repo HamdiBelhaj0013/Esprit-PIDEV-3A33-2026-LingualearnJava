@@ -225,6 +225,19 @@
     -fx-font-family: "Segoe UI", Arial, sans-serif;
 }
 
+.section-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #424242;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.field-error {
+    -fx-text-fill: #d63939;
+    -fx-font-size: 11px;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
 /* ═══════════════════════════════════════════════
    DASHBOARD — SHARED
    ═══════════════════════════════════════════════ */
