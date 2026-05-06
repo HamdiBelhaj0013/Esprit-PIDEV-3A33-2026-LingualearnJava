@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c62684bd-7db6-4266-8409-2a36624f041e" name="Changes" comment="">
+<<<<<<< HEAD
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/LoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/LoginController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user-managment/AdminMainController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user_managment/AdminMainController.java" afterDir="false" />
@@ -34,6 +35,14 @@
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/user-managment/StripeService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/user_managment/StripeService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/user-managment/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/user_managment/UserService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/webhook/StripeWebhookServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/webhook/StripeWebhookServer.java" afterDir="false" />
+=======
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/user-managment/HCaptchaService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/user/user_managment/NewPasswordController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/user/user_managment/NewPasswordController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/util/MyDataBase.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/util/MyDataBase.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/captcha/captcha.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/captcha/captcha.html" afterDir="false" />
+>>>>>>> 141dd5e0f235650a4223d2b00002e32005b92c26
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -89,7 +98,11 @@
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+<<<<<<< HEAD
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+=======
+    &quot;git-widget-placeholder&quot;: &quot;Merging main&quot;,
+>>>>>>> 141dd5e0f235650a4223d2b00002e32005b92c26
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
