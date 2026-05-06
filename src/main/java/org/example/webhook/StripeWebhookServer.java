@@ -53,17 +53,26 @@ public class StripeWebhookServer {
     // ── Lifecycle ─────────────────────────────────────────────────────────────
 
     public void start() throws IOException {
-        server = HttpServer.create(new InetSocketAddress("127.0.0.1", PORT), 0);
-        server.createContext("/stripe/webhook",  this::handleWebhook);
-        server.createContext("/payment/success", this::handlePaymentSuccess);
-        server.createContext("/payment/cancel",  this::handlePaymentCancel);
-        server.setExecutor(Executors.newSingleThreadExecutor(r -> {
-            Thread t = new Thread(r, "stripe-webhook");
-            t.setDaemon(true);
-            return t;
-        }));
-        server.start();
-        LOG.info("Stripe webhook server listening on http://127.0.0.1:{}/stripe/webhook", PORT);
+        try {
+            server = HttpServer.create(new InetSocketAddress("127.0.0.1", PORT), 0);
+            server.createContext("/stripe/webhook",  this::handleWebhook);
+            server.createContext("/payment/success", this::handlePaymentSuccess);
+            server.createContext("/payment/cancel",  this::handlePaymentCancel);
+            server.setExecutor(Executors.newSingleThreadExecutor(r -> {
+                Thread t = new Thread(r, "stripe-webhook");
+                t.setDaemon(true);
+                return t;
+            }));
+            server.start();
+            LOG.info("Stripe webhook server listening on http://127.0.0.1:{}/stripe/webhook", PORT);
+        } catch (IOException e) {
+            if (e.getMessage() != null && e.getMessage().contains("Address already in use")) {
+                LOG.warn("Stripe webhook server port {} already in use — assuming previous instance is still running.", PORT);
+                // Don't throw — let the app start normally
+            } else {
+                throw e; // re-throw unexpected errors
+            }
+        }
     }
 
     /** Called from Application.stop() — gives in-flight requests 2 s to finish. */
