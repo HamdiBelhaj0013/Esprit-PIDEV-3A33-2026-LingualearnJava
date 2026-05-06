@@ -88,6 +88,7 @@ public class LoginController {
             navigateToDashboard(user, isAdmin);
 
         } catch (Exception e) {
+            e.printStackTrace(); // ADD THIS LINE
             showError("Connection error. Please try again.");
         }
     }

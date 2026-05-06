@@ -21,7 +21,10 @@
       "Bash(echo \"Exit: $?\")",
       "Bash(/c/Users/belha/.m2/wrapper/dists/apache-maven-3.8.5-bin/5i5jha092a3i37g0paqnfr15e0/apache-maven-3.8.5/bin/mvn compile:*)",
       "Bash(JAVA_HOME=\"/c/jdk-23\" cd \"C:/Users/belha/OneDrive/Bureau/Projects/Esprit/LingualearnJava\")",
-      "Bash(JAVA_HOME=\"/c/jdk-23\" /c/Users/belha/.m2/wrapper/dists/apache-maven-3.8.5-bin/5i5jha092a3i37g0paqnfr15e0/apache-maven-3.8.5/bin/mvn compile)"
+      "Bash(JAVA_HOME=\"/c/jdk-23\" /c/Users/belha/.m2/wrapper/dists/apache-maven-3.8.5-bin/5i5jha092a3i37g0paqnfr15e0/apache-maven-3.8.5/bin/mvn compile)",
+      "Bash(ls mvnw*)",
+      "Bash(ls .mvn)",
+      "Bash(\"/c/Program Files/JetBrains/IntelliJ IDEA 2023.2.3/plugins/maven/lib/maven3/bin/mvn\" compile)"
     ]
   }
 }
