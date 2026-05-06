@@ -13,7 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import org.example.service.EmailVerificationService;
+import org.example.service.user_managment.EmailVerificationService;
 
 import java.io.IOException;
 

@@ -1,4 +1,4 @@
-package org.example.service;
+package org.example.service.user_managment;
 
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;

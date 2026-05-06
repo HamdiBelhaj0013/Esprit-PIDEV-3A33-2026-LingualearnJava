@@ -1,7 +1,7 @@
 package org.example.controller.admin.user_managment;
 
 import org.example.entity.User;
-import org.example.service.NotificationService;
+import org.example.service.user_managment.NotificationService;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

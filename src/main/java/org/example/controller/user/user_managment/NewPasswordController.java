@@ -11,11 +11,9 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
-import org.example.service.CaptchaServer;
-import org.example.service.HCaptchaService;
-import org.example.service.PasswordResetService;
-
-import java.io.IOException;
+import org.example.service.user_managment.CaptchaServer;
+import org.example.service.user_managment.HCaptchaService;
+import org.example.service.user_managment.PasswordResetService;
 
 public class NewPasswordController {
 

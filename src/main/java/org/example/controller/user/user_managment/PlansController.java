@@ -9,8 +9,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import org.example.entity.User;
-import org.example.service.StripeService;
-import org.example.service.UserService;
+import org.example.service.user_managment.StripeService;
+import org.example.service.user_managment.UserService;
 import org.example.util.SessionManager;
 
 import java.time.format.DateTimeFormatter;

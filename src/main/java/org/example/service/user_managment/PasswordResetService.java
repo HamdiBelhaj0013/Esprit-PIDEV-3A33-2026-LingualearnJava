@@ -1,6 +1,7 @@
-package org.example.service;
+package org.example.service.user_managment;
 
 import org.example.entity.User;
+import org.example.service.EmailService;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;

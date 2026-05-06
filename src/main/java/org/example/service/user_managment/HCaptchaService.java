@@ -1,4 +1,4 @@
-package org.example.service;
+package org.example.service.user_managment;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

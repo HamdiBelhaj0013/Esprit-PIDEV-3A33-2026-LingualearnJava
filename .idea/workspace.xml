@@ -5,15 +5,35 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c62684bd-7db6-4266-8409-2a36624f041e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/CaptchaServer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/HCaptchaService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/LoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/LoginController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user-managment/AdminMainController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user_managment/AdminMainController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user-managment/DashboardViewController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user_managment/DashboardViewController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user-managment/NotificationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user_managment/NotificationController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user-managment/Reclamationuserdetailcontroller" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user_managment/Reclamationuserdetailcontroller" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user-managment/StatsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user_managment/StatsController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user-managment/UserDetailController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user_managment/UserDetailController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user-managment/UserFormController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user_managment/UserFormController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user-managment/UserListController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user_managment/UserListController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/user/user_managment/ForgotPasswordController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/user/user_managment/ForgotPasswordController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/user/user_managment/NewPasswordController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/user/user_managment/NewPasswordController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/user-managment/HCaptchaService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/captcha/captcha.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/captcha/captcha.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/NewPassword.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/NewPassword.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/user/user_managment/PlansController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/user/user_managment/PlansController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/user/user_managment/RegisterController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/user/user_managment/RegisterController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/user/user_managment/UserDashboardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/user/user_managment/UserDashboardController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/user/user_managment/UserMainController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/user/user_managment/UserMainController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/user/user_managment/UserProfileController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/user/user_managment/UserProfileController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/user/user_managment/VerifyEmailController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/user/user_managment/VerifyEmailController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/user/user_managment/VerifyOTPController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/user/user_managment/VerifyOTPController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/CaptchaServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/user_managment/CaptchaServer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/HCaptchaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/user_managment/HCaptchaService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/user-managment/EmailService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/user_managment/EmailService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/user-managment/EmailVerificationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/user_managment/EmailVerificationService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/user-managment/IUserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/user_managment/IUserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/user-managment/NotificationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/user_managment/NotificationService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/user-managment/PasswordResetService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/user_managment/PasswordResetService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/user-managment/StripeService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/user_managment/StripeService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/user-managment/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/user_managment/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/webhook/StripeWebhookServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/webhook/StripeWebhookServer.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -169,7 +189,7 @@
       <workItem from="1776330047821" duration="104000" />
       <workItem from="1776516100369" duration="1000" />
       <workItem from="1776550541912" duration="1475000" />
-      <workItem from="1778076443217" duration="3274000" />
+      <workItem from="1778076443217" duration="4479000" />
     </task>
     <servers />
   </component>

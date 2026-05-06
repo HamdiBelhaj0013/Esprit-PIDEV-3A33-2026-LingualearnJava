@@ -11,7 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import org.example.service.PasswordResetService;
+import org.example.service.user_managment.PasswordResetService;
 
 import java.io.IOException;
 import java.util.regex.Pattern;

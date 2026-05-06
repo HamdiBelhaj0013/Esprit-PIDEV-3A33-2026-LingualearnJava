@@ -1,7 +1,7 @@
 package org.example.controller.admin.user_managment;
 
 import org.example.entity.User;
-import org.example.service.UserService;
+import org.example.service.user_managment.UserService;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;

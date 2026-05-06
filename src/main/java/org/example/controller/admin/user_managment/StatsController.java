@@ -2,7 +2,7 @@ package org.example.controller.admin.user_managment;
 
 import org.example.entity.LearningStats;
 import org.example.entity.User;
-import org.example.service.UserService;
+import org.example.service.user_managment.UserService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;

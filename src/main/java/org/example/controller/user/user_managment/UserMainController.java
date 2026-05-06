@@ -2,8 +2,8 @@ package org.example.controller.user.user_managment;
 
 import org.example.controller.tests.MockTestDashboardController;
 import org.example.entity.User;
-import org.example.service.NotificationService;
-import org.example.service.UserService;
+import org.example.service.user_managment.NotificationService;
+import org.example.service.user_managment.UserService;
 import org.example.util.SessionManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

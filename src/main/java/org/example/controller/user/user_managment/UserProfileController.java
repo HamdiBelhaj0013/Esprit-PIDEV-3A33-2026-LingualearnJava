@@ -12,7 +12,7 @@ import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import org.example.controller.user.user_managment.UserMainController;
 import org.example.entity.User;
-import org.example.service.UserService;
+import org.example.service.user_managment.UserService;
 import org.example.util.SessionManager;
 
 import java.time.format.DateTimeFormatter;

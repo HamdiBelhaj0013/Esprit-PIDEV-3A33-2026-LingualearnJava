@@ -16,8 +16,8 @@ import org.example.controller.admin.user_managment.AdminMainController;
 import org.example.controller.user.user_managment.UserMainController;
 import org.example.controller.user.user_managment.VerifyEmailController;
 import org.example.entity.User;
-import org.example.service.EmailVerificationService;
-import org.example.service.UserService;
+import org.example.service.user_managment.EmailVerificationService;
+import org.example.service.user_managment.UserService;
 import org.example.util.Session;
 import org.example.util.StageManager;
 
