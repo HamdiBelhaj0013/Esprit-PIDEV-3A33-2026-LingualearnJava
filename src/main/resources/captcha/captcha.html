@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="https://js.hcaptcha.com/1/api.js?host=127.0.0.1" async defer></script>
+    <script src="https://js.hcaptcha.com/1/api.js?host=lingualern.local" async defer></script>
     <style>
         body {
             margin: 0; padding: 10px;
@@ -18,11 +18,23 @@
 </div>
 <script>
     var captchaToken = "";
+
     function onCaptchaSuccess(token) {
         captchaToken = token;
+        console.log("Captcha solved.");
     }
+
+    function onCaptchaExpired() {
+        captchaToken = "";
+        console.log("Captcha expired.");
+    }
+
     function getToken() {
         return captchaToken;
+    }
+
+    function isTokenReady() {
+        return captchaToken !== "";
     }
 </script>
 </body>
