@@ -1,6 +1,8 @@
 package org.example.controller.user.user_managment;
 
 import org.example.controller.tests.MockTestDashboardController;
+import org.example.controller.user.user_managment.UserDashboardController;
+import org.example.controllers.FrontStatsController;
 import org.example.entity.User;
 import org.example.service.user_managment.NotificationService;
 import org.example.service.user_managment.UserService;
@@ -104,14 +106,42 @@ public class UserMainController {
     }
 
     @FXML
+    private void showLearningStats(ActionEvent event) {
+        if (event.getSource() instanceof Button) setActive((Button) event.getSource(), "My Learning Stats");
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/fxml/modules/frontoffice/front-stats.fxml"));
+            Node view = loader.load();
+            contentArea.getChildren().setAll(view);
+        } catch (IOException e) {
+            e.printStackTrace();
+            Label err = new Label("Failed to load statistics: " + e.getMessage());
+            contentArea.getChildren().setAll(err);
+        }
+    }
+
+    @FXML
     void showProfile(ActionEvent event) {
         setActive(btnProfile, "My Profile");
         loadView("/fxml/user/UserProfileView.fxml");
     }
 
-    @FXML private void showCourses(ActionEvent e) {
-        setActive((Button) e.getSource(), "My Courses");
-        showComingSoonContent();
+    @FXML private void showUserLanguages(ActionEvent e) {
+        if (e != null && e.getSource() instanceof Button) setActive((Button) e.getSource(), "Languages");
+        org.example.controllers.FrontRouter.setContentPane(contentArea);
+        loadView("/fxml/modules/frontoffice/front-languages.fxml");
+    }
+
+    @FXML private void showUserCourses(ActionEvent e) {
+        if (e != null && e.getSource() instanceof Button) setActive((Button) e.getSource(), "My Courses");
+        org.example.controllers.FrontRouter.setContentPane(contentArea);
+        loadView("/fxml/modules/frontoffice/front-courses.fxml");
+    }
+
+    @FXML private void showUserLessons(ActionEvent e) {
+        if (e != null && e.getSource() instanceof Button) setActive((Button) e.getSource(), "My Lessons");
+        org.example.controllers.FrontRouter.setContentPane(contentArea);
+        loadView("/fxml/modules/frontoffice/front-lessons.fxml");
     }
 
     @FXML private void showPractice(ActionEvent e) {

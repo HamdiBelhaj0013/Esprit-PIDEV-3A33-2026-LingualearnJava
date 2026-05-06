@@ -12,7 +12,7 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import org.example.entities.Lesson;
 import org.example.entities.Quiz;
-import org.example.service.LessonService;
+import org.example.services.LessonService;
 import org.example.service.QuizService;
 
 import java.io.IOException;

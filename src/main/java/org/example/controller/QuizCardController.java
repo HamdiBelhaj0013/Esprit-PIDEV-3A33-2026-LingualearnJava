@@ -3,7 +3,7 @@ package org.example.controller;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import org.example.entities.Quiz;
-import org.example.service.LessonService;
+import org.example.services.LessonService;
 
 import java.util.function.Consumer;
 

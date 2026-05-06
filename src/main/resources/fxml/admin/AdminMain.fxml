@@ -47,14 +47,20 @@
             <Button fx:id="btnQuizStats" text="  📊 Quiz &amp; Ex Stats"
                     styleClass="sidebar-item" onAction="#showQuizStats"
                     maxWidth="Infinity"/>
-
+            <Button text="  📈 Learning Stats"
+                    styleClass="sidebar-item" onAction="#showLearningStats"
+                    maxWidth="Infinity"/>
             <Button fx:id="btnAiAssistant" text="  🤖 AI Assistant"
                     styleClass="sidebar-item" onAction="#showAiAssistant"
                     maxWidth="Infinity"/>
 
-            <Label text="COMING SOON" styleClass="sidebar-section"/>
-            <Button text="  Courses" styleClass="sidebar-item"
-                    disable="true" maxWidth="Infinity"/>
+            <Label text="PEDAGOGICAL CONTENT" styleClass="sidebar-section"/>
+            <Button text="  🌍 Languages" styleClass="sidebar-item"
+                    onAction="#showLanguages" maxWidth="Infinity"/>
+            <Button text="  📚 Courses" styleClass="sidebar-item"
+                    onAction="#showCourses" maxWidth="Infinity"/>
+            <Button text="  📖 Lessons" styleClass="sidebar-item"
+                    onAction="#showLessons" maxWidth="Infinity"/>
 
             <Label text="FORUM" styleClass="sidebar-section"/>
             <Button fx:id="btnForumStats" text="  📊 Forum Stats"
