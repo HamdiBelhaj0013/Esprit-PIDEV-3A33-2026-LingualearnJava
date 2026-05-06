@@ -1,10 +1,11 @@
 package org.example.controller.admin.user_managment;
 
 import org.example.entity.User;
-import org.example.controller.admin.DashboardViewController;
-import org.example.controller.admin.UserListController;
-import org.example.controller.admin.UserDetailController;
-import org.example.controller.admin.UserFormController;
+import org.example.controller.admin.user_managment.DashboardViewController;
+import org.example.controller.admin.user_managment.UserListController;
+import org.example.controller.admin.user_managment.UserDetailController;
+import org.example.controller.admin.user_managment.UserFormController;
+import org.example.controller.tests.MockTestDashboardController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -27,6 +28,7 @@ public class AdminMainController {
     @FXML private StackPane contentArea;
     @FXML private Button    btnDashboard;
     @FXML private Button    btnUsers;
+    @FXML private Button    btnTests;
 
     private User   loggedInUser;
     private Button activeButton;
@@ -58,6 +60,16 @@ public class AdminMainController {
             if (ctrl instanceof UserListController c) {
                 c.setMainController(this);
                 c.load();
+            }
+        });
+    }
+
+    @FXML
+    private void showTests(ActionEvent event) {
+        setActive(btnTests, "International Tests");
+        loadView("/fxml/tests/MockTestDashboard.fxml", ctrl -> {
+            if (ctrl instanceof MockTestDashboardController c) {
+                c.setContentArea(contentArea);
             }
         });
     }

@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox minWidth="480.0" spacing="0.0" styleClass="dialog-root" stylesheets="@../../css/admin.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controller.admin.UserFormController">
+<VBox minWidth="480.0" spacing="0.0" styleClass="dialog-root" stylesheets="@../../css/admin.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controller.admin.user_managment.UserFormController">
 
     <!-- Header -->
     <VBox spacing="4.0">
