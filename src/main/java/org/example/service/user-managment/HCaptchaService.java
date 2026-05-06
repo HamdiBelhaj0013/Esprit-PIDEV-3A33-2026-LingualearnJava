@@ -1,4 +1,4 @@
-package org.example.service.forum;
+package org.example.service.user_managment;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -10,7 +10,7 @@ import java.nio.charset.StandardCharsets;
 
 public class HCaptchaService {
 
-    private static final String SECRET = System.getenv("HCAPTCHA_SECRET");
+    private static final String SECRET = "xxxxxxxxxxxxxx";
     private static final String VERIFY_URL = "https://api.hcaptcha.com/siteverify";
 
     public boolean verify(String token) {
