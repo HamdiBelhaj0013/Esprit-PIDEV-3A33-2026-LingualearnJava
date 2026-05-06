@@ -30,6 +30,18 @@ public class MyDataBase {
     }
 
     public Connection getConnection() {
+        try {
+            if (connection == null || connection.isClosed() || !connection.isValid(2)) {
+                connection = DriverManager.getConnection(URL, USER, PASSWORD);
+                System.out.println("Reconnexion établie !");
+            }
+        } catch (SQLException e) {
+            try {
+                connection = DriverManager.getConnection(URL, USER, PASSWORD);
+            } catch (SQLException ex) {
+                System.out.println("Erreur reconnexion: " + ex.getMessage());
+            }
+        }
         return connection;
     }
 

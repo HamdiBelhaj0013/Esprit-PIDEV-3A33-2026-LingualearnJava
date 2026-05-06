@@ -122,7 +122,7 @@ public class NewPasswordController {
     }
 
     private void clearAllErrors() {
-        for (Label l : new Label[]{passwordError, confirmError, errorLabel}) {
+        for (Label l : new Label[]{passwordError, confirmError, errorLabel, captchaError}) {
             l.setText("");
             l.setVisible(false);
             l.setManaged(false);
