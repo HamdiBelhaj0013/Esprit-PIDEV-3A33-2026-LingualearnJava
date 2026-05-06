@@ -29,7 +29,7 @@ public class AdminMainController {
     @FXML private StackPane contentArea;
     @FXML private Button    btnDashboard;
     @FXML private Button    btnUsers;
-    @FXML private Button    btnSupport;   // ✅ ADDED — was missing, caused LoadException
+    @FXML private Button    btnSupport;
     @FXML private Button    btnTests;
     @FXML private Button    btnForumStats;
     @FXML private Button    btnForumPubs;
@@ -38,15 +38,11 @@ public class AdminMainController {
     private User   loggedInUser;
     private Button activeButton;
 
-    // ── Entry point from LoginController ─────────────────────────────────────
-
     public void setUser(User user) {
         this.loggedInUser = user;
         adminNameLabel.setText(user.getFirstName() + " " + user.getLastName());
         showDashboard(null);
     }
-
-    // ── Sidebar navigation ────────────────────────────────────────────────────
 
     @FXML
     private void showDashboard(ActionEvent event) {
@@ -71,10 +67,8 @@ public class AdminMainController {
 
     @FXML
     private void showSupport(ActionEvent event) {
-        // ✅ ADDED — was referenced in AdminMain.fxml but missing from controller
         setActive(btnSupport, "Support");
-        // TODO: replace with your support FXML when ready
-        // loadView("/fxml/admin/SupportView.fxml", ctrl -> {});
+        loadView("/fxml/admin/admin_view.fxml", ctrl -> {});
     }
 
     @FXML
@@ -117,8 +111,6 @@ public class AdminMainController {
         loadView("/fxml/admin/forum/fxml/commentaire_manager.fxml", ctrl -> {});
     }
 
-    // ── Called by child controllers to open dialogs ───────────────────────────
-
     public void openUserDetail(User user) {
         openStage("/fxml/admin/UserDetailDialog.fxml", "User: " + user.getFullName(),
                 700, 620, ctrl -> {
@@ -152,8 +144,6 @@ public class AdminMainController {
         else showDashboard(null);
     }
 
-    // ── Logout ────────────────────────────────────────────────────────────────
-
     @FXML
     private void handleLogout(ActionEvent event) {
         try {
@@ -169,8 +159,6 @@ public class AdminMainController {
             showError("Logout failed: " + e.getMessage());
         }
     }
-
-    // ── Helpers ───────────────────────────────────────────────────────────────
 
     private void setActive(Button btn, String title) {
         if (activeButton != null)
