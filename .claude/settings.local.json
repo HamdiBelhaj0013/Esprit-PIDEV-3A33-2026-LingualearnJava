@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mvn compile:*)",
+      "Bash(export PATH=\"/c/Users/belha/.m2/wrapper/dists/apache-maven-3.8.5-bin/5i5jha092a3i37g0paqnfr15e0/apache-maven-3.8.5/bin:$PATH\")",
+      "Read(//c/Program Files/Java//**)",
+      "Read(//c/Program Files/**)",
+      "Read(//c/Users/belha/.jdks//**)",
+      "Read(//c/Users/belha/AppData/Local/Programs//**)",
+      "Bash(\"/c/Program Files/JetBrains/IntelliJ IDEA 2023.2.3/jbr/bin/java\" -version)",
+      "Read(//c/Users/belha/AppData/Local/JetBrains//**)",
+      "Bash(\"/c/Users/belha/.jdks/openjdk-23.0.1/bin/java\" -version)",
+      "Bash(export JAVA_HOME=\"/c/Program Files/JetBrains/IntelliJ IDEA 2023.2.3/jbr\")",
+      "Bash(export PATH=\"$JAVA_HOME/bin:/c/Users/belha/.m2/wrapper/dists/apache-maven-3.8.5-bin/5i5jha092a3i37g0paqnfr15e0/apache-maven-3.8.5/bin:$PATH\")",
+      "Bash(java -version)",
+      "Bash(xargs grep:*)",
+      "Bash(find $SRC:*)",
+      "Read(//c/Users/belha//**)",
+      "Read(//mnt/c/Users/**)",
+      "Bash(cmd:*)",
+      "Bash(echo \"Exit: $?\")",
+      "Bash(/c/Users/belha/.m2/wrapper/dists/apache-maven-3.8.5-bin/5i5jha092a3i37g0paqnfr15e0/apache-maven-3.8.5/bin/mvn compile:*)",
+      "Bash(JAVA_HOME=\"/c/jdk-23\" cd \"C:/Users/belha/OneDrive/Bureau/Projects/Esprit/LingualearnJava\")",
+      "Bash(JAVA_HOME=\"/c/jdk-23\" /c/Users/belha/.m2/wrapper/dists/apache-maven-3.8.5-bin/5i5jha092a3i37g0paqnfr15e0/apache-maven-3.8.5/bin/mvn compile)"
+    ]
+  }
+}

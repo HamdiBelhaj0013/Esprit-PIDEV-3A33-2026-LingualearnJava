@@ -1,4 +1,4 @@
-package org.example.controller.user;
+package org.example.controller.user.user_managment;
 
 import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
@@ -7,10 +7,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+import org.example.controller.user.user_managment.UserMainController;
 import org.example.entity.User;
 import org.example.service.UserService;
 import org.example.util.SessionManager;

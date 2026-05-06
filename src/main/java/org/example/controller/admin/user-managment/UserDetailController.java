@@ -1,9 +1,8 @@
 package org.example.controller.admin;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
 import org.example.entity.LearningStats;
 import org.example.entity.User;
+import org.example.controller.admin.user_managment.AdminMainController;
 import org.example.service.NotificationService;
 import org.example.service.UserService;
 import javafx.event.ActionEvent;
@@ -24,6 +23,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class UserDetailController {
 
@@ -31,12 +31,14 @@ public class UserDetailController {
     @FXML private Label  statusBadge;
     @FXML private Label  emailLabel;
 
+    // Profile
     @FXML private Label  rolesLabel;
     @FXML private Label  verifiedLabel;
     @FXML private Label  bannedLabel;
     @FXML private Label  banReasonLabel;
     @FXML private Label  joinedLabel;
 
+    // Subscription
     @FXML private Label  planLabel;
     @FXML private Label  premiumLabel;
     @FXML private Label  expiryLabel;
@@ -46,45 +48,50 @@ public class UserDetailController {
     @FXML private Button grantYearlyBtn;
     @FXML private Button revokePremiumBtn;
 
+    // Stats
     @FXML private Label  xpLabel;
     @FXML private Label  wordsLabel;
     @FXML private Label  minutesLabel;
     @FXML private Label  lastSessionLabel;
 
+    // Notifications
     @FXML private VBox   notifList;
+
+    // Footer
     @FXML private Button toggleStatusBtn;
 
-    private AdminMainController  mainController;
-    private EntityManagerFactory emf;
-    private User                 user;
+    private AdminMainController mainController;
+    private User                user;
 
     private static final DateTimeFormatter DT_FMT =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-    // ── Init ──────────────────────────────────────────────────────────────────
+    // ── Init ───────────────────────────────────────────────────────────────────
 
     public void setMainController(AdminMainController mc) { this.mainController = mc; }
-    public void setEmf(EntityManagerFactory emf)          { this.emf = emf; }
 
     public void setUser(User u) {
         this.user = u;
         populate();
     }
 
-    // ── Populate ──────────────────────────────────────────────────────────────
+    // ── Populate all sections ─────────────────────────────────────────────────
 
     private void populate() {
+        // Header
         fullNameLabel.setText(user.getFullName());
         emailLabel.setText(user.getEmail());
         statusBadge.setText(user.getStatus());
         statusBadge.getStyleClass().setAll("badge-" + user.getStatus());
 
+        // Profile
         rolesLabel.setText(String.join(", ", user.getRoles()));
         verifiedLabel.setText(user.isVerified() ? "Yes" : "No");
         bannedLabel.setText(user.isBanned() ? "Yes" : "No");
         banReasonLabel.setText(user.getBanReason() != null ? user.getBanReason() : "—");
         joinedLabel.setText(user.getCreatedAt() != null ? DT_FMT.format(user.getCreatedAt()) : "—");
 
+        // Subscription
         planLabel.setText(user.getSubscriptionPlan());
         premiumLabel.setText(user.isPremium() ? "★ Active" : "No");
         expiryLabel.setText(user.getSubscriptionExpiry() != null
@@ -92,11 +99,16 @@ public class UserDetailController {
         paymentLabel.setText(user.getLastPaymentStatus() != null
                 ? user.getLastPaymentStatus() : "—");
 
+        // Premium action buttons visibility
         boolean premium = user.isPremium();
-        grantMonthlyBtn.setVisible(!premium); grantMonthlyBtn.setManaged(!premium);
-        grantYearlyBtn.setVisible(!premium);  grantYearlyBtn.setManaged(!premium);
-        revokePremiumBtn.setVisible(premium); revokePremiumBtn.setManaged(premium);
+        grantMonthlyBtn.setVisible(!premium);
+        grantMonthlyBtn.setManaged(!premium);
+        grantYearlyBtn.setVisible(!premium);
+        grantYearlyBtn.setManaged(!premium);
+        revokePremiumBtn.setVisible(premium);
+        revokePremiumBtn.setManaged(premium);
 
+        // Stats
         LearningStats stats = user.getLearningStats();
         if (stats != null) {
             xpLabel.setText(String.valueOf(stats.getTotalXP()));
@@ -109,53 +121,60 @@ public class UserDetailController {
             minutesLabel.setText("0"); lastSessionLabel.setText("Never");
         }
 
+        // Toggle status button label
         toggleStatusBtn.setText("active".equals(user.getStatus()) ? "Suspend" : "Activate");
         toggleStatusBtn.getStyleClass().removeAll("btn-warning", "btn-success");
         toggleStatusBtn.getStyleClass().add(
                 "active".equals(user.getStatus()) ? "btn-warning" : "btn-success");
 
+        // Notifications
         loadNotifications();
     }
 
     private void loadNotifications() {
         notifList.getChildren().clear();
-        EntityManager em = emf.createEntityManager();
         try {
-            NotificationService ns = new NotificationService(em);
-            List<NotificationService.NotifRow> notifs = ns.getRecentForUser(user.getId());
+            List<NotificationService.NotifRow> notifs =
+                    new NotificationService().getRecentForUser(user.getId());
             if (notifs.isEmpty()) {
-                Label lbl = new Label("No notifications sent yet.");
-                lbl.getStyleClass().add("page-subtitle");
-                notifList.getChildren().add(lbl);
+                notifList.getChildren().add(new Label("No notifications sent yet.") {{
+                    getStyleClass().add("page-subtitle");
+                }});
             } else {
-                for (NotificationService.NotifRow n : notifs)
-                    notifList.getChildren().add(buildNotifRow(n));
+                for (NotificationService.NotifRow n : notifs) {
+                    VBox row = buildNotifRow(n);
+                    notifList.getChildren().add(row);
+                }
             }
-        } finally {
-            em.close();
+        } catch (Exception ex) {
+            showError("Could not load notifications: " + ex.getMessage());
         }
     }
 
     private VBox buildNotifRow(NotificationService.NotifRow n) {
         Label typeLbl = new Label(n.type.toUpperCase());
         typeLbl.getStyleClass().add("notif-type");
+
         Label msgLbl = new Label(n.message);
         msgLbl.getStyleClass().add("notif-message");
         msgLbl.setWrapText(true);
         msgLbl.setMaxWidth(Double.MAX_VALUE);
+
         Label dateLbl = new Label(n.createdAt + (n.isRead ? " · Read" : " · Unread"));
         dateLbl.getStyleClass().add("notif-date");
+
         HBox header = new HBox(8, typeLbl, dateLbl);
         header.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+
         VBox row = new VBox(4, header, msgLbl);
         row.getStyleClass().add("notif-row");
         return row;
     }
 
-    // ── Actions ───────────────────────────────────────────────────────────────
+    // ── Action handlers ───────────────────────────────────────────────────────
 
     @FXML private void handleEdit(ActionEvent e) {
-        mainController.openEditUser(user, this::reloadAndRefresh);
+        mainController.openEditUser(user, () -> reloadAndRefresh());
     }
 
     @FXML private void handleToggleStatus(ActionEvent e) {
@@ -167,18 +186,23 @@ public class UserDetailController {
         confirm.setHeaderText(null);
         confirm.showAndWait().ifPresent(btn -> {
             if (btn != ButtonType.OK) return;
-            withService(svc -> { if (suspend) svc.suspendUser(user); else svc.activateUser(user); });
+            withService(svc -> {
+                if (suspend) svc.suspendUser(user);
+                else         svc.activateUser(user);
+            });
             reloadAndRefresh();
         });
     }
 
     @FXML private void handleGrantMonthly(ActionEvent e) {
-        withService(svc -> svc.grantPremium(user, "MONTHLY", LocalDateTime.now().plusMonths(1)));
+        withService(svc ->
+                svc.grantPremium(user, "MONTHLY", LocalDateTime.now().plusMonths(1)));
         reloadAndRefresh();
     }
 
     @FXML private void handleGrantYearly(ActionEvent e) {
-        withService(svc -> svc.grantPremium(user, "YEARLY", LocalDateTime.now().plusYears(1)));
+        withService(svc ->
+                svc.grantPremium(user, "YEARLY", LocalDateTime.now().plusYears(1)));
         reloadAndRefresh();
     }
 
@@ -189,15 +213,17 @@ public class UserDetailController {
 
     @FXML private void handleEditStats(ActionEvent e) {
         openDialog("/fxml/admin/StatsDialog.fxml", "Edit Learning Stats", 400, 340, ctrl -> {
-            if (ctrl instanceof StatsController c)
-                c.setUser(user, emf, this::reloadAndRefresh);
+            if (ctrl instanceof StatsController c) {
+                c.setUser(user, this::reloadAndRefresh);
+            }
         });
     }
 
     @FXML private void handleSendNotif(ActionEvent e) {
         openDialog("/fxml/admin/NotificationDialog.fxml", "Send Notification", 420, 300, ctrl -> {
-            if (ctrl instanceof NotificationController c)
-                c.setUser(user, emf, this::reloadAndRefresh);
+            if (ctrl instanceof NotificationController c) {
+                c.setUser(user, this::reloadAndRefresh);
+            }
         });
     }
 
@@ -214,29 +240,24 @@ public class UserDetailController {
         });
     }
 
-    @FXML private void handleClose(ActionEvent e) { closeStage(); }
+    @FXML private void handleClose(ActionEvent e) {
+        closeStage();
+    }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     private void reloadAndRefresh() {
-        EntityManager em = emf.createEntityManager();
-        try {
-            user = new UserService(em).findById(user.getId()).orElse(user);
-            populate();
-        } finally {
-            em.close();
-        }
+        User reloaded = new UserService().findById(user.getId()).orElse(user);
+        this.user = reloaded;
+        populate();
         mainController.refreshCurrentView();
     }
 
     private void withService(java.util.function.Consumer<UserService> action) {
-        EntityManager em = emf.createEntityManager();
         try {
-            action.accept(new UserService(em));
+            action.accept(new UserService());
         } catch (Exception ex) {
             showError(ex.getMessage());
-        } finally {
-            em.close();
         }
     }
 
@@ -251,16 +272,21 @@ public class UserDetailController {
             stage.setScene(new Scene(root));
             stage.initOwner(fullNameLabel.getScene().getWindow());
             stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setMinWidth(w); stage.setMinHeight(h);
+            stage.setMinWidth(w);
+            stage.setMinHeight(h);
             stage.showAndWait();
         } catch (IOException ex) {
             showError("Could not open dialog: " + ex.getMessage());
         }
     }
 
-    private void closeStage() { ((Stage) fullNameLabel.getScene().getWindow()).close(); }
+    private void closeStage() {
+        ((Stage) fullNameLabel.getScene().getWindow()).close();
+    }
 
     private void showError(String msg) {
-        new Alert(Alert.AlertType.ERROR, msg).showAndWait();
+        Alert a = new Alert(Alert.AlertType.ERROR, msg);
+        a.setHeaderText(null);
+        a.showAndWait();
     }
 }

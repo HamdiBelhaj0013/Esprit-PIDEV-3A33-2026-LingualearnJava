@@ -1,5 +1,6 @@
-package org.example.controller.user;
+package org.example.controller.user.user_managment;
 
+import org.example.controller.user.user_managment.UserMainController;
 import org.example.entity.LearningStats;
 import org.example.entity.User;
 import org.example.service.NotificationService;

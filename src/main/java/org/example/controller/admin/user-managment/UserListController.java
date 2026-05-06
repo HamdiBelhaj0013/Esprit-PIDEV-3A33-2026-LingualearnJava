@@ -1,9 +1,8 @@
 package org.example.controller.admin;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
 import org.example.entity.User;
 import org.example.service.UserService;
+import org.example.controller.admin.user_managment.AdminMainController;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -46,8 +45,8 @@ public class UserListController {
     @FXML private Button bulkDeleteBtn;
 
     // ── State ─────────────────────────────────────────────────────────────────
-    private AdminMainController  mainController;
-    private EntityManagerFactory emf;
+    private AdminMainController mainController;
+    private final UserService   svc = new UserService();
 
     private final Set<Long> selected  = new HashSet<>();
     private int             page      = 1;
@@ -56,8 +55,7 @@ public class UserListController {
 
     // ── Init ──────────────────────────────────────────────────────────────────
 
-    public void setMainController(AdminMainController mc)       { this.mainController = mc; }
-    public void setEntityManagerFactory(EntityManagerFactory e) { this.emf = e; }
+    public void setMainController(AdminMainController mc) { this.mainController = mc; }
 
     public void load() {
         initFilters();
@@ -211,16 +209,10 @@ public class UserListController {
         String plan   = filterValue(planFilter);
         String sort   = sortKey();
 
-        EntityManager em = emf.createEntityManager();
-        try {
-            UserService svc = new UserService(em);
-            totalCount = svc.countAdvanced(search, status, role, plan);
-            List<User> users = svc.findAdvanced(search, status, role, plan, sort, page, PAGE_SIZE);
-            userTable.setItems(FXCollections.observableArrayList(users));
-            updatePagination();
-        } finally {
-            em.close();
-        }
+        totalCount = svc.countAdvanced(search, status, role, plan);
+        List<User> users = svc.findAdvanced(search, status, role, plan, sort, page, PAGE_SIZE);
+        userTable.setItems(FXCollections.observableArrayList(users));
+        updatePagination();
     }
 
     private String filterValue(ComboBox<String> cb) {
@@ -302,15 +294,11 @@ public class UserListController {
         confirm.setHeaderText("Confirm Deletion");
         confirm.showAndWait().ifPresent(btn -> {
             if (btn == ButtonType.OK) {
-                EntityManager em = emf.createEntityManager();
                 try {
-                    UserService svc = new UserService(em);
                     svc.findById(user.getId()).ifPresent(svc::deleteUser);
                     refresh();
                 } catch (Exception ex) {
                     showError("Delete failed: " + ex.getMessage());
-                } finally {
-                    em.close();
                 }
             }
         });
@@ -319,19 +307,11 @@ public class UserListController {
     // ── Bulk actions ──────────────────────────────────────────────────────────
 
     @FXML private void handleBulkActivate(ActionEvent e) {
-        applyBulkAction(u -> {
-            EntityManager em = emf.createEntityManager();
-            try { new UserService(em).activateUser(u); }
-            finally { em.close(); }
-        });
+        applyBulkAction(u -> svc.activateUser(u));
     }
 
     @FXML private void handleBulkSuspend(ActionEvent e) {
-        applyBulkAction(u -> {
-            EntityManager em = emf.createEntityManager();
-            try { new UserService(em).suspendUser(u); }
-            finally { em.close(); }
-        });
+        applyBulkAction(u -> svc.suspendUser(u));
     }
 
     @FXML private void handleBulkDelete(ActionEvent e) {
@@ -341,39 +321,24 @@ public class UserListController {
         confirm.setHeaderText("Confirm Bulk Delete");
         confirm.showAndWait().ifPresent(btn -> {
             if (btn == ButtonType.OK) {
-                applyBulkAction(u -> {
-                    EntityManager em = emf.createEntityManager();
-                    try { new UserService(em).deleteUser(u); }
-                    finally { em.close(); }
-                });
+                applyBulkAction(u -> svc.deleteUser(u));
             }
         });
     }
 
     private void applyBulkAction(java.util.function.Consumer<User> action) {
-        EntityManager em = emf.createEntityManager();
-        try {
-            UserService svc = new UserService(em);
-            new ArrayList<>(selected).forEach(id ->
-                    svc.findById(id).ifPresent(u -> {
-                        try { action.accept(u); }
-                        catch (Exception ex) { /* skip */ }
-                    }));
-        } finally {
-            em.close();
-        }
+        new ArrayList<>(selected).forEach(id ->
+                svc.findById(id).ifPresent(u -> {
+                    try { action.accept(u); }
+                    catch (Exception ex) { /* skip */ }
+                }));
         refresh();
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     private User reloadUser(Long id) {
-        EntityManager em = emf.createEntityManager();
-        try {
-            return new UserService(em).findById(id).orElse(null);
-        } finally {
-            em.close();
-        }
+        return svc.findById(id).orElse(null);
     }
 
     private void showError(String msg) {
