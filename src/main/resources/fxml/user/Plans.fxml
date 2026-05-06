@@ -14,7 +14,7 @@
             fitToWidth="true"
             xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="org.example.controller.user.PlansController"
+            fx:controller="org.example.controller.user.user_managment.PlansController"
             style="-fx-background-color: transparent; -fx-background: transparent; -fx-border-width: 0;">
 
     <VBox spacing="20">
