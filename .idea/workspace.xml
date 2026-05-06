@@ -5,181 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c62684bd-7db6-4266-8409-2a36624f041e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignoregit" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/copilot.data.migration.ask2agent.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DASHBOARD_IMPROVEMENTS.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/AdminDashboardController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/TestHash.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/UserDashboardController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/forum/BackofficeContext.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/forum/BackofficeNav.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/forum/CommentaireBackofficeController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/forum/CommentaireEditController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/forum/CommentaireNewController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/forum/CommentaireShowController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/forum/DashboardController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/forum/PublicationBackofficeController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/forum/PublicationEditController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/forum/PublicationNewController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/forum/PublicationShowController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/tests/LanguageSelectController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/tests/LevelSelectController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/tests/MockTestDashboardController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/tests/MockTestFormController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/tests/ProfileController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/tests/SpeakingResultController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/tests/SpeakingTestController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/tests/TestPreviewController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/tests/TestQuestionManagerController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/tests/TestResultViewController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/tests/UserTestDetailController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/tests/UserTestListController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/tests/WritingResultController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/user/forum/AjouterPublicationController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/user/forum/AjouterStoryController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/user/forum/BackofficeController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/user/forum/ChatbotController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/user/forum/CommentaireController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/user/forum/MainController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/user/forum/ModifierPublicationController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/user/forum/NotificationController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/user/forum/PublicationController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/user/user_managment/ForgotPasswordController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/user/user_managment/NewPasswordController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/user/user_managment/PlansController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/user/user_managment/VerifyEmailController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/user/user_managment/VerifyOTPController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/entities/forum/Commentaire.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/entities/forum/Notification.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/entities/forum/Publication.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/entity/tests/Certificate.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/entity/tests/MockTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/entity/tests/PlatformLanguage.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/entity/tests/TestAnswer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/entity/tests/TestQuestion.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/entity/tests/TestResult.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/interfaces/IServices.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/repository/tests/AntiCheatRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/repository/tests/CertificateRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/repository/tests/MockTestRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/repository/tests/TestAnswerRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/repository/tests/TestQuestionRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/repository/tests/TestResultRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/forum/BadWordChecker.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/forum/ForumEmailService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/forum/GeminiService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/forum/GroqService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/forum/HCaptchaService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/forum/NotificationManager.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/forum/ServiceCommentaire.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/forum/ServicePublication.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/tests/AntiCheatApiServer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/tests/AntiCheatGuard.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/tests/ApiNinjasService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/tests/AssemblyAIService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/tests/CertificateApiServer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/tests/CertificateService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/tests/ExamTimeGuardService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/tests/GroqSpeakingService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/tests/GroqWritingService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/tests/IMockTestService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/tests/ITestQuestionService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/tests/ITestResultService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/tests/MockTestService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/tests/TestPerformanceAnalyzer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/tests/TestQuestionService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/tests/TestResultService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/user-managment/EmailService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/user-managment/EmailVerificationService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/user-managment/PasswordResetService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/user-managment/StripeService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/util/AppConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/webhook/StripeWebhookServer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/META-INF/persistence.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/captcha/captcha.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/config.properties.template" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/ForgotPassword.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/NewPassword.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/UserDashboard.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/VerifyEmail.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/VerifyOTP.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/admin/forum/css/style.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/admin/forum/fxml/commentaire_edit.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/admin/forum/fxml/commentaire_manager.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/admin/forum/fxml/commentaire_new.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/admin/forum/fxml/commentaire_show.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/admin/forum/fxml/dashboard.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/admin/forum/fxml/publication_edit.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/admin/forum/fxml/publication_manager.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/admin/forum/fxml/publication_new.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/admin/forum/fxml/publication_show.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/admin/forum/fxml/stats_view.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/tests/LanguageSelectView.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/tests/LevelSelectView.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/tests/MockTestDashboard.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/tests/MockTestForm.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/tests/ProfileView.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/tests/SpeakingResultView.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/tests/SpeakingTestView.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/tests/TestPreviewView.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/tests/TestQuestionManager.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/tests/TestResultView.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/tests/UserTestDetailView.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/tests/UserTestListView.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/tests/WritingResultView.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/user/Plans.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/user/forum/css/style.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/user/forum/fxml/AjouterPublicationView.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/user/forum/fxml/AjouterStoryView.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/user/forum/fxml/MainView.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/user/forum/fxml/ModifierPublicationView.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/user/forum/fxml/NotificationView.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/user/forum/fxml/PublicationView.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/tests/MockTestServiceTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/tests/TestQuestionServiceTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/tests/TestResultServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/App.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/LoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/LoginController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/RegisterController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/user/user_managment/RegisterController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user-managment/AdminMainController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user-managment/AdminMainController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user-managment/DashboardViewController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user-managment/DashboardViewController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user-managment/NotificationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user-managment/NotificationController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user-managment/StatsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user-managment/StatsController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user-managment/UserDetailController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user-managment/UserDetailController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user-managment/UserFormController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user-managment/UserFormController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user-managment/UserListController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/admin/user-managment/UserListController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/user/user-managment/UserDashboardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/user/user_managment/UserDashboardController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/user/user-managment/UserMainController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/user/user_managment/UserMainController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/user/user-managment/UserProfileController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/user/user_managment/UserProfileController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/entities/LearningStats.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/entities/user-managment/LearningStats.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/entities/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/entities/user-managment/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/repository/user-managment/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/repository/user-managment/UserRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/user-managment/IUserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/user-managment/IUserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/user-managment/NotificationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/user-managment/NotificationService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/user-managment/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/user-managment/UserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/util/MyDataBase.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/util/MyDataBase.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/util/user-managment/StageManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/util/user-managment/StageManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/css/style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/Register.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/Register.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/admin/AdminMain.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/admin/AdminMain.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/admin/DashboardView.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/admin/DashboardView.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/admin/NotificationDialog.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/admin/NotificationDialog.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/admin/StatsDialog.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/admin/StatsDialog.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/admin/UserDetailDialog.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/admin/UserDetailDialog.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/admin/UserFormDialog.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/admin/UserFormDialog.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/admin/UserListView.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/admin/UserListView.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/login.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/login.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/user/UserDashboard.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/user/UserDashboard.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/user/UserMain.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/user/UserMain.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/user/UserProfileView.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/user/UserProfileView.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -234,7 +64,7 @@
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;Merging module/support&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;module/support&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
