@@ -29,6 +29,7 @@ public class AdminMainController {
     @FXML private StackPane contentArea;
     @FXML private Button    btnDashboard;
     @FXML private Button    btnUsers;
+    @FXML private Button    btnSupport;   // ✅ ADDED — was missing, caused LoadException
     @FXML private Button    btnTests;
     @FXML private Button    btnForumStats;
     @FXML private Button    btnForumPubs;
@@ -69,6 +70,14 @@ public class AdminMainController {
     }
 
     @FXML
+    private void showSupport(ActionEvent event) {
+        // ✅ ADDED — was referenced in AdminMain.fxml but missing from controller
+        setActive(btnSupport, "Support");
+        // TODO: replace with your support FXML when ready
+        // loadView("/fxml/admin/SupportView.fxml", ctrl -> {});
+    }
+
+    @FXML
     private void showTests(ActionEvent event) {
         setActive(btnTests, "International Tests");
         loadView("/fxml/tests/MockTestDashboard.fxml", ctrl -> {
@@ -81,8 +90,6 @@ public class AdminMainController {
     @FXML
     private void showForumStats(ActionEvent event) {
         setActive(btnForumStats, "Forum - Statistics");
-        // dashboard.fxml has its own sidebar as first child; hide it so it
-        // doesn't create a double-sidebar inside the admin contentArea.
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(
                     "/fxml/admin/forum/fxml/dashboard.fxml"));

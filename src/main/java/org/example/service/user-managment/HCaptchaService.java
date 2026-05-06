@@ -10,7 +10,7 @@ import java.nio.charset.StandardCharsets;
 
 public class HCaptchaService {
 
-    private static final String SECRET = "xxxxxxxxxxxxxx";
+    private static final String SECRET = "xxxxxxxxxxxxxxxxxxxxx";
     private static final String VERIFY_URL = "https://api.hcaptcha.com/siteverify";
 
     public boolean verify(String token) {
