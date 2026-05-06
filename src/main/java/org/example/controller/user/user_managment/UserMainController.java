@@ -136,7 +136,7 @@ public class UserMainController {
         setActive((Button) e.getSource(), "International Tests");
         try {
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/fxml/tests/MockTestDashboard.fxml"));
+                    getClass().getResource("/fxml/tests/UserTestListView.fxml"));
             Node view = loader.load();
             MockTestDashboardController ctrl = loader.getController();
             ctrl.setContentArea(contentArea);
@@ -298,4 +298,5 @@ public class UserMainController {
         int idx = Math.abs(name.hashCode()) % AVATAR_COLORS.length;
         return AVATAR_COLORS[idx];
     }
+
 }
