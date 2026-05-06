@@ -1,4 +1,4 @@
-package org.example.controller;
+package org.example.controller.user.user_managment;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

@@ -131,6 +131,12 @@ public class User {
     public void setStatus(String v)     { this.status = v; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime v) { this.createdAt = v; }
+
+    /** Returns the raw JSON string stored in the database (e.g. ["ROLE_USER","ROLE_ADMIN"]). */
+    public String getRolesJson() { return roles; }
+    /** Sets the roles field directly from the raw JSON string read from the database. */
+    public void setRolesJson(String json) { this.roles = json; }
 
     public String getSubscriptionPlan() { return subscriptionPlan; }
     public void setSubscriptionPlan(String v) {

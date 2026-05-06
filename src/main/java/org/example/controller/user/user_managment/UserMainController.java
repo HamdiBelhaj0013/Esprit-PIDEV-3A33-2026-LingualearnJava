@@ -1,5 +1,6 @@
-package org.example.controller.user;
+package org.example.controller.user.user_managment;
 
+import org.example.controller.tests.MockTestDashboardController;
 import org.example.entity.User;
 import org.example.service.NotificationService;
 import org.example.service.UserService;
@@ -35,11 +36,10 @@ public class UserMainController {
 
     private Button activeButton;
 
-    /** Singleton reference so refreshUserInfo() can reach the live instance. */
     private static UserMainController instance;
 
     private static final String[] AVATAR_COLORS = {
-        "#3b5bdb", "#2f9e44", "#e03131", "#f59f00", "#7c3aed", "#0891b2"
+            "#3b5bdb", "#2f9e44", "#e03131", "#f59f00", "#7c3aed", "#0891b2"
     };
 
     @FXML
@@ -47,7 +47,7 @@ public class UserMainController {
         instance = this;
     }
 
-    // â”€â”€ Entry point from LoginController â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Entry point from LoginController ─────────────────────────────────────
 
     public void setUser(User user) {
         SessionManager.setCurrentUser(user);
@@ -55,7 +55,7 @@ public class UserMainController {
         showDashboard(null);
     }
 
-    // â”€â”€ Static refresh â€” called after profile save â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Static refresh — called after profile save ────────────────────────────
 
     public static void refreshUserInfo() {
         if (instance == null) return;
@@ -68,17 +68,16 @@ public class UserMainController {
         String initials = buildInitials(user);
         instance.sidebarAvatarLabel.setText(initials);
         instance.sidebarAvatarLabel.setStyle(
-            "-fx-background-color: " + avatarColor(user.getFullName()) + ";"
+                "-fx-background-color: " + avatarColor(user.getFullName()) + ";"
         );
     }
 
-    // â”€â”€ Sidebar navigation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Sidebar navigation ────────────────────────────────────────────────────
 
     @FXML
     private void showDashboard(ActionEvent event) {
         setActive(btnDashboard, "Dashboard");
 
-        // Reload user from DB so the sidebar reflects any admin changes (name, email, status)
         User cached = SessionManager.getCurrentUser();
         if (cached != null) {
             new UserService().findById(cached.getId()).ifPresent(fresh -> {
@@ -89,7 +88,7 @@ public class UserMainController {
 
         try {
             FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/fxml/user/UserDashboard.fxml"));
+                    getClass().getResource("/fxml/user/UserDashboard.fxml"));
             Node view = loader.load();
             UserDashboardController controller = loader.getController();
             controller.setParentController(this);
@@ -129,13 +128,24 @@ public class UserMainController {
     }
 
     @FXML private void showReclamations(ActionEvent e) {
-        setActive((Button) e.getSource(), "Mes rÃ©clamations");
+        setActive((Button) e.getSource(), "Mes réclamations");
         showComingSoonContent();
     }
 
     @FXML private void showMockTests(ActionEvent e) {
-        setActive((Button) e.getSource(), "Mock Tests");
-        showComingSoonContent();
+        setActive((Button) e.getSource(), "International Tests");
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/fxml/tests/MockTestDashboard.fxml"));
+            Node view = loader.load();
+            MockTestDashboardController ctrl = loader.getController();
+            ctrl.setContentArea(contentArea);
+            contentArea.getChildren().setAll(view);
+        } catch (IOException ex) {
+            Label err = new Label("Failed to load tests: " + ex.getMessage());
+            err.setStyle("-fx-text-fill: #d63939;");
+            contentArea.getChildren().setAll(err);
+        }
     }
 
     @FXML
@@ -152,7 +162,7 @@ public class UserMainController {
 
         try {
             List<NotificationService.NotifRow> notifs =
-                new NotificationService().getRecentForUser(user.getId());
+                    new NotificationService().getRecentForUser(user.getId());
 
             if (notifs.isEmpty()) {
                 Label empty = new Label("No notifications yet.");
@@ -162,19 +172,19 @@ public class UserMainController {
                 for (NotificationService.NotifRow n : notifs) {
                     VBox row = new VBox(4);
                     row.setStyle("-fx-background-color: #f8fafc; -fx-background-radius: 8; " +
-                                 "-fx-border-color: #e3e8f0; -fx-border-radius: 8; " +
-                                 "-fx-border-width: 1; -fx-padding: 10 14;");
+                            "-fx-border-color: #e3e8f0; -fx-border-radius: 8; " +
+                            "-fx-border-width: 1; -fx-padding: 10 14;");
 
                     Label typeLbl = new Label(n.type.toUpperCase());
                     typeLbl.setStyle("-fx-font-size: 11px; -fx-font-weight: bold; " +
-                                     "-fx-text-fill: #3b5bdb; -fx-background-color: #eef2ff; " +
-                                     "-fx-background-radius: 4; -fx-padding: 2 6;");
+                            "-fx-text-fill: #3b5bdb; -fx-background-color: #eef2ff; " +
+                            "-fx-background-radius: 4; -fx-padding: 2 6;");
 
                     Label msgLbl = new Label(n.message);
                     msgLbl.setStyle("-fx-font-size: 13px; -fx-text-fill: #374151;");
                     msgLbl.setWrapText(true);
 
-                    Label dateLbl = new Label(n.createdAt + (n.isRead ? " Â· Read" : " Â· Unread"));
+                    Label dateLbl = new Label(n.createdAt + (n.isRead ? " · Read" : " · Unread"));
                     dateLbl.setStyle("-fx-font-size: 11px; -fx-text-fill: #6c7a99;");
 
                     row.getChildren().addAll(typeLbl, msgLbl, dateLbl);
@@ -190,7 +200,7 @@ public class UserMainController {
         ScrollPane scroll = new ScrollPane(page);
         scroll.setFitToWidth(true);
         scroll.setStyle("-fx-background-color: transparent; -fx-background: transparent; " +
-                        "-fx-border-width: 0;");
+                "-fx-border-width: 0;");
         VBox.setVgrow(scroll, javafx.scene.layout.Priority.ALWAYS);
 
         contentArea.getChildren().setAll(scroll);
@@ -205,7 +215,7 @@ public class UserMainController {
         setActive(btnBilling, "Plans & Billing");
         try {
             FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/fxml/user/Plans.fxml"));
+                    getClass().getResource("/fxml/user/Plans.fxml"));
             Node view = loader.load();
             PlansController ctrl = loader.getController();
             ctrl.loadData();
@@ -221,7 +231,7 @@ public class UserMainController {
         showBilling(null);
     }
 
-    // â”€â”€ Logout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Logout ────────────────────────────────────────────────────────────────
 
     @FXML
     private void handleLogout(ActionEvent event) {
@@ -236,13 +246,12 @@ public class UserMainController {
             stage.setMinHeight(500);
             stage.centerOnScreen();
         } catch (IOException e) {
-            // nothing to do â€” login screen unavailable
+            // nothing to do
         }
     }
 
-    // â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Helpers ───────────────────────────────────────────────────────────────
 
-    /** Called from UserDashboardController quick actions (same package). */
     void showComingSoonFor(String title) {
         topbarTitle.setText(title);
         showComingSoonContent();
@@ -290,5 +299,3 @@ public class UserMainController {
         return AVATAR_COLORS[idx];
     }
 }
-
-
