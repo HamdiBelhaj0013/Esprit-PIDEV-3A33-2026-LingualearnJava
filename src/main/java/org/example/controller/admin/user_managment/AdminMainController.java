@@ -1,7 +1,6 @@
 package org.example.controller.admin.user_managment;
 
 import org.example.entity.User;
-import org.example.controller.admin.AdminAiController;
 import org.example.controller.admin.user_managment.DashboardViewController;
 import org.example.controller.admin.user_managment.UserListController;
 import org.example.controller.admin.user_managment.UserDetailController;
@@ -32,7 +31,9 @@ public class AdminMainController {
     @FXML private Button    btnUsers;
     @FXML private Button    btnSupport;
     @FXML private Button    btnTests;
-    @FXML private Button    btnAiAssistant;
+    @FXML private Button    btnQuizzes;
+    @FXML private Button    btnExercices;
+    @FXML private Button    btnQuizStats;
     @FXML private Button    btnForumStats;
     @FXML private Button    btnForumPubs;
     @FXML private Button    btnForumComments;
@@ -42,6 +43,7 @@ public class AdminMainController {
 
     public void setUser(User user) {
         this.loggedInUser = user;
+        org.example.util.SessionManager.setCurrentUser(user);
         adminNameLabel.setText(user.getFirstName() + " " + user.getLastName());
         showDashboard(null);
     }
@@ -84,11 +86,21 @@ public class AdminMainController {
     }
 
     @FXML
-    private void showAiAssistant(ActionEvent event) {
-        setActive(btnAiAssistant, "AI Assistant");
-        loadView("/fxml/admin/AdminAiView.fxml", ctrl -> {
-            // AdminAiController self-initializes in @FXML initialize()
-        });
+    private void showQuizzes(ActionEvent event) {
+        setActive(btnQuizzes, "Quiz Management");
+        loadView("/fxml/QuizView.fxml", ctrl -> {});
+    }
+
+    @FXML
+    private void showExercices(ActionEvent event) {
+        setActive(btnExercices, "Exercices Management");
+        loadView("/fxml/admin/ExerciceView.fxml", ctrl -> {});
+    }
+
+    @FXML
+    private void showQuizStats(ActionEvent event) {
+        setActive(btnQuizStats, "Quiz & Exercises Statistics");
+        loadView("/fxml/StatsView.fxml", ctrl -> {});
     }
 
     @FXML

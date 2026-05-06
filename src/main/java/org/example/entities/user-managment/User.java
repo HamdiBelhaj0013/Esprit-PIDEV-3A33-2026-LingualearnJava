@@ -151,6 +151,7 @@ public class User {
     }
 
     public boolean isPremium() { return isPremium; }
+    public void setPremium(boolean p) { this.isPremium = p; }
 
     public String getLastPaymentStatus()       { return lastPaymentStatus; }
     public void setLastPaymentStatus(String v) { this.lastPaymentStatus = v; }

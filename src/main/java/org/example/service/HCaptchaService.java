@@ -1,4 +1,4 @@
-package org.example.service.forum;
+package org.example.service;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -10,14 +10,22 @@ import java.nio.charset.StandardCharsets;
 
 public class HCaptchaService {
 
-    private static final String SECRET = System.getenv("HCAPTCHA_SECRET");
+    private static final String SECRET     = System.getenv("HCAPTCHA_SECRET");
     private static final String VERIFY_URL = "https://api.hcaptcha.com/siteverify";
 
     public boolean verify(String token) {
-        if (token == null || token.isBlank()) return false;
+        if (token == null || token.isBlank()) {
+            System.err.println("[HCaptcha] Token is null or blank — skipping verification.");
+            return false;
+        }
+        if (SECRET == null || SECRET.isBlank()) {
+            System.err.println("[HCaptcha] HCAPTCHA_SECRET env variable is not set!");
+            return false;
+        }
+
         try {
-            String body = "secret=" + URLEncoder.encode(SECRET, StandardCharsets.UTF_8)
-                    + "&response=" + URLEncoder.encode(token, StandardCharsets.UTF_8);
+            String body = "secret="   + URLEncoder.encode(SECRET, StandardCharsets.UTF_8)
+                    + "&response=" + URLEncoder.encode(token,  StandardCharsets.UTF_8);
 
             URL url = new URL(VERIFY_URL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -38,9 +46,12 @@ public class HCaptchaService {
                 while ((line = br.readLine()) != null) response.append(line);
             }
 
-            return response.toString().contains("\"success\":true");
+            String json = response.toString();
+            System.out.println("[HCaptcha] Verification response: " + json);
+            return json.contains("\"success\":true");
 
         } catch (Exception e) {
+            System.err.println("[HCaptcha] Verification failed: " + e.getMessage());
             return false;
         }
     }

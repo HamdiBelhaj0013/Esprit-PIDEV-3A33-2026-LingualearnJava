@@ -6,19 +6,24 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.example.service.tests.AntiCheatApiServer;
 import org.example.service.tests.CertificateApiServer;
+import org.example.service.user_managment.CaptchaServer;
 import org.example.util.MyDataBase;
 import org.example.util.StageManager;
+import org.example.webhook.StripeWebhookServer;
 
 public class App extends Application {
 
+    private StripeWebhookServer webhookServer;
+
     @Override
     public void init() throws Exception {
-        // 1. Connexion base de données
         MyDataBase.getInstance();
-        // 2. API Certificats    → http://localhost:9090/api/certificate/verify/{uuid}
         CertificateApiServer.start();
-        // 3. API Anti-Triche   → http://localhost:9091/api/anticheat/logs
         AntiCheatApiServer.start();
+        CaptchaServer.start();
+        String webhookSecret = System.getenv("STRIPE_WEBHOOK_SECRET");
+        webhookServer = new StripeWebhookServer(webhookSecret);
+        webhookServer.start();
     }
 
     @Override
@@ -35,9 +40,10 @@ public class App extends Application {
 
     @Override
     public void stop() {
-        // Arrêt propre des deux serveurs
         CertificateApiServer.stop();
         AntiCheatApiServer.stop();
+        CaptchaServer.stop();
+        if (webhookServer != null) webhookServer.stop();
         MyDataBase.getInstance().closeConnection();
     }
 }
