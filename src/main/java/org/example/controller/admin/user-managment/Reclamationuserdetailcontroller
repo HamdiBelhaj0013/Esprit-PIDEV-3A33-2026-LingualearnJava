@@ -1,0 +1,145 @@
+package org.example.controller.user.supportmanagement;
+
+import javafx.collections.FXCollections;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.*;
+import javafx.stage.Stage;
+import org.example.entity.Reclamation;
+import org.example.repository.supportmanagement.ReclamationDAO;
+import org.example.repository.supportmanagement.SupportResponseDAO;
+import org.example.util.Session;
+
+import java.net.URL;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.stream.Collectors;
+
+public class ReclamationUserDetailController implements Initializable {
+
+    // ── Infos ─────────────────────────────────────────────────────────────
+    @FXML private Label labelSujet;
+    @FXML private Label labelStatut;
+    @FXML private Label labelPriorite;
+    @FXML private Label labelDate;
+    @FXML private Label labelMessage;
+
+    // ── Actions (modifier/supprimer) ──────────────────────────────────────
+    @FXML private TextField  editSubject;
+    @FXML private TextArea   editMessage;
+    @FXML private ComboBox<String> editPriority;
+    @FXML private Button     btnModifier;
+    @FXML private Button     btnSupprimer;
+    @FXML private Label      msgAction;
+
+    // ── Réponses admin ────────────────────────────────────────────────────
+    @FXML private ListView<String> reponsesList;
+
+    private final ReclamationDAO     reclDao     = new ReclamationDAO();
+    private final SupportResponseDAO responseDao = new SupportResponseDAO();
+
+    private Reclamation reclamation;
+    private Runnable    onClose;
+
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        editPriority.setItems(FXCollections.observableArrayList("LOW", "MEDIUM", "HIGH"));
+    }
+
+    public void setReclamation(Reclamation r, Runnable onCloseCallback) {
+        this.reclamation = r;
+        this.onClose     = onCloseCallback;
+        rafraichir();
+    }
+
+    private void rafraichir() {
+        // Infos
+        labelSujet.setText(reclamation.getSubject());
+        labelStatut.setText(reclamation.getStatus());
+        labelPriorite.setText(reclamation.getPriority());
+        labelDate.setText(reclamation.getSubmittedAt() != null
+            ? reclamation.getSubmittedAt().toString().replace("T", " ").substring(0, 16) : "");
+        labelMessage.setText(reclamation.getMessageBody());
+
+        // Pré-remplir les champs de modification
+        boolean isPending = "PENDING".equals(reclamation.getStatus());
+        editSubject.setText(reclamation.getSubject());
+        editMessage.setText(reclamation.getMessageBody());
+        editPriority.setValue(reclamation.getPriority());
+
+        // Désactiver si pas PENDING
+        editSubject.setDisable(!isPending);
+        editMessage.setDisable(!isPending);
+        editPriority.setDisable(!isPending);
+        btnModifier.setDisable(!isPending);
+        btnSupprimer.setDisable(!isPending);
+
+        if (!isPending) {
+            msgAction.setStyle("-fx-text-fill: gray;");
+            msgAction.setText("Modification/Suppression uniquement si statut = PENDING");
+        } else {
+            msgAction.setText("");
+        }
+
+        // Réponses admin
+        chargerReponses();
+    }
+
+    @FXML public void modifier() {
+        String sujet   = editSubject.getText().trim();
+        String message = editMessage.getText().trim();
+        String priorite = editPriority.getValue();
+
+        if (sujet.isEmpty() || message.isEmpty() || priorite == null) {
+            showMsg("Remplis tous les champs.", "red"); return;
+        }
+
+        reclamation.setSubject(sujet);
+        reclamation.setMessageBody(message);
+        reclamation.setPriority(priorite);
+
+        boolean ok = reclDao.modifier(reclamation);
+        if (ok) {
+            showMsg("✅ Réclamation modifiée.", "green");
+            if (onClose != null) onClose.run();
+            rafraichir();
+        } else {
+            showMsg("Erreur lors de la modification.", "red");
+        }
+    }
+
+    @FXML public void supprimer() {
+        Alert a = new Alert(Alert.AlertType.CONFIRMATION,
+            "Supprimer \"" + reclamation.getSubject() + "\" ?",
+            ButtonType.YES, ButtonType.NO);
+        a.setHeaderText("Confirmer la suppression");
+        a.showAndWait().ifPresent(btn -> {
+            if (btn == ButtonType.YES) {
+                boolean ok = reclDao.supprimer(reclamation.getId());
+                if (ok) {
+                    if (onClose != null) onClose.run();
+                    fermer();
+                } else {
+                    showMsg("Erreur suppression.", "red");
+                }
+            }
+        });
+    }
+
+    @FXML public void fermer() {
+        ((Stage) labelSujet.getScene().getWindow()).close();
+    }
+
+    private void chargerReponses() {
+        List<String> items = responseDao.getByReclamationId(reclamation.getId()).stream()
+            .map(r -> "[" + r.getRespondedAt() + "] " + r.getMessage())
+            .collect(Collectors.toList());
+        reponsesList.setItems(FXCollections.observableArrayList(
+            items.isEmpty() ? List.of("Aucune réponse de l'administration.") : items));
+    }
+
+    private void showMsg(String txt, String color) {
+        msgAction.setStyle("-fx-text-fill: " + color + "; -fx-font-weight: bold;");
+        msgAction.setText(txt);
+    }
+}

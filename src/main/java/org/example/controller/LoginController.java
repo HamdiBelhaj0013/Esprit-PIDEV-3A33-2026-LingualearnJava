@@ -18,6 +18,7 @@ import org.example.controller.user.user_managment.VerifyEmailController;
 import org.example.entity.User;
 import org.example.service.EmailVerificationService;
 import org.example.service.UserService;
+import org.example.util.Session;
 import org.example.util.StageManager;
 
 import java.io.IOException;
@@ -85,6 +86,11 @@ public class LoginController {
 
             User user    = userOpt.get();
             boolean isAdmin = user.getRoles().contains("ROLE_ADMIN");
+
+            // ✅ CORRIGÉ : set la session avec le vrai ID de l'utilisateur connecté
+            String role = isAdmin ? "ROLE_ADMIN" : "ROLE_USER";
+            Session.setCurrentUser(user.getId().intValue(), role);
+
             navigateToDashboard(user, isAdmin);
 
         } catch (Exception e) {
