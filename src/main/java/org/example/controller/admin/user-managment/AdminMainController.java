@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.layout.HBox;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -29,6 +30,9 @@ public class AdminMainController {
     @FXML private Button    btnDashboard;
     @FXML private Button    btnUsers;
     @FXML private Button    btnTests;
+    @FXML private Button    btnForumStats;
+    @FXML private Button    btnForumPubs;
+    @FXML private Button    btnForumComments;
 
     private User   loggedInUser;
     private Button activeButton;
@@ -74,6 +78,38 @@ public class AdminMainController {
         });
     }
 
+    @FXML
+    private void showForumStats(ActionEvent event) {
+        setActive(btnForumStats, "Forum - Statistics");
+        // dashboard.fxml has its own sidebar as first child; hide it so it
+        // doesn't create a double-sidebar inside the admin contentArea.
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                    "/fxml/admin/forum/fxml/dashboard.fxml"));
+            Node view = loader.load();
+            if (view instanceof HBox hbox && !hbox.getChildren().isEmpty()) {
+                Node forumSidebar = hbox.getChildren().get(0);
+                forumSidebar.setVisible(false);
+                forumSidebar.setManaged(false);
+            }
+            contentArea.getChildren().setAll(view);
+        } catch (IOException e) {
+            showError("Failed to load Forum Statistics: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void showForumPublications(ActionEvent event) {
+        setActive(btnForumPubs, "Forum - Publications");
+        loadView("/fxml/admin/forum/fxml/publication_manager.fxml", ctrl -> {});
+    }
+
+    @FXML
+    private void showForumComments(ActionEvent event) {
+        setActive(btnForumComments, "Forum - Comments");
+        loadView("/fxml/admin/forum/fxml/commentaire_manager.fxml", ctrl -> {});
+    }
+
     // ── Called by child controllers to open dialogs ───────────────────────────
 
     public void openUserDetail(User user) {
@@ -107,34 +143,6 @@ public class AdminMainController {
     public void refreshCurrentView() {
         if (activeButton == btnUsers) showUsers(null);
         else showDashboard(null);
-    }
-
-    // ── Forum navigation ──────────────────────────────────────────────────────
-
-    @FXML
-    private void goToForum(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/admin/forum/fxml/dashboard.fxml"));
-            Parent root = loader.load();
-            Stage stage = (Stage) contentArea.getScene().getWindow();
-            stage.setScene(new Scene(root, 1400, 800));
-            stage.setTitle("LinguaLearn - Forum");
-        } catch (IOException e) {
-            showError("Navigation impossible: " + e.getMessage());
-        }
-    }
-
-    @FXML
-    private void goToPublications(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/admin/forum/fxml/publication_manager.fxml"));
-            Parent root = loader.load();
-            Stage stage = (Stage) contentArea.getScene().getWindow();
-            stage.setScene(new Scene(root, 1400, 800));
-            stage.setTitle("LinguaLearn - Publications");
-        } catch (IOException e) {
-            showError("Navigation impossible: " + e.getMessage());
-        }
     }
 
     // ── Logout ────────────────────────────────────────────────────────────────
