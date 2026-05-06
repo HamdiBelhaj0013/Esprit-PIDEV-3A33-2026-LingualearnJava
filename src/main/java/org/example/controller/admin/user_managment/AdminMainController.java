@@ -34,6 +34,7 @@ public class AdminMainController {
     @FXML private Button    btnQuizzes;
     @FXML private Button    btnExercices;
     @FXML private Button    btnQuizStats;
+    @FXML private Button    btnAiAssistant;
     @FXML private Button    btnForumStats;
     @FXML private Button    btnForumPubs;
     @FXML private Button    btnForumComments;
@@ -101,6 +102,12 @@ public class AdminMainController {
     private void showQuizStats(ActionEvent event) {
         setActive(btnQuizStats, "Quiz & Exercises Statistics");
         loadView("/fxml/StatsView.fxml", ctrl -> {});
+    }
+
+    @FXML
+    private void showAiAssistant(ActionEvent event) {
+        setActive(btnAiAssistant, "AI Assistant");
+        loadView("/fxml/admin/AdminAiView.fxml", ctrl -> {});
     }
 
     @FXML
