@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="org.example.controller.QuizResultController"
+           style="-fx-background-color: #f8fafc;" stylesheets="@styles.css"
+           prefWidth="1200" prefHeight="800">
+
+    <VBox alignment="TOP_CENTER" spacing="20" style="-fx-padding: 40;">
+        
+        <!-- Top Navigation -->
+        <HBox alignment="CENTER_LEFT" maxWidth="850">
+            <Button onAction="#goBack" styleClass="btn-outline" style="-fx-border-color: transparent; -fx-padding: 10;">
+                <graphic>
+                    <HBox spacing="8" alignment="CENTER">
+                        <FontIcon iconLiteral="fas-arrow-left" iconSize="16" iconColor="#64748b"/>
+                        <Label text="Back to Quiz" style="-fx-text-fill: #64748b; -fx-font-weight: bold;"/>
+                    </HBox>
+                </graphic>
+            </Button>
+        </HBox>
+
+        <!-- Score Banner -->
+        <VBox fx:id="scoreBanner" maxWidth="850" spacing="12" alignment="CENTER"
+              style="-fx-background-color: #0ea5e9; -fx-background-radius: 16; -fx-padding: 35;">
+            <HBox spacing="20" alignment="CENTER">
+                <StackPane style="-fx-background-color: rgba(255,255,255,0.2); -fx-background-radius: 50; -fx-padding: 18;">
+                    <FontIcon iconLiteral="fas-trophy" iconSize="36" iconColor="white"/>
+                </StackPane>
+                <VBox spacing="4">
+                    <Label text="Quiz Completed!" style="-fx-font-size: 13px; -fx-text-fill: #e0f2fe; -fx-font-weight: bold;"/>
+                    <Label fx:id="scoreTitleLabel" text="Your Score" style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                    <Label fx:id="scoreSubLabel" text="" style="-fx-font-size: 14px; -fx-text-fill: #bae6fd;"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <VBox alignment="CENTER" spacing="4"
+                      style="-fx-background-color: rgba(255,255,255,0.15); -fx-background-radius: 12; -fx-padding: 16 24;">
+                    <Label fx:id="percentLabel" text="0%" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                    <Label text="Accuracy" style="-fx-font-size: 11px; -fx-text-fill: #e0f2fe;"/>
+                </VBox>
+            </HBox>
+        </VBox>
+
+        <!-- Scrollable Content: AI Summary + Question Results -->
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-padding: 0;" 
+                    maxWidth="850" VBox.vgrow="ALWAYS">
+            <content>
+                <VBox spacing="16" style="-fx-padding: 4 0 20 0;">
+
+                    <!-- AI Summary Card -->
+                    <VBox fx:id="aiSummaryCard" spacing="12"
+                          style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 25; -fx-border-color: #e5e7eb; -fx-border-radius: 12; -fx-border-width: 1;">
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <StackPane style="-fx-background-color: rgba(139, 92, 246, 0.1); -fx-background-radius: 8; -fx-padding: 8;">
+                                <FontIcon iconLiteral="fas-robot" iconSize="18" iconColor="#8b5cf6"/>
+                            </StackPane>
+                            <Label text="AI Tutor Summary" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <ProgressIndicator fx:id="summarySpinner" prefWidth="22" prefHeight="22" visible="true"/>
+                        </HBox>
+                        <Label fx:id="aiSummaryLabel" text="Analyzing your performance..." wrapText="true"
+                               minHeight="-Infinity" maxWidth="780"
+                               style="-fx-text-fill: #475569; -fx-font-size: 14px; -fx-line-spacing: 4;"/>
+                    </VBox>
+
+                    <!-- Question-by-Question Results -->
+                    <VBox fx:id="resultsContainer" spacing="16">
+                        <!-- Result cards will be added dynamically -->
+                    </VBox>
+
+                </VBox>
+            </content>
+        </ScrollPane>
+
+    </VBox>
+</StackPane>

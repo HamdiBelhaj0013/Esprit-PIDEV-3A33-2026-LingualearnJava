@@ -33,6 +33,8 @@ public class UserMainController {
     @FXML private Button    btnProfile;
     @FXML private Button    btnNotifications;
     @FXML private Button    btnBilling;
+    @FXML private Button    btnQuizzes;
+    @FXML private Button    btnExercices;
 
     private Button activeButton;
 
@@ -115,6 +117,16 @@ public class UserMainController {
     @FXML private void showPractice(ActionEvent e) {
         setActive((Button) e.getSource(), "Practice");
         showComingSoonContent();
+    }
+
+    @FXML private void showQuizzes(ActionEvent e) {
+        setActive((Button) e.getSource(), "Quizzes");
+        loadView("/fxml/QuizView.fxml");
+    }
+
+    @FXML private void showExercices(ActionEvent e) {
+        setActive((Button) e.getSource(), "Exercices");
+        loadView("/fxml/admin/ExerciceView.fxml");
     }
 
     @FXML private void showForum(ActionEvent e) {

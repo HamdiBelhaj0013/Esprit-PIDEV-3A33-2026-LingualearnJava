@@ -31,6 +31,9 @@ public class AdminMainController {
     @FXML private Button    btnUsers;
     @FXML private Button    btnSupport;
     @FXML private Button    btnTests;
+    @FXML private Button    btnQuizzes;
+    @FXML private Button    btnExercices;
+    @FXML private Button    btnQuizStats;
     @FXML private Button    btnForumStats;
     @FXML private Button    btnForumPubs;
     @FXML private Button    btnForumComments;
@@ -40,6 +43,7 @@ public class AdminMainController {
 
     public void setUser(User user) {
         this.loggedInUser = user;
+        org.example.util.SessionManager.setCurrentUser(user);
         adminNameLabel.setText(user.getFirstName() + " " + user.getLastName());
         showDashboard(null);
     }
@@ -79,6 +83,24 @@ public class AdminMainController {
                 c.setContentArea(contentArea);
             }
         });
+    }
+
+    @FXML
+    private void showQuizzes(ActionEvent event) {
+        setActive(btnQuizzes, "Quiz Management");
+        loadView("/fxml/QuizView.fxml", ctrl -> {});
+    }
+
+    @FXML
+    private void showExercices(ActionEvent event) {
+        setActive(btnExercices, "Exercices Management");
+        loadView("/fxml/admin/ExerciceView.fxml", ctrl -> {});
+    }
+
+    @FXML
+    private void showQuizStats(ActionEvent event) {
+        setActive(btnQuizStats, "Quiz & Exercises Statistics");
+        loadView("/fxml/StatsView.fxml", ctrl -> {});
     }
 
     @FXML

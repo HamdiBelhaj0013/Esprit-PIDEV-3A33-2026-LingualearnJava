@@ -36,6 +36,8 @@
                     styleClass="sidebar-item" onAction="#showDashboard"
                     maxWidth="Infinity"/>
             <Button text="  My Courses"        styleClass="sidebar-item" onAction="#showCourses"        maxWidth="Infinity"/>
+            <Button fx:id="btnQuizzes" text="  🧠 Quizzes" styleClass="sidebar-item" onAction="#showQuizzes" maxWidth="Infinity"/>
+            <Button fx:id="btnExercices" text="  📚 Exercices" styleClass="sidebar-item" onAction="#showExercices" maxWidth="Infinity"/>
             <Button text="  Practice"           styleClass="sidebar-item" onAction="#showPractice"       maxWidth="Infinity"/>
             <Button text="  Forum"              styleClass="sidebar-item" onAction="#showForum"          maxWidth="Infinity"/>
             <Button text="  FAQ"                styleClass="sidebar-item" onAction="#showFAQ"            maxWidth="Infinity"/>
