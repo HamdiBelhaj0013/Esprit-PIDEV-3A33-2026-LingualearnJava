@@ -13,7 +13,7 @@
     <padding><Insets top="20" left="20" right="20" bottom="20"/></padding>
 
     <HBox alignment="CENTER_LEFT" spacing="10">
-        <Label text="ðŸ”” Notifications" styleClass="view-title" HBox.hgrow="ALWAYS"/>
+        <Label text="🔔 Notifications" styleClass="view-title" HBox.hgrow="ALWAYS"/>
         <Button text="Tout marquer comme lu"
                 styleClass="btn-secondary"
                 onAction="#handleMarquerLues"/>

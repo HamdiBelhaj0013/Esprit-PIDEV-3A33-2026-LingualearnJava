@@ -6,7 +6,7 @@
       fx:controller="org.example.controller.admin.forum.PublicationShowController"
       spacing="10" style="-fx-padding: 16; -fx-background-color: #f8fafc;" prefWidth="560">
 
-    <Label text="DÃ©tails Publication" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2563eb;"/>
+    <Label text="Détails Publication" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2563eb;"/>
 
     <GridPane hgap="10" vgap="8">
         <Label text="ID:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>

@@ -24,9 +24,9 @@
 
     <Label text="Image"/>
     <HBox spacing="10" alignment="CENTER_LEFT">
-        <TextField fx:id="imagePathField" promptText="Aucune image sÃ©lectionnÃ©e..."
+        <TextField fx:id="imagePathField" promptText="Aucune image sélectionnée..."
                    editable="false" HBox.hgrow="ALWAYS"/>
-        <Button text="ðŸ“ Choisir" styleClass="btn-secondary" onAction="#handleChoisirImage"/>
+        <Button text="📂 Choisir" styleClass="btn-secondary" onAction="#handleChoisirImage"/>
     </HBox>
 
     <ImageView fx:id="imagePreview" fitWidth="200" fitHeight="120"
@@ -38,4 +38,3 @@
     </HBox>
 
 </VBox>
-

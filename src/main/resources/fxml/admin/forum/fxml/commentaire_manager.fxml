@@ -18,7 +18,7 @@
             <Label fx:id="kpiTotalCommentairesLabel" text="0" style="-fx-text-fill: #1d4ed8; -fx-font-size: 22px; -fx-font-weight: bold;"/>
         </VBox>
         <VBox alignment="CENTER" spacing="4" style="-fx-background-color: white; -fx-padding: 10 18; -fx-background-radius: 8; -fx-border-color: #dcfce7; -fx-border-radius: 8;">
-            <Label text="Publications liÃ©es" style="-fx-text-fill: #64748b; -fx-font-size: 12px;"/>
+            <Label text="Publications liées" style="-fx-text-fill: #64748b; -fx-font-size: 12px;"/>
             <Label fx:id="kpiPublicationsLieesLabel" text="0" style="-fx-text-fill: #15803d; -fx-font-size: 22px; -fx-font-weight: bold;"/>
         </VBox>
         <VBox alignment="CENTER" spacing="4" style="-fx-background-color: white; -fx-padding: 10 18; -fx-background-radius: 8; -fx-border-color: #ede9fe; -fx-border-radius: 8;">
@@ -28,16 +28,16 @@
     </HBox>
 
     <HBox alignment="CENTER" spacing="10" style="-fx-padding: 0 4 8 4;">
-        <TextField fx:id="searchContenuField" promptText="ðŸ” Rechercher dans le contenu..."
+        <TextField fx:id="searchContenuField" promptText="🔍 Rechercher dans le contenu..."
                    style="-fx-pref-width: 360; -fx-background-color: white; -fx-border-color: #cbd5e1; -fx-border-radius: 6; -fx-padding: 8 12; -fx-font-size: 13px;"/>
 
         <TextField fx:id="filterPublicationIdField" promptText="Publication ID"
                    style="-fx-pref-width: 180; -fx-background-color: white; -fx-border-color: #cbd5e1; -fx-border-radius: 6; -fx-padding: 8 12; -fx-font-size: 13px;"/>
 
-        <Button text="ðŸ”„ RafraÃ®chir" onAction="#refresh"
+        <Button text="🔄 Rafraîchir" onAction="#refresh"
                 style="-fx-background-color: #64748b; -fx-text-fill: white; -fx-font-size: 13px; -fx-padding: 8 16; -fx-background-radius: 6; -fx-cursor: hand;"/>
 
-        <Button text="âŒ Reset" onAction="#resetFilters"
+        <Button text="❌ Reset" onAction="#resetFilters"
                 style="-fx-background-color: #334155; -fx-text-fill: white; -fx-font-size: 13px; -fx-padding: 8 16; -fx-background-radius: 6; -fx-cursor: hand;"/>
     </HBox>
 
@@ -55,14 +55,14 @@
         </TableView>
 
         <HBox alignment="CENTER_RIGHT" spacing="10" style="-fx-padding: 10 0 0 0;">
-            <Button fx:id="firstPageButton" text="â®" onAction="#goToFirstPage"
+            <Button fx:id="firstPageButton" text="⮨" onAction="#goToFirstPage"
                     style="-fx-background-color: #e2e8f0; -fx-text-fill: #334155; -fx-font-size: 12px; -fx-background-radius: 6; -fx-cursor: hand;"/>
             <Label text="Lignes/page" style="-fx-text-fill: #64748b; -fx-font-size: 12px;"/>
             <ComboBox fx:id="pageSizeComboBox" prefWidth="90"
                       style="-fx-background-color: white; -fx-border-color: #cbd5e1; -fx-border-radius: 6; -fx-font-size: 12px;"/>
             <Pagination fx:id="pagination" maxPageIndicatorCount="8"
                         style="-fx-page-information-visible: false;"/>
-            <Button fx:id="lastPageButton" text="â­" onAction="#goToLastPage"
+            <Button fx:id="lastPageButton" text="⮩" onAction="#goToLastPage"
                     style="-fx-background-color: #e2e8f0; -fx-text-fill: #334155; -fx-font-size: 12px; -fx-background-radius: 6; -fx-cursor: hand;"/>
             <Label fx:id="pageInfoLabel" text="0-0 / 0"
                    style="-fx-text-fill: #64748b; -fx-font-size: 12px; -fx-font-weight: bold;"/>
@@ -71,15 +71,15 @@
 
     <VBox spacing="10" style="-fx-padding: 10 4 0 4;">
         <HBox alignment="CENTER" spacing="10" style="-fx-padding: 6 0 6 0;">
-            <Button text="âž• Ajouter" onAction="#openAddPage"
+            <Button text="➕ Ajouter" onAction="#openAddPage"
                     style="-fx-background-color: #16a34a; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-padding: 10 24; -fx-background-radius: 8; -fx-cursor: hand;"/>
-            <Button text="ðŸ‘ï¸ Voir" onAction="#openShowPage"
+            <Button text="👁️ Voir" onAction="#openShowPage"
                     style="-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-padding: 10 24; -fx-background-radius: 8; -fx-cursor: hand;"/>
-            <Button text="âœï¸ Modifier" onAction="#openEditPage"
+            <Button text="✏️ Modifier" onAction="#openEditPage"
                     style="-fx-background-color: #f59e0b; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-padding: 10 24; -fx-background-radius: 8; -fx-cursor: hand;"/>
-            <Button text="ðŸ—‘ï¸ Supprimer" onAction="#deleteCommentaire"
+            <Button text="🗑️ Supprimer" onAction="#deleteCommentaire"
                     style="-fx-background-color: #ef4444; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-padding: 10 24; -fx-background-radius: 8; -fx-cursor: hand;"/>
-            <Button text="ðŸ§¹ DÃ©sÃ©lectionner" onAction="#clearSelection"
+            <Button text="🧹 Désélectionner" onAction="#clearSelection"
                     style="-fx-background-color: #475569; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-padding: 10 24; -fx-background-radius: 8; -fx-cursor: hand;"/>
         </HBox>
 
@@ -87,5 +87,4 @@
     </VBox>
 
 </VBox>
-
 

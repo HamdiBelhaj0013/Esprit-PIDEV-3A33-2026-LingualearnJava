@@ -25,9 +25,9 @@
               prefHeight="120" wrapText="true"/>
     <Label fx:id="contenuError" text="" styleClass="error-label"/>
 
-    <!-- BOUTON AMÃ‰LIORATION IA -->
+    <!-- BOUTON AMÉLIORATION IA -->
     <HBox alignment="CENTER_RIGHT">
-        <Button fx:id="ameliorerBtn" text="âœ¨ AmÃ©liorer avec l'IA"
+        <Button fx:id="ameliorerBtn" text="✨ Améliorer avec l'IA"
                 styleClass="btn-secondary"
                 onAction="#handleAmeliorer"
                 style="-fx-background-color: linear-gradient(to right,#6d28d9,#3b5bdb);
@@ -39,9 +39,9 @@
     <!-- IMAGE -->
     <Label text="Image (optionnel)"/>
     <HBox spacing="10" alignment="CENTER_LEFT">
-        <TextField fx:id="imagePathField" promptText="Aucune image sÃ©lectionnÃ©e..."
+        <TextField fx:id="imagePathField" promptText="Aucune image sélectionnée..."
                    editable="false" HBox.hgrow="ALWAYS"/>
-        <Button text="ðŸ“ Choisir" styleClass="btn-secondary" onAction="#handleChoisirImage"/>
+        <Button text="📂 Choisir" styleClass="btn-secondary" onAction="#handleChoisirImage"/>
     </HBox>
     <Label fx:id="imageError" text="" styleClass="error-label"/>
 
@@ -55,4 +55,3 @@
     </HBox>
 
 </VBox>
-
