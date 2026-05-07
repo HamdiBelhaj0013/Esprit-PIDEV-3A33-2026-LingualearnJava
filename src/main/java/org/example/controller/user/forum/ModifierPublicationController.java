@@ -1,6 +1,5 @@
 package org.example.controller.user.forum;
 
-
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
@@ -26,12 +25,12 @@ public class ModifierPublicationController {
     private Publication publication;
     private String selectedImagePath = "";
 
-    // ReÃ§oit la publication Ã  modifier et prÃ©-remplit le formulaire
+    // Reçoit la publication à modifier et pré-remplit le formulaire
     public void setPublication(Publication p, PublicationController controller) {
         this.publication = p;
         this.publicationController = controller;
 
-        // PrÃ©-remplir les champs
+        // Pré-remplir les champs
         titreField.setText(p.getTitrePub());
         contenuArea.setText(p.getContenuPub());
 
@@ -85,10 +84,10 @@ public class ModifierPublicationController {
 
             if (publicationController != null) {
                 publicationController.loadPublications();
-                publicationController.loadStories(); // ðŸ”¥ FIX
+                publicationController.loadStories(); // 🔥 FIX
             }
 
-            showAlert(Alert.AlertType.INFORMATION, "SuccÃ¨s", "Modification rÃ©ussie !");
+            showAlert(Alert.AlertType.INFORMATION, "Succès", "Modification réussie !");
             fermerFenetre();
 
         } catch (Exception e) {
@@ -113,6 +112,3 @@ public class ModifierPublicationController {
         alert.showAndWait();
     }
 }
-
-
-

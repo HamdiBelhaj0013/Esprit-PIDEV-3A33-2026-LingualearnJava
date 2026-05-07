@@ -92,7 +92,7 @@ public class BackofficeController {
                 } else {
                     Publication p = getTableView().getItems().get(getIndex());
 
-                    Button btnModifier = new Button("âœï¸");
+                    Button btnModifier = new Button("✏️");
                     btnModifier.setStyle(
                             "-fx-background-color: #3498db;" +
                                     "-fx-text-fill: white;" +
@@ -101,7 +101,7 @@ public class BackofficeController {
                     );
                     btnModifier.setOnAction(e -> modifierPublication(p));
 
-                    Button btnSupprimer = new Button("ðŸ—‘");
+                    Button btnSupprimer = new Button("🗑️");
                     btnSupprimer.setStyle(
                             "-fx-background-color: #e74c3c;" +
                                     "-fx-text-fill: white;" +
@@ -141,7 +141,7 @@ public class BackofficeController {
             stage.setScene(new Scene(root));
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
-            loadPublications(); // RafraÃ®chir aprÃ¨s modification
+            loadPublications(); // Rafraîchir après modification
         } catch (IOException e) {
             System.out.println("Erreur : " + e.getMessage());
         }
@@ -151,7 +151,7 @@ public class BackofficeController {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Confirmation");
         confirm.setHeaderText("Supprimer la publication ?");
-        confirm.setContentText("Cette action est irrÃ©versible.");
+        confirm.setContentText("Cette action est irréversible.");
         confirm.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 try {
@@ -217,7 +217,7 @@ public class BackofficeController {
                 } else {
                     Commentaire c = getTableView().getItems().get(getIndex());
 
-                    Button btnModifier = new Button("âœï¸");
+                    Button btnModifier = new Button("✏️");
                     btnModifier.setStyle(
                             "-fx-background-color: #3498db;" +
                                     "-fx-text-fill: white;" +
@@ -226,7 +226,7 @@ public class BackofficeController {
                     );
                     btnModifier.setOnAction(e -> modifierCommentaire(c));
 
-                    Button btnSupprimer = new Button("ðŸ—‘");
+                    Button btnSupprimer = new Button("🗑️");
                     btnSupprimer.setStyle(
                             "-fx-background-color: #e74c3c;" +
                                     "-fx-text-fill: white;" +
@@ -275,7 +275,7 @@ public class BackofficeController {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Confirmation");
         confirm.setHeaderText("Supprimer le commentaire ?");
-        confirm.setContentText("Cette action est irrÃ©versible.");
+        confirm.setContentText("Cette action est irréversible.");
         confirm.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 try {

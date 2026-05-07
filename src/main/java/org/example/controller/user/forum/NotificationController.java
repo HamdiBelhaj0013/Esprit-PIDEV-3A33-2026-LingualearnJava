@@ -49,7 +49,7 @@ public class NotificationController {
         );
 
         // ICONE
-        Label icone = new Label(n.getType().equals("like") ? "ðŸ‘" : "ðŸ’¬");
+        Label icone = new Label(n.getType().equals("like") ? "👍" : "💬");
         icone.setStyle("-fx-font-size: 20px;");
 
         // MESSAGE + DATE
@@ -62,7 +62,7 @@ public class NotificationController {
         );
         message.setWrapText(true);
 
-        Label date = new Label("ðŸ• " + n.getDate().toLocalTime()
+        Label date = new Label("🕐 " + n.getDate().toLocalTime()
                 .toString().substring(0, 5) + " - " +
                 n.getDate().toLocalDate().toString());
         date.setStyle("-fx-font-size: 10px; -fx-text-fill: #65676b;");
@@ -71,7 +71,7 @@ public class NotificationController {
 
         // POINT ROUGE si non lue
         if (!n.isLue()) {
-            Label point = new Label("â—");
+            Label point = new Label("●");
             point.setStyle("-fx-text-fill: #3b5bdb; -fx-font-size: 10px;");
             card.getChildren().addAll(icone, info, point);
         } else {

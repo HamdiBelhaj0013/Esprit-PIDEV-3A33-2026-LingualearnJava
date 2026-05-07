@@ -1,6 +1,5 @@
 package org.example.controller.user.forum;
 
-
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -43,7 +42,7 @@ public class AjouterPublicationController {
 
     @FXML
     public void initialize() {
-        // Validation en temps rÃ©el
+        // Validation en temps réel
         titreField.textProperty().addListener((obs, old, val) -> validerTitre());
         contenuArea.textProperty().addListener((obs, old, val) -> validerContenu());
     }
@@ -51,17 +50,17 @@ public class AjouterPublicationController {
     private boolean validerTitre() {
         String titre = titreField.getText().trim();
         if (titre.isEmpty()) {
-            titreError.setText("âš  Le titre est obligatoire.");
+            titreError.setText("⚠ Le titre est obligatoire.");
             titreField.getStyleClass().removeAll("field-valid");
             titreField.getStyleClass().add("field-error");
             return false;
         } else if (titre.length() < 3) {
-            titreError.setText("âš  Le titre doit contenir au moins 3 caractÃ¨res.");
+            titreError.setText("⚠ Le titre doit contenir au moins 3 caractères.");
             titreField.getStyleClass().removeAll("field-valid");
             titreField.getStyleClass().add("field-error");
             return false;
         } else if (titre.length() > 100) {
-            titreError.setText("âš  Le titre ne doit pas dÃ©passer 100 caractÃ¨res.");
+            titreError.setText("⚠ Le titre ne doit pas dépasser 100 caractères.");
             titreField.getStyleClass().removeAll("field-valid");
             titreField.getStyleClass().add("field-error");
             return false;
@@ -76,12 +75,12 @@ public class AjouterPublicationController {
     private boolean validerContenu() {
         String contenu = contenuArea.getText().trim();
         if (contenu.isEmpty()) {
-            contenuError.setText("âš  Le contenu est obligatoire.");
+            contenuError.setText("⚠ Le contenu est obligatoire.");
             contenuArea.getStyleClass().removeAll("field-valid");
             contenuArea.getStyleClass().add("field-error");
             return false;
         } else if (contenu.length() < 10) {
-            contenuError.setText("âš  Le contenu doit contenir au moins 10 caractÃ¨res.");
+            contenuError.setText("⚠ Le contenu doit contenir au moins 10 caractères.");
             contenuArea.getStyleClass().removeAll("field-valid");
             contenuArea.getStyleClass().add("field-error");
             return false;
@@ -134,7 +133,7 @@ public class AjouterPublicationController {
                 publicationController.loadPublications();
             }
 
-            showAlert(Alert.AlertType.INFORMATION, "SuccÃ¨s", "Publication ajoutÃ©e avec succÃ¨s !");
+            showAlert(Alert.AlertType.INFORMATION, "Succès", "Publication ajoutée avec succès !");
             fermerFenetre();
 
         } catch (Exception e) {
@@ -148,12 +147,12 @@ public class AjouterPublicationController {
         String contenu = contenuArea.getText().trim();
 
         if (titre.isEmpty() && contenu.isEmpty()) {
-            ameliorerStatus.setText("âš ï¸ Veuillez saisir un titre ou un contenu avant d'amÃ©liorer.");
+            ameliorerStatus.setText("⚠️ Veuillez saisir un titre ou un contenu avant d'améliorer.");
             return;
         }
 
         ameliorerBtn.setDisable(true);
-        ameliorerStatus.setText("â³ AmÃ©lioration en cours...");
+        ameliorerStatus.setText("⏳ Amélioration en cours...");
 
         new Thread(() -> {
             try {
@@ -164,12 +163,12 @@ public class AjouterPublicationController {
                 Platform.runLater(() -> {
                     titreField.setText(result[0]);
                     contenuArea.setText(result[1]);
-                    ameliorerStatus.setText("âœ… Publication amÃ©liorÃ©e par l'IA !");
+                    ameliorerStatus.setText("✅ Publication améliorée par l'IA !");
                     ameliorerBtn.setDisable(false);
                 });
             } catch (Exception e) {
                 Platform.runLater(() -> {
-                    ameliorerStatus.setText("âŒ Erreur IA : " + e.getMessage());
+                    ameliorerStatus.setText("❌ Erreur IA : " + e.getMessage());
                     ameliorerBtn.setDisable(false);
                 });
             }
@@ -193,6 +192,3 @@ public class AjouterPublicationController {
         alert.showAndWait();
     }
 }
-
-
-

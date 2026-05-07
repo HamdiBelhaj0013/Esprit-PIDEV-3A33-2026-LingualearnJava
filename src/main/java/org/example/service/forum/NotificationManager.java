@@ -9,7 +9,7 @@ public class NotificationManager {
     private static NotificationManager instance;
     private List<Notification> notifications = new ArrayList<>();
     private Runnable onNewNotification;
-    private Runnable onBadgeUpdate; // callback lÃ©ger, juste pour le badge
+    private Runnable onBadgeUpdate; // callback lÃÂ©ger, juste pour le badge
 
     private NotificationManager() {}
 
@@ -37,10 +37,10 @@ public class NotificationManager {
 
     public int getNombreNonLues() { return getNonLues().size(); }
 
-    /** Marque toutes lues SANS dÃ©clencher le callback onNewNotification */
+    /** Marque toutes lues SANS dÃÂ©clencher le callback onNewNotification */
     public void marquerToutesLues() {
         for (Notification n : notifications) n.setLue(true);
-        // Mettre Ã  jour uniquement le badge, pas le toast
+        // Mettre ÃÂ  jour uniquement le badge, pas le toast
         if (onBadgeUpdate != null) {
             javafx.application.Platform.runLater(onBadgeUpdate);
         }
@@ -48,7 +48,7 @@ public class NotificationManager {
 
     public void setOnNewNotification(Runnable callback) { this.onNewNotification = callback; }
 
-    /** Callback appelÃ© uniquement lors d'un changement de badge (marquer lues) */
+    /** Callback appelÃÂ© uniquement lors d'un changement de badge (marquer lues) */
     public void setOnBadgeUpdate(Runnable callback) { this.onBadgeUpdate = callback; }
 }
 

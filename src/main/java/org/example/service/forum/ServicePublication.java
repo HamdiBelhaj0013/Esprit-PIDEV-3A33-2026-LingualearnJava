@@ -29,7 +29,7 @@ public class ServicePublication implements IServices<Publication> {
         ps.setString(4, p.getContenuPub());
         ps.setTimestamp(5, Timestamp.valueOf(p.getDatePub()));
         ps.executeUpdate();
-        System.out.println("âœ… Publication ajoutÃ©e !");
+        System.out.println("Ã¢Åâ¦ Publication ajoutÃÂ©e !");
     }
 
     @Override
@@ -46,7 +46,7 @@ public class ServicePublication implements IServices<Publication> {
 
     @Override
     public void delete(int id) throws Exception {
-        // Supprimer d'abord tous les commentaires associÃ©s Ã  cette publication
+        // Supprimer d'abord tous les commentaires associÃÂ©s ÃÂ  cette publication
         String deleteCommentsSql = "DELETE FROM commentaire WHERE publication_id=?";
         PreparedStatement psComments = cnx.prepareStatement(deleteCommentsSql);
         psComments.setInt(1, id);
@@ -58,7 +58,7 @@ public class ServicePublication implements IServices<Publication> {
         ps.setInt(1, id);
         ps.executeUpdate();
         
-        System.out.println("âœ… Publication et ses commentaires supprimÃ©s !");
+        System.out.println("Ã¢Åâ¦ Publication et ses commentaires supprimÃÂ©s !");
     }
 
     @Override
@@ -146,7 +146,7 @@ public class ServicePublication implements IServices<Publication> {
         p.setDatePub(rs.getTimestamp("date_pub").toLocalDateTime());
         p.setLikes(rs.getInt("likes"));
         p.setDislikes(rs.getInt("dislikes"));
-        p.setUtilisateurId(1); // statique jusqu'Ã  implÃ©mentation auth
+        p.setUtilisateurId(1); // statique jusqu'ÃÂ  implÃÂ©mentation auth
         try { p.setReportPub(rs.getInt("report_pub")); } catch (Exception ignored) {}
         return p;
     }

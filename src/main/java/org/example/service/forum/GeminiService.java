@@ -12,7 +12,7 @@ import javax.net.ssl.X509TrustManager;
 import java.security.cert.X509Certificate;
 
 /**
- * Service d'amÃ©lioration de publications via GROQ (LLaMA 3).
+ * Service d'amélioration de publications via GROQ (LLaMA 3).
  * Cle API dediee a l'amelioration, hardcodee ici.
  */
 public class GeminiService {
@@ -40,12 +40,12 @@ public class GeminiService {
     }
 
     /**
-     * AmÃ©liore le titre et le contenu d'une publication via GROQ.
+     * Améliore le titre et le contenu d'une publication via GROQ.
      * Retourne [nouveauTitre, nouveauContenu].
      */
     public String[] ameliorerPublication(String titre, String contenu) throws Exception {
-        String systemPrompt = "Tu es un expert en rÃ©daction. AmÃ©liore le titre et le contenu pour qu'ils soient clairs, engageants et professionnels. "
-                + "RÃ©ponds UNIQUEMENT en JSON valide avec les clÃ©s 'titre' et 'contenu'. Aucun texte avant ou aprÃ¨s le JSON.";
+        String systemPrompt = "Tu es un expert en rédaction. Améliore le titre et le contenu pour qu'ils soient clairs, engageants et professionnels. "
+                + "Réponds UNIQUEMENT en JSON valide avec les clés 'titre' et 'contenu'. Aucun texte avant ou après le JSON.";
 
         JSONObject body = new JSONObject();
         body.put("model", MODEL);
@@ -74,30 +74,29 @@ public class GeminiService {
                 .getJSONObject("message")
                 .getString("content");
 
-        // Nettoyer le markdown si prÃ©sent
+        // Nettoyer le markdown si présent
         rawText = rawText.replaceAll("(?s)```json\\s*", "")
                          .replaceAll("(?s)```\\s*", "")
                          .trim();
 
-        System.out.println("ðŸ” RÃ©ponse IA brute : " + rawText);
+        System.out.println("🤖 Réponse IA brute : " + rawText);
 
-        // Parser le JSON avec org.json (dÃ©jÃ  dans pom.xml)
+        // Parser le JSON avec org.json (déjà dans pom.xml)
         try {
             JSONObject json = new JSONObject(rawText);
             String newTitre = json.optString("titre", titre);
             String newContenu = json.optString("contenu", contenu);
 
-            System.out.println("âœ… AmÃ©lioration appliquÃ©e");
+            System.out.println("✅ Amélioration appliquée");
             System.out.println("  Titre : " + newTitre);
             System.out.println("  Contenu : " + newContenu);
 
             return new String[]{newTitre, newContenu};
 
         } catch (Exception e) {
-            System.out.println("âš ï¸ Erreur parsing JSON: " + e.getMessage());
+            System.out.println("⚠️ Erreur parsing JSON: " + e.getMessage());
             System.out.println("  Texte non valide: " + rawText);
             throw new Exception("Impossible de parser la reponse IA. Verifiez le format JSON.");
         }
     }
 }
-

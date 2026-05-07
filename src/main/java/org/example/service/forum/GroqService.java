@@ -13,17 +13,17 @@ import javax.net.ssl.X509TrustManager;
 import java.security.cert.X509Certificate;
 
 /**
- * Service d'appel Ã  l'API GROQ (LLaMA 3) â€” utilisÃ© pour le chatbot.
+ * Service d'appel à l'API GROQ (LLaMA 3) – utilisé pour le chatbot.
  */
 public class GroqService {
 
     private static final String API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
-    // ClÃ© de secours â€” fonctionne mÃªme sans variable d'environnement
+    // Clé de secours – fonctionne même sans variable d'environnement
     private static final String FALLBACK_API_KEY =
             "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";
 
-    // Plusieurs modÃ¨les testÃ©s en cascade si l'un est indisponible
+    // Plusieurs modèles testés en cascade si l'un est indisponible
     private static final String[] MODELS = {
             "llama-3.3-70b-versatile",
             "llama-3.1-8b-instant",
@@ -58,7 +58,7 @@ public class GroqService {
     private final List<String[]> history = new ArrayList<>();
 
     /**
-     * Envoie un message et retourne la rÃ©ponse (avec historique de conversation).
+     * Envoie un message et retourne la réponse (avec historique de conversation).
      */
     public String chat(String systemPrompt, String userMessage) {
         String apiKey = resolveApiKey();
@@ -88,30 +88,30 @@ public class GroqService {
                     return reply;
                 }
 
-                System.out.println("âš ï¸ GROQ [" + model + "] code " + response.statusCode() + " : " + response.body());
+                System.out.println("⚠️ GROQ [" + model + "] code " + response.statusCode() + " : " + response.body());
 
-                // 400/404 â†’ modÃ¨le indisponible, tenter le suivant
-                // 401 â†’ clÃ© invalide, inutile de retenter
+                // 400/404 → modèle indisponible, tenter le suivant
+                // 401 → clé invalide, inutile de retenter
                 if (response.statusCode() == 401) {
-                    return "ClÃ© API GROQ invalide (401). Mettez Ã  jour FALLBACK_API_KEY dans GroqService.";
+                    return "Clé API GROQ invalide (401). Mettez à jour FALLBACK_API_KEY dans GroqService.";
                 }
                 if (response.statusCode() == 400 || response.statusCode() == 404) continue;
 
                 return "Service indisponible temporairement (code " + response.statusCode() + ").";
 
             } catch (Exception ignored) {
-                // Tenter le modÃ¨le suivant
+                // Tenter le modèle suivant
             }
         }
 
-        return "DÃ©solÃ©, impossible de joindre le service IA. VÃ©rifiez votre connexion.";
+        return "Désolé, impossible de joindre le service IA. Vérifiez votre connexion.";
     }
 
     public void clearHistory() {
         history.clear();
     }
 
-    // â”€â”€ RÃ©solution de la clÃ© API â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Résolution de la clé API ────────────────────────────────
 
     private String resolveApiKey() {
         String env = System.getenv("GROQ_API_KEY");
@@ -126,7 +126,7 @@ public class GroqService {
         return FALLBACK_API_KEY;
     }
 
-    // â”€â”€ Construction du JSON messages (avec historique) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Construction du JSON messages (avec historique) ─────────
 
     private String buildMessagesJson(String systemPrompt) {
         StringBuilder sb = new StringBuilder();
@@ -142,14 +142,14 @@ public class GroqService {
         return sb.toString();
     }
 
-    // â”€â”€ Extraction du contenu de la rÃ©ponse JSON â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Extraction du contenu de la réponse JSON ────────────────
 
     private String extractContent(String json) {
         try {
             int messageIndex = json.indexOf("\"message\"");
             int contentIdx = json.indexOf("\"content\":\"",
                     messageIndex >= 0 ? messageIndex : 0);
-            if (contentIdx < 0) return "Aucune rÃ©ponse gÃ©nÃ©rÃ©e.";
+            if (contentIdx < 0) return "Aucune réponse générée.";
             int start = contentIdx + 11;
             int end = json.indexOf("\"", start);
             while (end > 0 && json.charAt(end - 1) == '\\') {
@@ -160,11 +160,11 @@ public class GroqService {
                     .replace("\\\"", "\"")
                     .trim();
         } catch (Exception e) {
-            return "RÃ©ponse reÃ§ue, mais format inattendu.";
+            return "Réponse reçue, mais format inattendu.";
         }
     }
 
-    // â”€â”€ Ã‰chappement JSON â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Échappement JSON ─────────────────────────────────────────
 
     private String escapeJson(String s) {
         return s.replace("\\", "\\\\")

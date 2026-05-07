@@ -64,7 +64,7 @@ public class CommentaireController {
         addBox.setAlignment(Pos.CENTER_LEFT);
 
         TextField commentField = new TextField();
-        commentField.setPromptText("Ã‰crire un commentaire...");
+        commentField.setPromptText("Écrire un commentaire...");
         commentField.setStyle(
                 "-fx-background-radius: 20;" +
                         "-fx-border-radius: 20;" +
@@ -85,38 +85,37 @@ public class CommentaireController {
         envoyerBtn.setOnAction(e -> {
             String contenu = commentField.getText().trim();
             if (!contenu.isEmpty()) {
-                // â”€â”€ Bad word check â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                // ── Bad word check ──────────────────────────────────────
                 if (badWordChecker.containsBadWords(contenu)) {
                     Alert alert = new Alert(Alert.AlertType.WARNING);
-                    alert.setTitle("Commentaire inappropriÃ©");
-                    alert.setHeaderText("âš ï¸ Votre commentaire a Ã©tÃ© bloquÃ©");
-                    alert.setContentText("Votre commentaire contient des mots inappropriÃ©s et n'a pas Ã©tÃ© publiÃ©. Merci de respecter les rÃ¨gles de la communautÃ©.");
+                    alert.setTitle("Commentaire inapproprié");
+                    alert.setHeaderText("⚠️ Votre commentaire a été bloqué");
+                    alert.setContentText("Votre commentaire contient des mots inappropriés et n'a pas été publié. Merci de respecter les règles de la communauté.");
                     alert.showAndWait();
-                    // Envoyer email Ã  l'admin
+                    // Envoyer email à l'admin
                     ForumEmailService.sendBadWordWarning(contenu, publicationTitre);
                     commentField.clear();
                     return;
                 }
-                // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                 try {
-                    // âœ… Sauvegarde dans la DB
+                    // ✅ Sauvegarde dans la DB
                     Commentaire c = new Commentaire();
                     c.setContenuC(contenu);
                     c.setDateCom(LocalDateTime.now());
                     c.setPublicationId(publicationId);
                     serviceCommentaire.add(c);
                     NotificationManager.getInstance().ajouterNotification(
-                            "ðŸ’¬ Nouveau commentaire sur : \"" + publicationTitre + "\"",
+                            "💬 Nouveau commentaire sur : \"" + publicationTitre + "\"",
                             "commentaire",
                             publicationId
                     );
 
-                    // RafraÃ®chir la liste
+                    // Rafraîchir la liste
                     loadCommentaires();
                     commentField.clear();
-                    System.out.println("âœ… Commentaire enregistrÃ© !");
+                    System.out.println("✅ Commentaire enregistré !");
                 } catch (Exception ex) {
-                    System.out.println("âŒ Erreur : " + ex.getMessage());
+                    System.out.println("❌ Erreur : " + ex.getMessage());
                 }
             }
         });
@@ -143,7 +142,7 @@ public class CommentaireController {
                         "-fx-padding: 8 12;"
         );
 
-        Label avatar = new Label("ðŸ‘¤");
+        Label avatar = new Label("👤");
         avatar.setStyle("-fx-font-size: 14px;");
 
         VBox contentBox = new VBox(2);
@@ -160,7 +159,7 @@ public class CommentaireController {
         HBox.setHgrow(contentBox, Priority.ALWAYS);
 
         // BOUTON MODIFIER
-        Label modifier = new Label("âœï¸");
+        Label modifier = new Label("✏️");
         modifier.setStyle("-fx-font-size: 12px; -fx-text-fill: #3498db; -fx-cursor: hand;");
         modifier.setOnMouseClicked(e -> {
             TextInputDialog dialog = new TextInputDialog(c.getContenuC());
@@ -173,30 +172,30 @@ public class CommentaireController {
                         c.setContenuC(newContenu.trim());
                         serviceCommentaire.update(c);
                         contenuLabel.setText(newContenu.trim());
-                        System.out.println("âœ… Commentaire modifiÃ© !");
+                        System.out.println("✅ Commentaire modifié !");
                     } catch (Exception ex) {
-                        System.out.println("âŒ Erreur modification : " + ex.getMessage());
+                        System.out.println("❌ Erreur modification : " + ex.getMessage());
                     }
                 }
             });
         });
 
         // BOUTON SUPPRIMER
-        Label supprimer = new Label("ðŸ—‘");
+        Label supprimer = new Label("🗑️");
         supprimer.setStyle("-fx-font-size: 12px; -fx-text-fill: #e74c3c; -fx-cursor: hand;");
         supprimer.setOnMouseClicked(e -> {
             Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
             confirm.setTitle("Confirmation");
             confirm.setHeaderText("Supprimer le commentaire ?");
-            confirm.setContentText("Cette action est irrÃ©versible.");
+            confirm.setContentText("Cette action est irréversible.");
             confirm.showAndWait().ifPresent(response -> {
                 if (response == ButtonType.OK) {
                     try {
                         serviceCommentaire.delete(c.getId());
                         loadCommentaires();
-                        System.out.println("âœ… Commentaire supprimÃ© !");
+                        System.out.println("✅ Commentaire supprimé !");
                     } catch (Exception ex) {
-                        System.out.println("âŒ Erreur suppression : " + ex.getMessage());
+                        System.out.println("❌ Erreur suppression : " + ex.getMessage());
                     }
                 }
             });
@@ -206,6 +205,3 @@ public class CommentaireController {
         return commentCard;
     }
 }
-
-
-

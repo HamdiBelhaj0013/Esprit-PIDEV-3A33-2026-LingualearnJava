@@ -27,7 +27,7 @@ public class ServiceCommentaire implements IServices<Commentaire> {
                 : Timestamp.valueOf(LocalDateTime.now()));
         ps.setInt(3, c.getPublicationId());
         ps.executeUpdate();
-        System.out.println("âœ… Commentaire enregistrÃ© en DB !");
+        System.out.println("✅ Commentaire enregistré en DB !");
     }
 
     @Override
@@ -69,7 +69,7 @@ public class ServiceCommentaire implements IServices<Commentaire> {
         return null;
     }
 
-    // RÃ©cupÃ©rer les commentaires d'une publication
+    // Récupérer les commentaires d'une publication
     public List<Commentaire> getByPublicationId(int publicationId) throws Exception {
         List<Commentaire> list = new ArrayList<>();
         String sql = "SELECT * FROM commentaire WHERE publication_id=? ORDER BY date_com ASC";

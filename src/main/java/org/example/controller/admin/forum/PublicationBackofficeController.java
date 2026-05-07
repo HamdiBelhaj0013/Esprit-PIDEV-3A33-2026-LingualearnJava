@@ -75,7 +75,7 @@ public class PublicationBackofficeController {
             selectedPublication = null;
             updateKpis();
             applyFilters();
-            setStatus("Liste actualisÃ©e.", false);
+            setStatus("Liste actualisée.", false);
         } catch (Exception e) {
             showError("Chargement impossible", e.getMessage());
         }
@@ -135,7 +135,7 @@ public class PublicationBackofficeController {
         pageInfoLabel.setText((from + 1) + "-" + to + " / " + pagedSource.size());
     }
 
-    // â”€â”€â”€ Build one card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // --- Build one card -----------------------------------------------------------
     private VBox buildCard(Publication pub) {
         VBox card = new VBox(0);
         card.setPrefWidth(280);
@@ -143,7 +143,7 @@ public class PublicationBackofficeController {
         card.setStyle(isSelected(pub) ? CARD_SELECTED : CARD_DEFAULT);
         card.setCursor(javafx.scene.Cursor.HAND);
 
-        // â”€â”€ Image banner â”€â”€
+        // -- Image banner --
         StackPane imageBanner = new StackPane();
         imageBanner.setPrefHeight(170);
         imageBanner.setMinHeight(170);
@@ -181,7 +181,7 @@ public class PublicationBackofficeController {
         StackPane.setMargin(typeBadge, new Insets(10, 0, 0, 10));
         imageBanner.getChildren().add(typeBadge);
 
-        // â”€â”€ Body â”€â”€
+        // -- Body --
         VBox body = new VBox(6);
         body.setPadding(new Insets(12, 14, 10, 14));
 
@@ -193,7 +193,7 @@ public class PublicationBackofficeController {
 
         // Content preview
         String preview = pub.getContenuPub() != null && !pub.getContenuPub().isBlank()
-                ? (pub.getContenuPub().length() > 80 ? pub.getContenuPub().substring(0, 77) + "â€¦" : pub.getContenuPub())
+                ? (pub.getContenuPub().length() > 80 ? pub.getContenuPub().substring(0, 77) + "…" : pub.getContenuPub())
                 : "";
         Label contenu = new Label(preview);
         contenu.setStyle("-fx-font-size: 11.5px; -fx-text-fill: #64748b; -fx-wrap-text: true;");
@@ -205,22 +205,22 @@ public class PublicationBackofficeController {
         stats.setAlignment(Pos.CENTER_LEFT);
         stats.setPadding(new Insets(6, 0, 4, 0));
         stats.getChildren().addAll(
-            statChip("ðŸ‘ " + pub.getLikes(),    "#dcfce7", "#15803d"),
-            statChip("ðŸ‘Ž " + pub.getDislikes(), "#fef9c3", "#b45309"),
-            statChip("ðŸš¨ " + pub.getReportPub(),"#fee2e2", "#b91c1c")
+            statChip("👍 " + pub.getLikes(),    "#dcfce7", "#15803d"),
+            statChip("👎 " + pub.getDislikes(), "#fef9c3", "#b45309"),
+            statChip("🚨 " + pub.getReportPub(),"#fee2e2", "#b91c1c")
         );
 
         body.getChildren().addAll(titre, contenu, stats);
 
-        // â”€â”€ Action buttons â”€â”€
+        // -- Action buttons --
         HBox actions = new HBox(6);
         actions.setAlignment(Pos.CENTER);
         actions.setPadding(new Insets(2, 10, 12, 10));
 
-        Button btnVoir   = actionBtn("ðŸ‘ï¸", "#3b82f6");
-        Button btnEdit   = actionBtn("âœï¸", "#f59e0b");
-        Button btnComm   = actionBtn("ðŸ’¬", "#0ea5e9");
-        Button btnDel    = actionBtn("ðŸ—‘ï¸", "#ef4444");
+        Button btnVoir   = actionBtn("👁️", "#3b82f6");
+        Button btnEdit   = actionBtn("✏️", "#f59e0b");
+        Button btnComm   = actionBtn("💬", "#0ea5e9");
+        Button btnDel    = actionBtn("🗑️", "#ef4444");
 
         btnVoir.setOnAction(e -> { selectCard(pub); openShowFor(pub); });
         btnEdit.setOnAction(e -> { selectCard(pub); openEditFor(pub); });
@@ -259,17 +259,15 @@ public class PublicationBackofficeController {
         cardsPane.getChildren().forEach(node -> {
             if (node instanceof VBox) {
                 VBox c = (VBox) node;
-                // Find which pub this card represents via titre label
-                // Re-apply style based on selection
                 c.setStyle(CARD_DEFAULT);
             }
         });
         // Re-render page to highlight selected
         showPage(pagination.getCurrentPageIndex());
-        setStatus("SÃ©lectionnÃ© : " + pub.getTitrePub(), false);
+        setStatus("Sélectionné : " + pub.getTitrePub(), false);
     }
 
-    // â”€â”€â”€ Actions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // --- Actions ------------------------------------------------------------------
     private void openShowFor(Publication pub) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/admin/forum/fxml/publication_show.fxml"));
@@ -279,10 +277,10 @@ public class PublicationBackofficeController {
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.initOwner(cardsPane.getScene().getWindow());
-            stage.setTitle("DÃ©tails Publication");
+            stage.setTitle("Détails Publication");
             stage.setScene(new Scene(root));
             stage.showAndWait();
-        } catch (Exception e) { showError("Ouverture dÃ©tails impossible", e.getMessage()); }
+        } catch (Exception e) { showError("Ouverture détails impossible", e.getMessage()); }
     }
 
     private void openEditFor(Publication pub) {
@@ -309,7 +307,7 @@ public class PublicationBackofficeController {
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.initOwner(cardsPane.getScene().getWindow());
-            stage.setTitle("ðŸ’¬ Commentaires â€” " + pub.getTitrePub());
+            stage.setTitle("💬 Commentaires – " + pub.getTitrePub());
             stage.setScene(new Scene(root, 860, 620));
             stage.showAndWait();
             refresh();
@@ -328,11 +326,11 @@ public class PublicationBackofficeController {
         try {
             servicePublication.delete(pub.getId());
             refresh();
-            setStatus("Publication supprimÃ©e.", false);
+            setStatus("Publication supprimée.", false);
         } catch (Exception e) { showError("Suppression impossible", e.getMessage()); }
     }
 
-    // â”€â”€â”€ FXML actions (kept for FXML button bindings) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // --- FXML actions (kept for FXML button bindings) ----------------------------
     @FXML public void openAddPage() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/admin/forum/fxml/publication_new.fxml"));
@@ -355,7 +353,7 @@ public class PublicationBackofficeController {
         filterTypeCombo.getSelectionModel().selectFirst();
         minLikesField.clear();
         applyFilters();
-        setStatus("Filtres rÃ©initialisÃ©s.", false);
+        setStatus("Filtres réinitialisés.", false);
     }
 
     @FXML public void goToDashboard() { BackofficeNav.navigateToDashboard(cardsPane); }
@@ -368,7 +366,7 @@ public class PublicationBackofficeController {
         }
     }
 
-    // â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // --- Helpers ------------------------------------------------------------------
     private int getPageSize() {
         Integer v = pageSizeComboBox.getValue();
         return v == null || v <= 0 ? 6 : v;
@@ -392,10 +390,3 @@ public class PublicationBackofficeController {
         setStatus(header, true);
     }
 }
-
-
-
-
-
-
-

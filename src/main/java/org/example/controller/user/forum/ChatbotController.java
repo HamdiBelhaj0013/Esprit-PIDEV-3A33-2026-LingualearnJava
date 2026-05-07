@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * ContrÃ´leur du chatbot IA (widget flottant style Facebook Messenger).
+ * Contrôleur du chatbot IA (widget flottant style Facebook Messenger).
  */
 public class ChatbotController {
 
@@ -42,15 +42,15 @@ public class ChatbotController {
     private Button toggleBtn;
 
     /**
-     * CrÃ©e et retourne le widget chatbot complet (bouton flottant + fenÃªtre).
+     * Crée et retourne le widget chatbot complet (bouton flottant + fenêtre).
      */
     public StackPane buildWidget() {
         StackPane container = new StackPane();
         container.setPickOnBounds(false);
         container.setMouseTransparent(false);
 
-        // â”€â”€ BOUTON FLOTTANT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-        toggleBtn = new Button("ðŸ’¬");
+        // ── BOUTON FLOTTANT ────────────────────────────────────────
+        toggleBtn = new Button("💬");
         toggleBtn.setStyle(
             "-fx-background-color: #3b5bdb;" +
             "-fx-text-fill: white;" +
@@ -92,7 +92,7 @@ public class ChatbotController {
         StackPane.setAlignment(toggleBtn, Pos.BOTTOM_RIGHT);
         StackPane.setMargin(toggleBtn, new Insets(0, 20, 20, 0));
 
-        // â”€â”€ FENÃŠTRE CHAT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── FENÊTRE CHAT ──────────────────────────────────────────
         chatWidget = buildChatWindow();
         chatWidget.setVisible(false);
         chatWidget.setManaged(false);
@@ -127,20 +127,20 @@ public class ChatbotController {
             "-fx-background-radius: 16 16 0 0;"
         );
 
-        Label avatar = new Label("ðŸ¤–");
+        Label avatar = new Label("🤖");
         avatar.setStyle("-fx-font-size: 22px;");
 
         VBox headerText = new VBox(2);
         Label botName = new Label("LinguaBot");
         botName.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: white;");
-        Label botStatus = new Label("â— En ligne");
+        Label botStatus = new Label("🟢 En ligne");
         botStatus.setStyle("-fx-font-size: 11px; -fx-text-fill: #a5b4fc;");
         headerText.getChildren().addAll(botName, botStatus);
 
         Region headerSpacer = new Region();
         HBox.setHgrow(headerSpacer, Priority.ALWAYS);
 
-        Label closeBtn = new Label("âœ•");
+        Label closeBtn = new Label("✖");
         closeBtn.setStyle("-fx-font-size: 16px; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 4 8; -fx-background-radius: 50;");
         closeBtn.setOnMouseEntered(e -> closeBtn.setStyle("-fx-font-size: 16px; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 4 8; -fx-background-radius: 50; -fx-background-color: rgba(255,255,255,0.2);"));
         closeBtn.setOnMouseExited(e -> closeBtn.setStyle("-fx-font-size: 16px; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 4 8; -fx-background-radius: 50;"));
@@ -159,7 +159,7 @@ public class ChatbotController {
         VBox.setVgrow(scrollPane, Priority.ALWAYS);
 
         // Message de bienvenue
-        addBotMessage("ðŸ‘‹ Bonjour ! Je suis **LinguaBot**, votre assistant IA sur LinguaLearn.\nComment puis-je vous aider aujourd'hui ?");
+        addBotMessage("👋 Bonjour ! Je suis **LinguaBot**, votre assistant IA sur LinguaLearn.\nComment puis-je vous aider aujourd'hui ?");
 
         // Input area
         HBox inputArea = new HBox(8);
@@ -168,7 +168,7 @@ public class ChatbotController {
         inputArea.setStyle("-fx-background-color: white; -fx-background-radius: 0 0 16 16; -fx-border-color: #e4e6eb; -fx-border-width: 1 0 0 0;");
 
         inputField = new TextField();
-        inputField.setPromptText("Ã‰crivez votre message...");
+        inputField.setPromptText("Écrivez votre message...");
         inputField.setStyle(
             "-fx-background-radius: 20;" +
             "-fx-border-radius: 20;" +
@@ -180,7 +180,7 @@ public class ChatbotController {
         HBox.setHgrow(inputField, Priority.ALWAYS);
         inputField.setOnAction(e -> sendMessage());
 
-        Button sendBtn = new Button("âž¤");
+        Button sendBtn = new Button("➤");
         sendBtn.setStyle(
             "-fx-background-color: #3b5bdb;" +
             "-fx-text-fill: white;" +
@@ -203,7 +203,7 @@ public class ChatbotController {
         isOpen = !isOpen;
         chatWidget.setVisible(isOpen);
         chatWidget.setManaged(isOpen);
-        toggleBtn.setText(isOpen ? "âœ•" : "ðŸ’¬");
+        toggleBtn.setText(isOpen ? "✖" : "💬");
         if (isOpen) {
             Platform.runLater(() -> inputField.requestFocus());
         }
@@ -216,14 +216,13 @@ public class ChatbotController {
         inputField.clear();
         addUserMessage(text);
 
-        // Message "en train d'Ã©crire..."
-        Label typing = new Label("ðŸ¤– LinguaBot est en train d'Ã©crire...");
+        // Message "en train d'écrire..."
+        Label typing = new Label("🤖 LinguaBot est en train d'écrire...");
         typing.setStyle("-fx-font-size: 11px; -fx-text-fill: #65676b; -fx-padding: 4 12;");
         messageList.getChildren().add(typing);
         scrollToBottom();
 
-        // Appel API en thread sÃ©parÃ©
-        // Appel API en thread sÃ©parÃ©
+        // Appel API en thread séparé
         new Thread(() -> {
             String response = groqService.chat(SYSTEM_PROMPT, text);
             Platform.runLater(() -> {
@@ -256,7 +255,7 @@ public class ChatbotController {
         HBox wrapper = new HBox(8);
         wrapper.setAlignment(Pos.CENTER_LEFT);
 
-        Label avatar = new Label("ðŸ¤–");
+        Label avatar = new Label("🤖");
         avatar.setStyle("-fx-font-size: 16px;");
 
         Label bubble = new Label(text.replace("**", ""));
@@ -278,6 +277,4 @@ public class ChatbotController {
         Platform.runLater(() -> scrollPane.setVvalue(1.0));
     }
 }
-
-
 

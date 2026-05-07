@@ -1,6 +1,5 @@
 package org.example.controller.user.forum;
 
-
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
@@ -42,12 +41,12 @@ public class AjouterStoryController {
     private boolean validerTitre() {
         String titre = titreField.getText().trim();
         if (titre.isEmpty()) {
-            titreError.setText("âš  Le titre est obligatoire.");
+            titreError.setText("⚠ Le titre est obligatoire.");
             titreField.getStyleClass().removeAll("field-valid");
             titreField.getStyleClass().add("field-error");
             return false;
         } else if (titre.length() < 3) {
-            titreError.setText("âš  Le titre doit contenir au moins 3 caractÃ¨res.");
+            titreError.setText("⚠ Le titre doit contenir au moins 3 caractères.");
             titreField.getStyleClass().removeAll("field-valid");
             titreField.getStyleClass().add("field-error");
             return false;
@@ -62,7 +61,7 @@ public class AjouterStoryController {
     private boolean validerContenu() {
         String contenu = contenuArea.getText().trim();
         if (contenu.isEmpty()) {
-            contenuError.setText("âš  Le contenu est obligatoire.");
+            contenuError.setText("⚠ Le contenu est obligatoire.");
             contenuArea.getStyleClass().removeAll("field-valid");
             contenuArea.getStyleClass().add("field-error");
             return false;
@@ -99,7 +98,7 @@ public class AjouterStoryController {
         try {
             Publication p = new Publication();
             p.setTitrePub(titreField.getText().trim());
-            p.setTypePub("story"); // â† type story
+            p.setTypePub("story"); // → type story
             p.setLienPub(selectedImagePath);
             p.setContenuPub(contenuArea.getText().trim());
             p.setDatePub(LocalDateTime.now());
@@ -113,7 +112,7 @@ public class AjouterStoryController {
                 publicationController.loadStories();
             }
 
-            showAlert(Alert.AlertType.INFORMATION, "SuccÃ¨s", "Story ajoutÃ©e !");
+            showAlert(Alert.AlertType.INFORMATION, "Succès", "Story ajoutée !");
             fermerFenetre();
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Erreur", e.getMessage());
@@ -134,9 +133,4 @@ public class AjouterStoryController {
         alert.setContentText(message);
         alert.showAndWait();
     }
-
-
 }
-
-
-

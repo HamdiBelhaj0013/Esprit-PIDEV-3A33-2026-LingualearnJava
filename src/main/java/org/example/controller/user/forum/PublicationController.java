@@ -34,6 +34,7 @@ public class PublicationController {
     private int pageActuelle = 1;
     private final int PUBLICATIONS_PAR_PAGE = 5;
     private List<Publication> toutesPublications = new ArrayList<>();
+
     @FXML
     public void initialize() {
         loadStories();
@@ -43,7 +44,6 @@ public class PublicationController {
     public void loadPublications() {
         publicationsContainer.getChildren().clear();
         try {
-            // Charger uniquement les publications de type "post" (les stories restent dans la section stories)
             toutesPublications = servicePublication.getAll().stream()
                     .filter(p -> p.getTypePub() == null || !p.getTypePub().equalsIgnoreCase("story"))
                     .collect(java.util.stream.Collectors.toList());
@@ -60,10 +60,9 @@ public class PublicationController {
     }
 
     @FXML
-
     private void handleTri() {
         triCroissant = !triCroissant;
-        triIcon.setText(triCroissant ? "â†‘" : "â†“");
+        triIcon.setText(triCroissant ? "↑" : "↓");
         if (triCroissant) {
             toutesPublications.sort((a, b) -> a.getDatePub().compareTo(b.getDatePub()));
         } else {
@@ -74,7 +73,6 @@ public class PublicationController {
     }
 
     private VBox createPublicationCard(Publication p) {
-        // CARTE PRINCIPALE
         VBox card = new VBox(10);
         card.setMaxWidth(600);
         card.setPrefWidth(600);
@@ -89,10 +87,9 @@ public class PublicationController {
 
         // HEADER
         HBox header = new HBox(10);
-
         header.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
 
-        Label avatar = new Label("ðŸ‘¤");
+        Label avatar = new Label("👤");
         avatar.setStyle(
                 "-fx-background-color: #e4e6eb;" +
                         "-fx-background-radius: 50;" +
@@ -103,7 +100,7 @@ public class PublicationController {
         VBox userInfo = new VBox(2);
         Label nomUser = new Label("Utilisateur");
         nomUser.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #1c1e21;");
-        Label date = new Label("ðŸ“… " + p.getDatePub().toLocalDate().toString());
+        Label date = new Label("📅 " + p.getDatePub().toLocalDate().toString());
         date.setStyle("-fx-font-size: 11px; -fx-text-fill: #65676b;");
         userInfo.getChildren().addAll(nomUser, date);
 
@@ -111,7 +108,7 @@ public class PublicationController {
         HBox.setHgrow(headerSpacer, Priority.ALWAYS);
 
         // BOUTON MODIFIER
-        Label modifier = new Label("âœï¸");
+        Label modifier = new Label("✏️");
         modifier.setStyle("-fx-font-size: 16px; -fx-text-fill: #3498db; -fx-cursor: hand; -fx-padding: 5; -fx-background-radius: 50;");
         modifier.setOnMouseEntered(e -> modifier.setStyle("-fx-font-size: 16px; -fx-text-fill: #2980b9; -fx-cursor: hand; -fx-padding: 5; -fx-background-color: #eaf4fb; -fx-background-radius: 50;"));
         modifier.setOnMouseExited(e -> modifier.setStyle("-fx-font-size: 16px; -fx-text-fill: #3498db; -fx-cursor: hand; -fx-padding: 5; -fx-background-radius: 50;"));
@@ -132,7 +129,7 @@ public class PublicationController {
         });
 
         // BOUTON SUPPRIMER
-        Label supprimer = new Label("ðŸ—‘");
+        Label supprimer = new Label("🗑️");
         supprimer.setStyle("-fx-font-size: 16px; -fx-text-fill: #e74c3c; -fx-cursor: hand; -fx-padding: 5; -fx-background-radius: 50;");
         supprimer.setOnMouseEntered(e -> supprimer.setStyle("-fx-font-size: 16px; -fx-text-fill: #c0392b; -fx-cursor: hand; -fx-padding: 5; -fx-background-color: #fdecea; -fx-background-radius: 50;"));
         supprimer.setOnMouseExited(e -> supprimer.setStyle("-fx-font-size: 16px; -fx-text-fill: #e74c3c; -fx-cursor: hand; -fx-padding: 5; -fx-background-radius: 50;"));
@@ -140,7 +137,7 @@ public class PublicationController {
             Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
             confirm.setTitle("Confirmation");
             confirm.setHeaderText("Supprimer la publication ?");
-            confirm.setContentText("Cette action est irrÃ©versible.");
+            confirm.setContentText("Cette action est irréversible.");
             confirm.showAndWait().ifPresent(response -> {
                 if (response == ButtonType.OK) {
                     try {
@@ -178,7 +175,7 @@ public class PublicationController {
                     card.getChildren().add(imageView);
                 }
             } catch (Exception e) {
-                System.out.println("Image non trouvÃ©e : " + e.getMessage());
+                System.out.println("Image non trouvée : " + e.getMessage());
             }
         }
 
@@ -186,8 +183,8 @@ public class PublicationController {
         Region separator = new Region();
         separator.setStyle("-fx-background-color: #e4e6eb; -fx-pref-height: 1;");
 
-        // â”€â”€ REACTIONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-        // Ã‰tat du vote : 0 = rien, 1 = liked, -1 = disliked
+        // ── REACTIONS ──────────────────────────────────────────────
+        // ── État du vote : 0 = rien, 1 = liked, -1 = disliked
         final int[] etatVote = {0};
 
         // Styles
@@ -198,10 +195,10 @@ public class PublicationController {
         final String DISLIKE_ACTIVE  = "-fx-font-size: 14px; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 6 14; -fx-background-radius: 20; -fx-background-color: #e74c3c; -fx-font-weight: bold;";
         final String DISLIKE_HOVER   = "-fx-font-size: 14px; -fx-text-fill: #e74c3c; -fx-cursor: hand; -fx-padding: 6 14; -fx-background-radius: 20; -fx-background-color: #fdecea;";
 
-        Label likes = new Label("ðŸ‘  " + p.getLikes());
+        Label likes = new Label("👍  " + p.getLikes());
         likes.setStyle(LIKE_DEFAULT);
 
-        Label dislikes = new Label("ðŸ‘Ž  " + p.getDislikes());
+        Label dislikes = new Label("👎  " + p.getDislikes());
         dislikes.setStyle(DISLIKE_DEFAULT);
 
         // Barre ratio likes / dislikes
@@ -210,66 +207,66 @@ public class PublicationController {
 
         javafx.scene.layout.StackPane ratioBar = buildRatioBar(ratioLikes, 200, 6);
 
-        // â”€â”€ Like click â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── Like click ──────────────────────────────────────────────
         likes.setOnMouseClicked(e -> {
             try {
                 if (etatVote[0] == 1) {
                     // Annuler le like
                     servicePublication.unlikePublication(p.getId());
                     p.setLikes(p.getLikes() - 1);
-                    likes.setText("ðŸ‘  " + p.getLikes());
+                    likes.setText("👍  " + p.getLikes());
                     likes.setStyle(LIKE_DEFAULT);
                     etatVote[0] = 0;
                 } else {
-                    // Si dislikÃ© â†’ annuler d'abord
+                    // Si disliké → annuler d'abord
                     if (etatVote[0] == -1) {
                         servicePublication.undislikePublication(p.getId());
                         p.setDislikes(p.getDislikes() - 1);
-                        dislikes.setText("ðŸ‘Ž  " + p.getDislikes());
+                        dislikes.setText("👎  " + p.getDislikes());
                         dislikes.setStyle(DISLIKE_DEFAULT);
                     }
                     servicePublication.like(p.getId());
                     p.setLikes(p.getLikes() + 1);
-                    likes.setText("ðŸ‘  " + p.getLikes());
+                    likes.setText("👍  " + p.getLikes());
                     likes.setStyle(LIKE_ACTIVE);
                     etatVote[0] = 1;
                     NotificationManager.getInstance().ajouterNotification(
-                            "ðŸ‘ Quelqu'un a aimÃ© votre publication : \"" + p.getTitrePub() + "\"",
+                            "👍 Quelqu'un a aimé votre publication : \"" + p.getTitrePub() + "\"",
                             "like", p.getId()
                     );
                 }
-                // Mettre Ã  jour la barre ratio
+                // Mettre à jour la barre ratio
                 updateRatioBar(ratioBar, p.getLikes(), p.getDislikes());
             } catch (Exception ex) {
                 System.out.println("Erreur like : " + ex.getMessage());
             }
         });
 
-        // â”€â”€ Dislike click â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── Dislike click ──────────────────────────────────────────
         dislikes.setOnMouseClicked(e -> {
             try {
                 if (etatVote[0] == -1) {
                     // Annuler le dislike
                     servicePublication.undislikePublication(p.getId());
                     p.setDislikes(p.getDislikes() - 1);
-                    dislikes.setText("ðŸ‘Ž  " + p.getDislikes());
+                    dislikes.setText("👎  " + p.getDislikes());
                     dislikes.setStyle(DISLIKE_DEFAULT);
                     etatVote[0] = 0;
                 } else {
-                    // Si likÃ© â†’ annuler d'abord
+                    // Si liké → annuler d'abord
                     if (etatVote[0] == 1) {
                         servicePublication.unlikePublication(p.getId());
                         p.setLikes(p.getLikes() - 1);
-                        likes.setText("ðŸ‘  " + p.getLikes());
+                        likes.setText("👍  " + p.getLikes());
                         likes.setStyle(LIKE_DEFAULT);
                     }
                     servicePublication.dislike(p.getId());
                     p.setDislikes(p.getDislikes() + 1);
-                    dislikes.setText("ðŸ‘Ž  " + p.getDislikes());
+                    dislikes.setText("👎  " + p.getDislikes());
                     dislikes.setStyle(DISLIKE_ACTIVE);
                     etatVote[0] = -1;
                     NotificationManager.getInstance().ajouterNotification(
-                            "ðŸ‘Ž Quelqu'un a dislikÃ© votre publication : \"" + p.getTitrePub() + "\"",
+                            "👎 Quelqu'un a disliké votre publication : \"" + p.getTitrePub() + "\"",
                             "dislike", p.getId()
                     );
                 }
@@ -279,14 +276,14 @@ public class PublicationController {
             }
         });
 
-        // â”€â”€ Hover effects â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── Hover effects ──────────────────────────────────────────
         likes.setOnMouseEntered(e -> { if (etatVote[0] != 1)  likes.setStyle(LIKE_HOVER); });
         likes.setOnMouseExited(e  -> { if (etatVote[0] != 1)  likes.setStyle(LIKE_DEFAULT); });
         dislikes.setOnMouseEntered(e -> { if (etatVote[0] != -1) dislikes.setStyle(DISLIKE_HOVER); });
         dislikes.setOnMouseExited(e  -> { if (etatVote[0] != -1) dislikes.setStyle(DISLIKE_DEFAULT); });
 
-        // â”€â”€ TOGGLE COMMENTAIRES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-        Label toggleCommentaires = new Label("ðŸ’¬ Commenter");
+        // ── TOGGLE COMMENTAIRES ────────────────────────────────────
+        Label toggleCommentaires = new Label("💬 Commenter");
         toggleCommentaires.setStyle("-fx-font-size: 13px; -fx-text-fill: #65676b; -fx-cursor: hand; -fx-padding: 6 14; -fx-background-radius: 20; -fx-background-color: #f0f2f5;");
         toggleCommentaires.setOnMouseEntered(e -> toggleCommentaires.setStyle("-fx-font-size: 13px; -fx-text-fill: #1c1e21; -fx-cursor: hand; -fx-padding: 6 14; -fx-background-radius: 20; -fx-background-color: #e4e6eb;"));
         toggleCommentaires.setOnMouseExited(e  -> toggleCommentaires.setStyle("-fx-font-size: 13px; -fx-text-fill: #65676b; -fx-cursor: hand; -fx-padding: 6 14; -fx-background-radius: 20; -fx-background-color: #f0f2f5;"));
@@ -294,7 +291,7 @@ public class PublicationController {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        Label partager = new Label("â†— Partager");
+        Label partager = new Label("↗ Partager");
         partager.setStyle("-fx-font-size: 13px; -fx-text-fill: #65676b; -fx-cursor: hand; -fx-padding: 6 14; -fx-background-radius: 20; -fx-background-color: #f0f2f5;");
         partager.setOnMouseEntered(e -> partager.setStyle("-fx-font-size: 13px; -fx-text-fill: #1c1e21; -fx-cursor: hand; -fx-padding: 6 14; -fx-background-radius: 20; -fx-background-color: #e4e6eb;"));
         partager.setOnMouseExited(e  -> partager.setStyle("-fx-font-size: 13px; -fx-text-fill: #65676b; -fx-cursor: hand; -fx-padding: 6 14; -fx-background-radius: 20; -fx-background-color: #f0f2f5;"));
@@ -313,7 +310,7 @@ public class PublicationController {
             boolean visible = commentairesSection.isVisible();
             commentairesSection.setVisible(!visible);
             commentairesSection.setManaged(!visible);
-            toggleCommentaires.setText(visible ? "ðŸ’¬ Commenter" : "ðŸ’¬ Masquer");
+            toggleCommentaires.setText(visible ? "💬 Commenter" : "💬 Masquer");
         });
 
         card.getChildren().addAll(separator, ratioBar, reactions, commentairesSection);
@@ -341,7 +338,7 @@ public class PublicationController {
         return bar;
     }
 
-    /** Met Ã  jour la largeur de la barre ratio aprÃ¨s un vote */
+    /** Met à jour la largeur de la barre ratio après un vote */
     private void updateRatioBar(javafx.scene.layout.StackPane bar, int newLikes, int newDislikes) {
         int total = newLikes + newDislikes;
         double ratio = total > 0 ? (double) newLikes / total : 0.5;
@@ -360,7 +357,6 @@ public class PublicationController {
             java.util.List<Publication> all = keyword.isEmpty()
                     ? servicePublication.getAll()
                     : servicePublication.search(keyword);
-            // Exclure les stories du feed principal
             toutesPublications = all.stream()
                     .filter(p -> p.getTypePub() == null || !p.getTypePub().equalsIgnoreCase("story"))
                     .collect(java.util.stream.Collectors.toList());
@@ -375,6 +371,7 @@ public class PublicationController {
             System.out.println("Erreur recherche : " + e.getMessage());
         }
     }
+
     @FXML
     private void handleAjouter() {
         try {
@@ -437,12 +434,7 @@ public class PublicationController {
         card.setAlignment(javafx.geometry.Pos.CENTER);
         card.setPrefWidth(90);
 
-
-        // HEADER (icÃ´nes)
         HBox header = new HBox(5);
-        //header.setAlignment(javafx.geometry.Pos.TOP_RIGHT);
-
-
 
         card.setCursor(javafx.scene.Cursor.HAND);
 
@@ -472,7 +464,7 @@ public class PublicationController {
                 cercle.getChildren().add(img);
             }
         } else {
-            Label icon = new Label("ðŸ“–");
+            Label icon = new Label("🌐");
             icon.setStyle("-fx-font-size: 28px;");
             cercle.setStyle(cercle.getStyle() +
                     "-fx-background-color: linear-gradient(to bottom, #3b5bdb, #9b5de5);"
@@ -493,7 +485,6 @@ public class PublicationController {
     }
 
     private void voirStory(Publication s) {
-        // RÃ©cupÃ©rer toutes les stories
         List<Publication> stories = new ArrayList<>();
         try {
             stories.addAll(servicePublication.getAllStories());
@@ -508,40 +499,37 @@ public class PublicationController {
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
 
-        // Container principal
         VBox root = new VBox(0);
         root.setStyle("-fx-background-color: #1a1a2e;");
         root.setPrefWidth(420);
 
-        // Fonction pour afficher une story
         final List<Publication> finalStories = stories;
         Runnable[] afficherStory = {null};
         afficherStory[0] = () -> {
             root.getChildren().clear();
             Publication current = finalStories.get(index[0]);
 
-            // HEADER avec flÃ¨ches
+            // HEADER avec flèches
             HBox header = new HBox(10);
 
             // ICONES
-            Label modifier = new Label("âœï¸");
-            modifier.setStyle("-fx-font-size: 18px; -fx-text-fill: white; -fx-cursor: hand;");
-            modifier.setOnMouseClicked(e -> ouvrirModifierStory(current));
+            Label modifierStory = new Label("✏️");
+            modifierStory.setStyle("-fx-font-size: 18px; -fx-text-fill: white; -fx-cursor: hand;");
+            modifierStory.setOnMouseClicked(e -> ouvrirModifierStory(current));
 
-            Label supprimer = new Label("ðŸ—‘");
-            supprimer.setStyle("-fx-font-size: 18px; -fx-text-fill: red; -fx-cursor: hand;");
-            supprimer.setOnMouseClicked(e -> {
+            Label supprimerStory = new Label("🗑️");
+            supprimerStory.setStyle("-fx-font-size: 18px; -fx-text-fill: red; -fx-cursor: hand;");
+            supprimerStory.setOnMouseClicked(e -> {
                 supprimerStory(current);
                 stage.close();
             });
-
 
             header.setAlignment(javafx.geometry.Pos.CENTER);
             header.setPadding(new Insets(10));
             header.setStyle("-fx-background-color: #1a1a2e;");
 
             // FLECHE GAUCHE
-            Label fleche_gauche = new Label("â®");
+            Label fleche_gauche = new Label("◮");
             fleche_gauche.setStyle(
                     "-fx-font-size: 24px;" +
                             "-fx-text-fill: white;" +
@@ -568,7 +556,7 @@ public class PublicationController {
             HBox.setHgrow(spacerR, Priority.ALWAYS);
 
             // FLECHE DROITE
-            Label fleche_droite = new Label("â¯");
+            Label fleche_droite = new Label("◯");
             fleche_droite.setStyle(
                     "-fx-font-size: 24px;" +
                             "-fx-text-fill: white;" +
@@ -585,7 +573,7 @@ public class PublicationController {
                 }
             });
 
-            header.getChildren().addAll(fleche_gauche, modifier, supprimer, spacerL, indicateur, spacerR, fleche_droite);
+            header.getChildren().addAll(fleche_gauche, modifierStory, supprimerStory, spacerL, indicateur, spacerR, fleche_droite);
 
             // CONTENU STORY
             VBox content = new VBox(12);
@@ -636,10 +624,10 @@ public class PublicationController {
             reactions.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
             reactions.setPadding(new Insets(5, 0, 0, 0));
 
-            Label likes = new Label("ðŸ‘  " + current.getLikes());
+            Label likes = new Label("👍  " + current.getLikes());
             likes.setStyle(S_LIKE_DEFAULT);
 
-            Label dislikes = new Label("ðŸ‘Ž  " + current.getDislikes());
+            Label dislikes = new Label("👎  " + current.getDislikes());
             dislikes.setStyle(S_DISLIKE_DEFAULT);
 
             int stTotal = current.getLikes() + current.getDislikes();
@@ -651,23 +639,23 @@ public class PublicationController {
                     if (etatVote[0] == 1) {
                         servicePublication.unlikePublication(current.getId());
                         current.setLikes(current.getLikes() - 1);
-                        likes.setText("ðŸ‘  " + current.getLikes());
+                        likes.setText("👍  " + current.getLikes());
                         likes.setStyle(S_LIKE_DEFAULT);
                         etatVote[0] = 0;
                     } else {
                         if (etatVote[0] == -1) {
                             servicePublication.undislikePublication(current.getId());
                             current.setDislikes(current.getDislikes() - 1);
-                            dislikes.setText("ðŸ‘Ž  " + current.getDislikes());
+                            dislikes.setText("👎  " + current.getDislikes());
                             dislikes.setStyle(S_DISLIKE_DEFAULT);
                         }
                         servicePublication.like(current.getId());
                         current.setLikes(current.getLikes() + 1);
-                        likes.setText("ðŸ‘  " + current.getLikes());
+                        likes.setText("👍  " + current.getLikes());
                         likes.setStyle(S_LIKE_ACTIVE);
                         etatVote[0] = 1;
                         NotificationManager.getInstance().ajouterNotification(
-                                "ðŸ‘ Quelqu'un a aimÃ© votre story : \"" + current.getTitrePub() + "\"",
+                                "👍 Quelqu'un a aimé votre story : \"" + current.getTitrePub() + "\"",
                                 "like", current.getId()
                         );
                     }
@@ -682,23 +670,23 @@ public class PublicationController {
                     if (etatVote[0] == -1) {
                         servicePublication.undislikePublication(current.getId());
                         current.setDislikes(current.getDislikes() - 1);
-                        dislikes.setText("ðŸ‘Ž  " + current.getDislikes());
+                        dislikes.setText("👎  " + current.getDislikes());
                         dislikes.setStyle(S_DISLIKE_DEFAULT);
                         etatVote[0] = 0;
                     } else {
                         if (etatVote[0] == 1) {
                             servicePublication.unlikePublication(current.getId());
                             current.setLikes(current.getLikes() - 1);
-                            likes.setText("ðŸ‘  " + current.getLikes());
+                            likes.setText("👍  " + current.getLikes());
                             likes.setStyle(S_LIKE_DEFAULT);
                         }
                         servicePublication.dislike(current.getId());
                         current.setDislikes(current.getDislikes() + 1);
-                        dislikes.setText("ðŸ‘Ž  " + current.getDislikes());
+                        dislikes.setText("👎  " + current.getDislikes());
                         dislikes.setStyle(S_DISLIKE_ACTIVE);
                         etatVote[0] = -1;
                         NotificationManager.getInstance().ajouterNotification(
-                                "ðŸ‘Ž Quelqu'un a dislikÃ© votre story : \"" + current.getTitrePub() + "\"",
+                                "👎 Quelqu'un a disliké votre story : \"" + current.getTitrePub() + "\"",
                                 "dislike", current.getId()
                         );
                     }
@@ -713,7 +701,7 @@ public class PublicationController {
             dislikes.setOnMouseEntered(e -> { if (etatVote[0] != -1) dislikes.setStyle(S_DISLIKE_HOVER); });
             dislikes.setOnMouseExited(e  -> { if (etatVote[0] != -1) dislikes.setStyle(S_DISLIKE_DEFAULT); });
 
-            Label toggleComment = new Label("ðŸ’¬ Commenter");
+            Label toggleComment = new Label("💬 Commenter");
             toggleComment.setStyle("-fx-font-size: 14px; -fx-text-fill: #aaa; -fx-cursor: hand; -fx-padding: 5 12; -fx-background-radius: 20; -fx-background-color: rgba(255,255,255,0.08);");
             toggleComment.setOnMouseEntered(e -> toggleComment.setStyle("-fx-font-size: 14px; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 5 12; -fx-background-radius: 20; -fx-background-color: rgba(255,255,255,0.15);"));
             toggleComment.setOnMouseExited(e  -> toggleComment.setStyle("-fx-font-size: 14px; -fx-text-fill: #aaa; -fx-cursor: hand; -fx-padding: 5 12; -fx-background-radius: 20; -fx-background-color: rgba(255,255,255,0.08);"));
@@ -733,7 +721,7 @@ public class PublicationController {
                 boolean visible = commentairesSection.isVisible();
                 commentairesSection.setVisible(!visible);
                 commentairesSection.setManaged(!visible);
-                toggleComment.setText(visible ? "ðŸ’¬ Commenter" : "ðŸ’¬ Masquer");
+                toggleComment.setText(visible ? "💬 Commenter" : "💬 Masquer");
             });
 
             content.getChildren().addAll(titre, contenu, sep, storyRatioBar, reactions, commentairesSection);
@@ -742,7 +730,6 @@ public class PublicationController {
             stage.sizeToScene();
         };
 
-        // Afficher la premiÃ¨re story
         afficherStory[0].run();
 
         ScrollPane scrollPane = new ScrollPane(root);
@@ -752,6 +739,7 @@ public class PublicationController {
         stage.setScene(new Scene(scrollPane, 420, 600));
         stage.show();
     }
+
     private void ouvrirAjouterStory() {
         try {
             FXMLLoader loader = new FXMLLoader(
@@ -779,12 +767,10 @@ public class PublicationController {
         int debut = (pageActuelle - 1) * PUBLICATIONS_PAR_PAGE;
         int fin = Math.min(debut + PUBLICATIONS_PAR_PAGE, total);
 
-        // Afficher les publications de la page
         for (int i = debut; i < fin; i++) {
             publicationsContainer.getChildren().add(createPublicationCard(toutesPublications.get(i)));
         }
 
-        // PAGINATION
         if (totalPages > 1) {
             publicationsContainer.getChildren().add(createPagination(totalPages));
         }
@@ -796,7 +782,7 @@ public class PublicationController {
         pagination.setPadding(new Insets(15, 0, 10, 0));
 
         // BOUTON PRECEDENT
-        Label precedent = new Label("â®");
+        Label precedent = new Label("◮");
         precedent.setStyle(
                 "-fx-font-size: 14px;" +
                         "-fx-cursor: hand;" +
@@ -812,41 +798,8 @@ public class PublicationController {
             });
         }
 
-        // NUMEROS DE PAGES
-        for (int i = 1; i <= totalPages; i++) {
-            final int numPage = i;
-            Label pageLbl = new Label(String.valueOf(i));
-            if (i == pageActuelle) {
-                pageLbl.setStyle(
-                        "-fx-font-size: 14px;" +
-                                "-fx-cursor: hand;" +
-                                "-fx-padding: 8 12;" +
-                                "-fx-background-radius: 8;" +
-                                "-fx-background-color: #3b5bdb;" +
-                                "-fx-text-fill: white;" +
-                                "-fx-font-weight: bold;"
-                );
-            } else {
-                pageLbl.setStyle(
-                        "-fx-font-size: 14px;" +
-                                "-fx-cursor: hand;" +
-                                "-fx-padding: 8 12;" +
-                                "-fx-background-radius: 8;" +
-                                "-fx-background-color: white;" +
-                                "-fx-text-fill: #3b5bdb;" +
-                                "-fx-border-color: #3b5bdb;" +
-                                "-fx-border-radius: 8;"
-                );
-                pageLbl.setOnMouseClicked(e -> {
-                    pageActuelle = numPage;
-                    afficherPage();
-                });
-            }
-            pagination.getChildren().add(pageLbl);
-        }
-
         // BOUTON SUIVANT
-        Label suivant = new Label("â¯");
+        Label suivant = new Label("◯");
         suivant.setStyle(
                 "-fx-font-size: 14px;" +
                         "-fx-cursor: hand;" +
@@ -862,10 +815,7 @@ public class PublicationController {
             });
         }
 
-        pagination.getChildren().addAll(precedent, suivant);
-
-        // RÃ©organiser : prÃ©cÃ©dent, pages, suivant
-        pagination.getChildren().clear();
+        // Réorganiser : précédent, pages, suivant
         pagination.getChildren().add(precedent);
         for (int i = 1; i <= totalPages; i++) {
             final int numPage = i;
@@ -906,13 +856,13 @@ public class PublicationController {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Confirmation");
         confirm.setHeaderText("Supprimer la story ?");
-        confirm.setContentText("Cette action est irrÃ©versible.");
+        confirm.setContentText("Cette action est irréversible.");
 
         confirm.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 try {
                     servicePublication.delete(s.getId());
-                    loadStories(); // refresh
+                    loadStories();
                 } catch (Exception e) {
                     System.out.println("Erreur suppression story : " + e.getMessage());
                 }
@@ -940,6 +890,7 @@ public class PublicationController {
             System.out.println("Erreur : " + e.getMessage());
         }
     }
+
     @FXML private void handleAccueil() {}
     @FXML private void handleDomaines() {}
     @FXML private void handleQuiz() {}
@@ -949,8 +900,4 @@ public class PublicationController {
     @FXML private void handleInscrire2() {}
     @FXML private void handleNotifications() {}
 }
-
-
-
-
 

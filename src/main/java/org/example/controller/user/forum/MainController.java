@@ -36,7 +36,7 @@ public class MainController {
 
     @FXML
     public void initialize() {
-        // ── Guard: user must be logged in ────────────────────────────────────
+        // ── Guard: user must be logged in ──────────────────────────
         if (SessionManager.getCurrentUser() == null) {
             contentArea.getChildren().clear();
             Label msg = new Label("🔒 Vous devez être connecté pour accéder au forum.");
@@ -45,7 +45,7 @@ public class MainController {
             return;
         }
 
-        // Nouvelle notification â†’ toast + rafraÃ®chissement si panel ouvert
+        // Nouvelle notification → toast + rafraîchissement si panel ouvert
         NotificationManager.getInstance().setOnNewNotification(() -> {
             updateBadge();
             List<Notification> all = NotificationManager.getInstance().getAll();
@@ -53,10 +53,9 @@ public class MainController {
             if (dropdownOpen) populateList();
         });
 
-        // Mise Ã  jour badge uniquement (aprÃ¨s marquerToutesLues)
+        // Mise à jour badge uniquement (après marquerToutesLues)
         NotificationManager.getInstance().setOnBadgeUpdate(this::updateBadge);
 
-        // Init sceneClickHandler as a stable field reference (fixes remove bug)
         sceneClickHandler = this::onSceneClick;
 
         // Init chatbot widget
@@ -66,17 +65,17 @@ public class MainController {
         loadView("/fxml/user/forum/fxml/PublicationView.fxml");
     }
 
-    // â”€â”€ Badge â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Badge ────────────────────────────────────────────────────
     private void updateBadge() {
         int count = NotificationManager.getInstance().getNombreNonLues();
-        btnNotifications.setText("ðŸ”” Notifications" + (count > 0 ? " (" + count + ")" : ""));
+        btnNotifications.setText("🔔 Notifications" + (count > 0 ? " (" + count + ")" : ""));
         btnNotifications.setStyle(count > 0
             ? "-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-background-radius: 6; -fx-font-size: 13px; -fx-cursor: hand; -fx-padding: 8 15;"
             : "-fx-background-color: #3b5bdb; -fx-text-fill: white; -fx-background-radius: 6; -fx-font-size: 13px; -fx-cursor: hand; -fx-padding: 8 15;"
         );
     }
 
-    // â”€â”€ Toggle dropdown â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Toggle dropdown ────────────────────────────────────────
     @FXML
     void toggleNotificationPanel() {
         if (dropdownOpen) {
@@ -87,7 +86,7 @@ public class MainController {
     }
 
     private void openDropdown() {
-        // Annuler une Ã©ventuelle animation de fermeture en cours
+        // Annuler une éventuelle animation de fermeture en cours
         if (closeAnim != null) { closeAnim.stop(); closeAnim = null; }
 
         populateList();
@@ -112,7 +111,7 @@ public class MainController {
         anim.play();
         dropdownOpen = true;
 
-        // Fermer si clic en dehors â€” enregistrÃ© une seule fois
+        // Fermer si clic en dehors – enregistré une seule fois
         javafx.application.Platform.runLater(() -> {
             if (contentArea.getScene() != null) {
                 contentArea.getScene().addEventFilter(
@@ -124,7 +123,6 @@ public class MainController {
     }
 
     private void onSceneClick(javafx.scene.input.MouseEvent e) {
-        // Ignorer si le clic est sur le dropdown ou le bouton
         if (notificationDropdown.isHover() || btnNotifications.isHover()) return;
         closeDropdown();
         if (contentArea.getScene() != null) {
@@ -139,7 +137,6 @@ public class MainController {
         if (!dropdownOpen) return;
         dropdownOpen = false;
 
-        // Retirer le filtre de clic
         if (contentArea.getScene() != null) {
             contentArea.getScene().removeEventFilter(
                 javafx.scene.input.MouseEvent.MOUSE_PRESSED,
@@ -167,7 +164,7 @@ public class MainController {
         closeAnim.play();
     }
 
-    // â”€â”€ Peupler la liste du dropdown â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Peupler la liste du dropdown ──────────────────────────
     private void populateList() {
         notificationDropdownList.getChildren().clear();
         List<Notification> notifications = NotificationManager.getInstance().getAll();
@@ -182,7 +179,7 @@ public class MainController {
             }
         }
 
-        // Marquer comme lues (dÃ©clenche seulement onBadgeUpdate, pas de toast)
+        // Marquer comme lues (déclenche seulement onBadgeUpdate, pas de toast)
         NotificationManager.getInstance().marquerToutesLues();
     }
 
@@ -198,7 +195,7 @@ public class MainController {
         item.setOnMouseEntered(e -> item.setStyle("-fx-background-color: #f0f2f5; -fx-background-radius: 10; -fx-cursor: hand;"));
         item.setOnMouseExited(e  -> item.setStyle("-fx-background-color: " + bgDefault + "; -fx-background-radius: 10; -fx-cursor: hand;"));
 
-        // IcÃ´ne colorÃ©e dans un cercle
+        // Icône colorée dans un cercle
         StackPane iconCircle = new StackPane();
         iconCircle.setMinSize(42, 42);
         iconCircle.setMaxSize(42, 42);
@@ -206,7 +203,7 @@ public class MainController {
                       : "dislike".equals(n.getType()) ? "#fde8e8"
                       : "#e8f5e9";
         iconCircle.setStyle("-fx-background-color: " + iconBg + "; -fx-background-radius: 50;");
-        Label icone = new Label("like".equals(n.getType()) ? "ðŸ‘" : "dislike".equals(n.getType()) ? "ðŸ‘Ž" : "ðŸ’¬");
+        Label icone = new Label("like".equals(n.getType()) ? "👍" : "dislike".equals(n.getType()) ? "👎" : "💬");
         icone.setStyle("-fx-font-size: 18px;");
         iconCircle.getChildren().add(icone);
 
@@ -221,14 +218,14 @@ public class MainController {
         message.setMaxWidth(240);
 
         Label dateLabel = new Label(
-            n.getDate().toLocalDate() + " Ã  " + n.getDate().toLocalTime().toString().substring(0, 5)
+            n.getDate().toLocalDate() + " à " + n.getDate().toLocalTime().toString().substring(0, 5)
         );
         dateLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #3b5bdb;");
         textBox.getChildren().addAll(message, dateLabel);
 
         // Point bleu si non lue
         if (wasUnread) {
-            Label dot = new Label("â—");
+            Label dot = new Label("●");
             dot.setStyle("-fx-text-fill: #3b5bdb; -fx-font-size: 9px;");
             item.getChildren().addAll(iconCircle, textBox, dot);
         } else {
@@ -237,14 +234,14 @@ public class MainController {
         return item;
     }
 
-    // â”€â”€ Bouton "Tout marquer lu" dans le header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Bouton "Tout marquer lu" dans le header ─────────────
     @FXML
     void handleMarquerLues() {
         NotificationManager.getInstance().marquerToutesLues();
         populateList();
     }
 
-    // â”€â”€ Toast (coin haut-droit, 3 sec) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Toast (coin haut-droit, 3 sec) ────────────────────────
     private void showNotificationPopup(Notification n) {
         HBox popup = new HBox(10);
         popup.setAlignment(Pos.CENTER_LEFT);
@@ -255,7 +252,7 @@ public class MainController {
             "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 12, 0, 0, 4);"
         );
 
-        Label icone = new Label("like".equals(n.getType()) ? "ðŸ‘" : "dislike".equals(n.getType()) ? "ðŸ‘Ž" : "ðŸ’¬");
+        Label icone = new Label("like".equals(n.getType()) ? "👍" : "dislike".equals(n.getType()) ? "👎" : "💬");
         icone.setStyle("-fx-font-size: 18px;");
 
         Label msg = new Label(n.getMessage());
@@ -280,7 +277,7 @@ public class MainController {
         fadeOut.play();
     }
 
-    // â”€â”€ Navigation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Navigation ────────────────────────────────────────────
     @FXML void showAccueil()    { closeDropdown(); loadView("/fxml/user/forum/fxml/PublicationView.fxml"); }
     @FXML void showRessources() { closeDropdown(); loadView("/fxml/user/forum/fxml/PublicationView.fxml"); }
     @FXML void showInscrire()   { closeDropdown(); }
@@ -298,9 +295,3 @@ public class MainController {
         }
     }
 }
-
-
-
-
-
-
