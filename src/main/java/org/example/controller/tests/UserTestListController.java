@@ -50,8 +50,10 @@ public class UserTestListController implements Initializable {
     private UserDashboardController dashboardController;
     private Stage                   currentStage;
     private List<TestResult>        cachedResults;
+    private Runnable                onBack;
+    private Scene                   originalScene; // ← NOUVEAU
+    private String                  originalTitle; // ← NOUVEAU
 
-    // ── Filtre langue/niveau ──────────────────────────────────────────────────
     private PlatformLanguage filterLanguage  = null;
     private String[]         filterLevels    = null;
     private String           filterLevelName = null;
@@ -60,6 +62,14 @@ public class UserTestListController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         setupTable();
         setupFilters();
+    }
+
+    public void setOnBack(Runnable onBack) { this.onBack = onBack; }
+
+    // ← NOUVEAU
+    public void setOriginalScene(Scene scene, String title) {
+        this.originalScene = scene;
+        this.originalTitle = title;
     }
 
     public void init(MockTestService service, User user,
@@ -89,8 +99,7 @@ public class UserTestListController implements Initializable {
     public PlatformLanguage        getFilterLanguage()      { return filterLanguage; }
     public String[]                getFilterLevels()        { return filterLevels; }
     public String                  getFilterLevelName()     { return filterLevelName; }
-
-    // ── Cache résultats ───────────────────────────────────────────────────────
+    public Runnable                getOnBack()              { return onBack; }
 
     private void loadResultsCache() {
         try { cachedResults = resultService.findByUserId(currentUser.getId()); }
@@ -103,8 +112,6 @@ public class UserTestListController implements Initializable {
         loadData();
         testsTable.refresh();
     }
-
-    // ── Setup table ───────────────────────────────────────────────────────────
 
     private void setupTable() {
         colType.setCellValueFactory(c     -> new SimpleStringProperty(c.getValue().getTestType()));
@@ -127,7 +134,6 @@ public class UserTestListController implements Initializable {
                 new SimpleObjectProperty<>(formatScore(getAverageScoreFromCache(c.getValue().getId()))));
         colAverageScore.setCellFactory(col -> buildScoreCell());
 
-        // Double-clic → aperçu du test
         testsTable.setOnMouseClicked(e -> {
             if (e.getClickCount() == 2 && testsTable.getSelectionModel().getSelectedItem() != null)
                 openTestPreview(testsTable.getSelectionModel().getSelectedItem());
@@ -177,8 +183,6 @@ public class UserTestListController implements Initializable {
     private String formatScore(Float score) {
         return score == null ? "—" : Math.round(score) + "%";
     }
-
-    // ── Filtres ───────────────────────────────────────────────────────────────
 
     private void setupFilters() {
         typeFilterCombo.setItems(FXCollections.observableArrayList(
@@ -231,8 +235,6 @@ public class UserTestListController implements Initializable {
         totalTestsLabel.setText(result.size() + " test(s) trouvé(s)");
     }
 
-    // ── Actions ───────────────────────────────────────────────────────────────
-
     @FXML
     private void handleViewTest(ActionEvent event) {
         MockTest sel = testsTable.getSelectionModel().getSelectedItem();
@@ -249,6 +251,8 @@ public class UserTestListController implements Initializable {
                 Parent root = loader.load();
                 LevelSelectController ctrl = loader.getController();
                 ctrl.init(service, currentUser, dashboardController, currentStage, filterLanguage);
+                ctrl.setOnBack(onBack);
+                ctrl.setOriginalScene(originalScene, originalTitle); // ← NOUVEAU
                 Scene scene = new Scene(root);
                 scene.getStylesheets().add(
                         getClass().getResource("/css/style.css").toExternalForm());
@@ -258,16 +262,19 @@ public class UserTestListController implements Initializable {
                 System.err.println("Erreur retour niveau : " + e.getMessage());
             }
         } else {
-            if (dashboardController != null) dashboardController.returnToDashboard();
+            if (onBack != null) {
+                // ← NOUVEAU : restaure la scène originale avant d'appeler onBack
+                if (originalScene != null) {
+                    currentStage.setScene(originalScene);
+                    currentStage.setTitle(originalTitle != null ? originalTitle : "LinguaLearn");
+                }
+                onBack.run();
+            } else if (dashboardController != null) {
+                dashboardController.returnToDashboard();
+            }
         }
     }
 
-    // ── Navigation ────────────────────────────────────────────────────────────
-
-    /**
-     * Navigue vers l'aperçu du test (TestPreviewView) au lieu de démarrer
-     * le test directement — l'utilisateur voit les infos et confirme avant.
-     */
     private void openTestPreview(MockTest test) {
         try {
             FXMLLoader loader = new FXMLLoader(
@@ -292,6 +299,8 @@ public class UserTestListController implements Initializable {
             Parent root = loader.load();
             UserTestListController ctrl = loader.getController();
             ctrl.init(service, currentUser, dashboardController, currentStage);
+            ctrl.setOnBack(onBack);
+            ctrl.setOriginalScene(originalScene, originalTitle); // ← NOUVEAU
             ctrl.refreshData();
             Scene scene = new Scene(root);
             scene.getStylesheets().add(

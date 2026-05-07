@@ -29,28 +29,28 @@ public class LanguageSelectController implements Initializable {
     private User                    currentUser;
     private UserDashboardController dashboardController;
     private Stage                   currentStage;
+    private Runnable                onBack;
 
-    /**
-     * MODE détermine la destination après sélection de langue :
-     *   TEST    → LevelSelectView (flux tests)
-     *   PROFILE → ProfileView (profil filtré par langue)
-     */
     public enum Mode { TEST, PROFILE }
     private Mode mode = Mode.TEST;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {}
 
-    /** Entrée depuis "Voir les tests disponibles" → mode TEST */
     public void init(MockTestService service, User user,
                      UserDashboardController dashboardController, Stage stage) {
         initWithMode(service, user, dashboardController, stage, Mode.TEST);
     }
 
-    /** Entrée depuis "Voir mon profil" → mode PROFILE */
     public void initForProfile(MockTestService service, User user,
                                UserDashboardController dashboardController, Stage stage) {
         initWithMode(service, user, dashboardController, stage, Mode.PROFILE);
+    }
+
+    public void initEmbedded(MockTestService service, User user,
+                             Runnable onBack, Stage stage) {
+        this.onBack = onBack;
+        initWithMode(service, user, null, stage, Mode.TEST);
     }
 
     private void initWithMode(MockTestService service, User user,
@@ -150,6 +150,7 @@ public class LanguageSelectController implements Initializable {
             Parent root = loader.load();
             LevelSelectController ctrl = loader.getController();
             ctrl.init(service, currentUser, dashboardController, currentStage, lang);
+            ctrl.setOnBack(onBack);
             Scene scene = new Scene(root);
             scene.getStylesheets().add(
                     getClass().getResource("/css/style.css").toExternalForm());
@@ -166,7 +167,6 @@ public class LanguageSelectController implements Initializable {
                     getClass().getResource("/fxml/tests/ProfileView.fxml"));
             Parent root = loader.load();
             ProfileController ctrl = loader.getController();
-            // Nouveau init avec langue
             ctrl.init(currentUser, dashboardController, currentStage, service, lang);
             Scene scene = new Scene(root);
             scene.getStylesheets().add(
@@ -183,6 +183,10 @@ public class LanguageSelectController implements Initializable {
 
     @FXML
     private void handleBack() {
-        if (dashboardController != null) dashboardController.returnToDashboard();
+        if (onBack != null) {
+            onBack.run(); // ← le onBack dans UserMainController restaure la scène + dashboard
+        } else if (dashboardController != null) {
+            dashboardController.returnToDashboard();
+        }
     }
 }

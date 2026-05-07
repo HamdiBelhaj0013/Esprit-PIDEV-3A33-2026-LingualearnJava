@@ -1,9 +1,9 @@
 package org.example.controller.user.user_managment;
 
-import org.example.controller.tests.MockTestDashboardController;
+import org.example.controller.tests.LanguageSelectController;
 import org.example.controller.user.user_managment.UserDashboardController;
-import org.example.controllers.FrontStatsController;
 import org.example.entity.User;
+import org.example.service.tests.MockTestService;
 import org.example.service.user_managment.NotificationService;
 import org.example.service.user_managment.UserService;
 import org.example.util.SessionManager;
@@ -39,7 +39,6 @@ public class UserMainController {
     @FXML private Button    btnExercices;
 
     private Button activeButton;
-
     private static UserMainController instance;
 
     private static final String[] AVATAR_COLORS = {
@@ -47,11 +46,7 @@ public class UserMainController {
     };
 
     @FXML
-    public void initialize() {
-        instance = this;
-    }
-
-    // ── Entry point from LoginController ─────────────────────────────────────
+    public void initialize() { instance = this; }
 
     public void setUser(User user) {
         SessionManager.setCurrentUser(user);
@@ -59,29 +54,21 @@ public class UserMainController {
         showDashboard(null);
     }
 
-    // ── Static refresh — called after profile save ────────────────────────────
-
     public static void refreshUserInfo() {
         if (instance == null) return;
         User user = SessionManager.getCurrentUser();
         if (user == null) return;
-
         instance.sidebarNameLabel.setText(user.getFullName());
         instance.sidebarEmailLabel.setText(user.getEmail());
-
         String initials = buildInitials(user);
         instance.sidebarAvatarLabel.setText(initials);
         instance.sidebarAvatarLabel.setStyle(
-                "-fx-background-color: " + avatarColor(user.getFullName()) + ";"
-        );
+                "-fx-background-color: " + avatarColor(user.getFullName()) + ";");
     }
 
-    // ── Sidebar navigation ────────────────────────────────────────────────────
-
     @FXML
-    private void showDashboard(ActionEvent event) {
+    public void showDashboard(ActionEvent event) {
         setActive(btnDashboard, "Dashboard");
-
         User cached = SessionManager.getCurrentUser();
         if (cached != null) {
             new UserService().findById(cached.getId()).ifPresent(fresh -> {
@@ -89,7 +76,6 @@ public class UserMainController {
                 refreshUserInfo();
             });
         }
-
         try {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/fxml/user/UserDashboard.fxml"));
@@ -175,14 +161,30 @@ public class UserMainController {
     }
 
     @FXML private void showMockTests(ActionEvent e) {
-        setActive((Button) e.getSource(), "International Tests");
+        setActive((Button) e.getSource(), "Mock Tests");
         try {
+            Stage stage = (Stage) contentArea.getScene().getWindow();
+            Scene dashboardScene = contentArea.getScene();
+
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/fxml/tests/UserTestListView.fxml"));
-            Node view = loader.load();
-            MockTestDashboardController ctrl = loader.getController();
-            ctrl.setContentArea(contentArea);
-            contentArea.getChildren().setAll(view);
+                    getClass().getResource("/fxml/tests/LanguageSelectView.fxml"));
+            Parent root = loader.load();
+            LanguageSelectController ctrl = loader.getController();
+            ctrl.initEmbedded(
+                    new MockTestService(),
+                    SessionManager.getCurrentUser(),
+                    () -> {
+                        stage.setScene(dashboardScene);
+                        stage.setTitle("LinguaLearn — Dashboard");
+                        showDashboard(null);
+                    },
+                    stage
+            );
+            Scene testScene = new Scene(root);
+            testScene.getStylesheets().add(
+                    getClass().getResource("/css/style.css").toExternalForm());
+            stage.setScene(testScene);
+            stage.setTitle("LinguaLearn — Langue");
         } catch (IOException ex) {
             Label err = new Label("Failed to load tests: " + ex.getMessage());
             err.setStyle("-fx-text-fill: #d63939;");
@@ -193,19 +195,15 @@ public class UserMainController {
     @FXML
     private void showNotifications(ActionEvent event) {
         setActive(btnNotifications, "Notifications");
-
         User user = SessionManager.getCurrentUser();
         VBox page = new VBox(16);
         page.setPadding(new javafx.geometry.Insets(24));
-
         Label title = new Label("Notifications");
         title.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1a1f36;");
         page.getChildren().add(title);
-
         try {
             List<NotificationService.NotifRow> notifs =
                     new NotificationService().getRecentForUser(user.getId());
-
             if (notifs.isEmpty()) {
                 Label empty = new Label("No notifications yet.");
                 empty.setStyle("-fx-text-fill: #6c7a99; -fx-font-size: 14px;");
@@ -216,19 +214,15 @@ public class UserMainController {
                     row.setStyle("-fx-background-color: #f8fafc; -fx-background-radius: 8; " +
                             "-fx-border-color: #e3e8f0; -fx-border-radius: 8; " +
                             "-fx-border-width: 1; -fx-padding: 10 14;");
-
                     Label typeLbl = new Label(n.type.toUpperCase());
                     typeLbl.setStyle("-fx-font-size: 11px; -fx-font-weight: bold; " +
                             "-fx-text-fill: #3b5bdb; -fx-background-color: #eef2ff; " +
                             "-fx-background-radius: 4; -fx-padding: 2 6;");
-
                     Label msgLbl = new Label(n.message);
                     msgLbl.setStyle("-fx-font-size: 13px; -fx-text-fill: #374151;");
                     msgLbl.setWrapText(true);
-
                     Label dateLbl = new Label(n.createdAt + (n.isRead ? " · Read" : " · Unread"));
                     dateLbl.setStyle("-fx-font-size: 11px; -fx-text-fill: #6c7a99;");
-
                     row.getChildren().addAll(typeLbl, msgLbl, dateLbl);
                     page.getChildren().add(row);
                 }
@@ -238,19 +232,15 @@ public class UserMainController {
             err.setStyle("-fx-text-fill: #d63939;");
             page.getChildren().add(err);
         }
-
         ScrollPane scroll = new ScrollPane(page);
         scroll.setFitToWidth(true);
         scroll.setStyle("-fx-background-color: transparent; -fx-background: transparent; " +
                 "-fx-border-width: 0;");
         VBox.setVgrow(scroll, javafx.scene.layout.Priority.ALWAYS);
-
         contentArea.getChildren().setAll(scroll);
     }
 
-    public void navigateToNotifications() {
-        showNotifications(null);
-    }
+    public void navigateToNotifications() { showNotifications(null); }
 
     @FXML
     private void showBilling(ActionEvent event) {
@@ -269,11 +259,7 @@ public class UserMainController {
         }
     }
 
-    public void navigateToBilling() {
-        showBilling(null);
-    }
-
-    // ── Logout ────────────────────────────────────────────────────────────────
+    public void navigateToBilling() { showBilling(null); }
 
     @FXML
     private void handleLogout(ActionEvent event) {
@@ -291,8 +277,6 @@ public class UserMainController {
             // nothing to do
         }
     }
-
-    // ── Helpers ───────────────────────────────────────────────────────────────
 
     void showComingSoonFor(String title) {
         topbarTitle.setText(title);
@@ -340,5 +324,4 @@ public class UserMainController {
         int idx = Math.abs(name.hashCode()) % AVATAR_COLORS.length;
         return AVATAR_COLORS[idx];
     }
-
 }

@@ -23,42 +23,48 @@ import java.util.ResourceBundle;
 
 public class LevelSelectController implements Initializable {
 
-    // ── FXML ──────────────────────────────────────────────────────────────────
     @FXML private Label userNameLabel;
     @FXML private Label languageTitleLabel;
     @FXML private Label languageSubtitleLabel;
 
-    // Beginner
     @FXML private VBox  beginnerCard;
     @FXML private Label beginnerCountLabel;
     @FXML private Label beginnerBestLabel;
     @FXML private Label beginnerLockLabel;
 
-    // Intermediate
     @FXML private VBox  intermediateCard;
     @FXML private Label intermediateCountLabel;
     @FXML private Label intermediateBestLabel;
     @FXML private Label intermediateLockLabel;
 
-    // Advanced
     @FXML private VBox  advancedCard;
     @FXML private Label advancedCountLabel;
     @FXML private Label advancedBestLabel;
     @FXML private Label advancedLockLabel;
 
-    // ── State ─────────────────────────────────────────────────────────────────
     private MockTestService         service;
     private TestResultService       resultService;
     private User                    currentUser;
     private UserDashboardController dashboardController;
     private Stage                   currentStage;
     private PlatformLanguage        selectedLanguage;
+    private Runnable                onBack;
+    private Scene                   originalScene; // ← NOUVEAU
+    private String                  originalTitle; // ← NOUVEAU
 
     private boolean intermediateUnlocked = false;
     private boolean advancedUnlocked     = false;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {}
+
+    public void setOnBack(Runnable onBack) { this.onBack = onBack; }
+
+    // ← NOUVEAU
+    public void setOriginalScene(Scene scene, String title) {
+        this.originalScene = scene;
+        this.originalTitle = title;
+    }
 
     public void init(MockTestService service, User user,
                      UserDashboardController dashboardController,
@@ -79,8 +85,6 @@ public class LevelSelectController implements Initializable {
         updateCardsUI();
     }
 
-    // ── Logique de verrouillage ───────────────────────────────────────────────
-
     private void checkUnlocks() {
         Long uid  = currentUser.getId();
         Long lang = selectedLanguage.getId();
@@ -100,7 +104,6 @@ public class LevelSelectController implements Initializable {
         intermediateCountLabel.setText(intermediate + " test(s) disponible(s)");
         advancedCountLabel.setText(advanced + " test(s) disponible(s)");
 
-        // Meilleur score
         Long lang = selectedLanguage.getId();
         float bestBeg   = resultService.bestScoreInLevels(currentUser.getId(), new String[]{"A1","A2"}, lang);
         float bestInter = resultService.bestScoreInLevels(currentUser.getId(), new String[]{"B1","B2"}, lang);
@@ -112,12 +115,10 @@ public class LevelSelectController implements Initializable {
     }
 
     private void updateCardsUI() {
-        // Beginner — toujours accessible
         styleCard(beginnerCard, true, "#2e7d32", "#e8f5e9", "#a5d6a7");
         beginnerLockLabel.setVisible(false);
         beginnerLockLabel.setManaged(false);
 
-        // Intermediate
         if (intermediateUnlocked) {
             styleCard(intermediateCard, true, "#e65100", "#fff3e0", "#ffcc80");
             intermediateLockLabel.setVisible(false);
@@ -129,7 +130,6 @@ public class LevelSelectController implements Initializable {
             intermediateLockLabel.setManaged(true);
         }
 
-        // Advanced
         if (advancedUnlocked) {
             styleCard(advancedCard, true, "#4527a0", "#ede7f6", "#ce93d8");
             advancedLockLabel.setVisible(false);
@@ -158,8 +158,6 @@ public class LevelSelectController implements Initializable {
                         "-fx-cursor: default; -fx-opacity: 0.75;"
         );
     }
-
-    // ── Handlers clics ────────────────────────────────────────────────────────
 
     @FXML
     private void handleBeginner(MouseEvent event) {
@@ -195,8 +193,6 @@ public class LevelSelectController implements Initializable {
         alert.showAndWait();
     }
 
-    // ── Navigation ────────────────────────────────────────────────────────────
-
     private void navigateToTests(String[] levels, String levelName) {
         try {
             FXMLLoader loader = new FXMLLoader(
@@ -205,6 +201,8 @@ public class LevelSelectController implements Initializable {
             UserTestListController ctrl = loader.getController();
             ctrl.initWithFilter(service, currentUser, dashboardController,
                     currentStage, selectedLanguage, levels, levelName);
+            ctrl.setOnBack(onBack);
+            ctrl.setOriginalScene(originalScene, originalTitle); // ← NOUVEAU
             Scene scene = new Scene(root);
             scene.getStylesheets().add(
                     getClass().getResource("/css/style.css").toExternalForm());
@@ -222,7 +220,11 @@ public class LevelSelectController implements Initializable {
                     getClass().getResource("/fxml/tests/LanguageSelectView.fxml"));
             Parent root = loader.load();
             LanguageSelectController ctrl = loader.getController();
-            ctrl.init(service, currentUser, dashboardController, currentStage);
+            if (onBack != null) {
+                ctrl.initEmbedded(service, currentUser, onBack, currentStage);
+            } else {
+                ctrl.init(service, currentUser, dashboardController, currentStage);
+            }
             Scene scene = new Scene(root);
             scene.getStylesheets().add(
                     getClass().getResource("/css/style.css").toExternalForm());
@@ -232,8 +234,6 @@ public class LevelSelectController implements Initializable {
             System.err.println("Erreur retour langue : " + e.getMessage());
         }
     }
-
-    // ── Helpers ───────────────────────────────────────────────────────────────
 
     private boolean isA(String level) { return "A1".equals(level) || "A2".equals(level); }
     private boolean isB(String level) { return "B1".equals(level) || "B2".equals(level); }

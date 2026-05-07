@@ -23,6 +23,7 @@ import org.example.service.tests.*;
 import javax.sound.sampled.*;
 import java.io.*;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -46,7 +47,6 @@ public class SpeakingTestController implements Initializable {
     @FXML private Button     btnEcouter;
     @FXML private VBox       historiqueBox;
     @FXML private ProgressBar progressBar;
-    // Cercles visualiseur
     @FXML private Circle     micCircle;
     @FXML private Circle     wave1;
     @FXML private Circle     wave2;
@@ -64,17 +64,15 @@ public class SpeakingTestController implements Initializable {
     private GroqSpeakingService    groqService;
     private AssemblyAIService      assemblyService;
 
-    private List<String>  questions      = new ArrayList<>();
-    private List<String>  reponses       = new ArrayList<>();
-    private int           questionIdx    = 0;
-    private boolean       enregistrement = false;
+    private List<String>  questions       = new ArrayList<>();
+    private List<String>  reponses        = new ArrayList<>();
+    private int           questionIdx     = 0;
+    private boolean       enregistrement  = false;
     private boolean       transcriptionOk = false;
 
-    // Audio
     private TargetDataLine microLine;
     private Path           tempWavFile;
 
-    // Animations
     private Timeline       pulseAnim;
     private Timeline       waveAnim;
     private Timeline       recBlinkAnim;
@@ -107,12 +105,47 @@ public class SpeakingTestController implements Initializable {
         chargerQuestions();
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    //  ANIMATIONS MICRO
-    // ─────────────────────────────────────────────────────────────────────────
+    // ── Fix encodage UTF-8 ────────────────────────────────────────────────────
+
+    private String fixEncoding(String text) {
+        if (text == null) return "";
+        try {
+            // Si le texte contient des séquences unicode échappées, on les décode
+            if (text.contains("\\u") || text.contains("u00")) {
+                StringBuilder sb = new StringBuilder();
+                int i = 0;
+                while (i < text.length()) {
+                    if (i + 4 < text.length() && text.charAt(i) == 'u'
+                            && isHex(text.charAt(i+1)) && isHex(text.charAt(i+2))
+                            && isHex(text.charAt(i+3)) && isHex(text.charAt(i+4))) {
+                        String hex = text.substring(i+1, i+5);
+                        sb.append((char) Integer.parseInt(hex, 16));
+                        i += 5;
+                    } else {
+                        sb.append(text.charAt(i));
+                        i++;
+                    }
+                }
+                return sb.toString();
+            }
+            // Sinon essaie de corriger l'encodage ISO -> UTF-8
+            byte[] bytes = text.getBytes(StandardCharsets.ISO_8859_1);
+            String utf8 = new String(bytes, StandardCharsets.UTF_8);
+            // Si le résultat contient des caractères valides, utilise-le
+            if (!utf8.contains("\uFFFD")) return utf8;
+            return text;
+        } catch (Exception e) {
+            return text;
+        }
+    }
+
+    private boolean isHex(char c) {
+        return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
+    }
+
+    // ── Animations micro ──────────────────────────────────────────────────────
 
     private void setupMicAnimations() {
-        // Pulse idle — légère pulsation du cercle central
         pulseAnim = new Timeline(
                 new KeyFrame(Duration.ZERO,
                         new KeyValue(micCircle.scaleXProperty(), 1.0),
@@ -127,7 +160,6 @@ public class SpeakingTestController implements Initializable {
         pulseAnim.setCycleCount(Timeline.INDEFINITE);
         pulseAnim.play();
 
-        // Ondes — expansions pendant enregistrement
         waveAnim = new Timeline(
                 new KeyFrame(Duration.ZERO,
                         new KeyValue(wave1.opacityProperty(), 0.3),
@@ -154,7 +186,6 @@ public class SpeakingTestController implements Initializable {
         );
         waveAnim.setCycleCount(Timeline.INDEFINITE);
 
-        // Clignotement indicateur REC
         recBlinkAnim = new Timeline(
                 new KeyFrame(Duration.ZERO,
                         new KeyValue(recIndicator.fillProperty(), Color.web("#ef4444"))),
@@ -168,7 +199,6 @@ public class SpeakingTestController implements Initializable {
 
     private void setModeRecording(boolean recording) {
         if (recording) {
-            // Rouge + ondes
             micCircle.setFill(Color.web("#ef4444"));
             micCircle.setStyle("-fx-effect:dropshadow(gaussian,rgba(239,68,68,0.7),24,0,0,0);");
             micIcon.setText("⏹");
@@ -181,7 +211,6 @@ public class SpeakingTestController implements Initializable {
             recBlinkAnim.play();
             setStatut("Enregistrement en cours...", "#ef4444");
         } else {
-            // Indigo + idle
             micCircle.setFill(Color.web("#6366f1"));
             micCircle.setStyle("-fx-effect:dropshadow(gaussian,rgba(99,102,241,0.7),24,0,0,0);");
             micIcon.setText("🎙");
@@ -192,7 +221,6 @@ public class SpeakingTestController implements Initializable {
             waveAnim.stop();
             recBlinkAnim.stop();
             recIndicator.setFill(Color.TRANSPARENT);
-            // Reset ondes
             wave1.setOpacity(0.3); wave1.setScaleX(1); wave1.setScaleY(1);
             wave2.setOpacity(0.15); wave2.setScaleX(1); wave2.setScaleY(1);
             wave3.setOpacity(0.08); wave3.setScaleX(1); wave3.setScaleY(1);
@@ -211,13 +239,12 @@ public class SpeakingTestController implements Initializable {
         setStatut("AssemblyAI transcrit votre reponse...", "#f59f00");
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    //  CHARGEMENT QUESTIONS
-    // ─────────────────────────────────────────────────────────────────────────
+    // ── Chargement questions ──────────────────────────────────────────────────
 
     private void chargerQuestions() {
         setStatut("Generation des questions par l'IA...", "#6366f1");
         questionLabel.setText("Preparation de votre examen...");
+        questionLabel.setWrapText(true);
         btnEnregistrer.setDisable(true);
 
         String niveau = currentTest.getLevel() != null ? currentTest.getLevel() : "B1";
@@ -227,21 +254,24 @@ public class SpeakingTestController implements Initializable {
         new Thread(() -> {
             try {
                 List<String> qs = groqService.genererQuestions(niveau, langue);
+                // Fix encodage sur chaque question
+                List<String> qsFixed = new ArrayList<>();
+                for (String q : qs) qsFixed.add(fixEncoding(q));
                 Platform.runLater(() -> {
-                    questions.addAll(qs);
+                    questions.addAll(qsFixed);
                     afficherQuestion(0);
                 });
             } catch (Exception e) {
                 Platform.runLater(() -> {
                     questions.addAll(List.of(
-                            "Pouvez-vous vous presenter brievement ?",
-                            "Parlez-moi de vos loisirs preferes.",
-                            "Decrivez votre journee ideale.",
+                            "Pouvez-vous vous présenter brièvement ?",
+                            "Parlez-moi de vos loisirs préférés.",
+                            "Décrivez votre journée idéale.",
                             "Que pensez-vous de l'apprentissage des langues ?",
                             "Quels sont vos projets pour l'avenir ?"
                     ));
                     afficherQuestion(0);
-                    setStatut("Questions par defaut (IA indisponible)", "#f59f00");
+                    setStatut("Questions par défaut (IA indisponible)", "#f59f00");
                 });
             }
         }).start();
@@ -252,6 +282,8 @@ public class SpeakingTestController implements Initializable {
         String q = questions.get(idx);
 
         questionLabel.setText(q);
+        questionLabel.setWrapText(true);
+        questionLabel.setStyle("-fx-font-size: 15px; -fx-text-fill: white; -fx-font-weight: bold;");
         progressLabel.setText(String.format("%02d / %02d", idx + 1, TOTAL_QUESTIONS));
         progressBar.setProgress((double) idx / TOTAL_QUESTIONS);
         transcriptionLabel.setText("");
@@ -264,18 +296,15 @@ public class SpeakingTestController implements Initializable {
         btnSuivant.setText(derniere ? "Terminer l'examen et voir le bilan" : "Question suivante");
 
         setModeRecording(false);
-        setStatut("Appuyez sur le micro pour repondre", "#94a3b8");
+        setStatut("Appuyez sur le micro pour répondre", "#94a3b8");
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    //  TTS — LECTURE DE LA QUESTION
-    // ─────────────────────────────────────────────────────────────────────────
+    // ── TTS ───────────────────────────────────────────────────────────────────
 
     @FXML
     private void handleEcouter() {
         if (questions.isEmpty() || questionIdx >= questions.size()) return;
         String texte = questions.get(questionIdx);
-        // Detecter la langue du test pour choisir la bonne voix TTS
         String langue = currentTest.getPlatformLanguage() != null
                 ? currentTest.getPlatformLanguage().getName().toLowerCase() : "francais";
 
@@ -284,7 +313,6 @@ public class SpeakingTestController implements Initializable {
 
         new Thread(() -> {
             try {
-                // Choisir la voix selon la langue
                 String voixFiltre;
                 if (langue.contains("fran") || langue.contains("french")) {
                     voixFiltre = "French";
@@ -300,7 +328,6 @@ public class SpeakingTestController implements Initializable {
 
                 String safeTexte = texte.replace("'", " ").replace("\"", " ");
 
-                // PowerShell : chercher voix de la bonne langue, sinon premiere voix disponible
                 String script = String.format(
                         "Add-Type -AssemblyName System.Speech; " +
                                 "$s = New-Object System.Speech.Synthesis.SpeechSynthesizer; " +
@@ -328,9 +355,7 @@ public class SpeakingTestController implements Initializable {
         }).start();
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    //  ENREGISTREMENT AUDIO
-    // ─────────────────────────────────────────────────────────────────────────
+    // ── Enregistrement audio ──────────────────────────────────────────────────
 
     @FXML
     private void handleEnregistrer() {
@@ -366,7 +391,7 @@ public class SpeakingTestController implements Initializable {
 
         } catch (Exception e) {
             LOG.severe("Erreur micro : " + e.getMessage());
-            setStatut("Impossible d'acceder au microphone", "#ef4444");
+            setStatut("Impossible d'accéder au microphone", "#ef4444");
         }
     }
 
@@ -383,7 +408,6 @@ public class SpeakingTestController implements Initializable {
                         new ByteArrayInputStream(audioData), format,
                         audioData.length / format.getFrameSize());
                 AudioSystem.write(wavStream, AudioFileFormat.Type.WAVE, tempWavFile.toFile());
-                LOG.info("Audio: " + audioData.length + " bytes -> " + tempWavFile);
             }
         } catch (Exception e) {
             LOG.severe("Erreur enregistrement : " + e.getMessage());
@@ -404,13 +428,12 @@ public class SpeakingTestController implements Initializable {
 
         new Thread(() -> {
             try {
-                // Verifier que le fichier existe et a du contenu
                 if (tempWavFile == null || !Files.exists(tempWavFile)
                         || Files.size(tempWavFile) < 1000) {
                     throw new Exception("Fichier audio trop court ou vide");
                 }
 
-                String texte = assemblyService.transcrire(tempWavFile, langue);
+                String texte = fixEncoding(assemblyService.transcrire(tempWavFile, langue));
                 Files.deleteIfExists(tempWavFile);
 
                 Platform.runLater(() -> {
@@ -422,7 +445,7 @@ public class SpeakingTestController implements Initializable {
                     btnEnregistrer.setDisable(false);
                     btnEcouter.setDisable(false);
                     setModeRecording(false);
-                    setStatut("Transcription reussie !", "#10b981");
+                    setStatut("Transcription réussie !", "#10b981");
                 });
             } catch (Exception e) {
                 LOG.severe("Erreur transcription : " + e.getMessage());
@@ -432,7 +455,6 @@ public class SpeakingTestController implements Initializable {
                     transcriptionLabel.setText("Transcription indisponible. Vous pouvez continuer.");
                     ajouterAuHistorique(questionIdx, reponseFallback);
                     transcriptionOk = false;
-                    // RESET COMPLET du bouton — bug corrige
                     btnEnregistrer.setDisable(false);
                     btnEcouter.setDisable(false);
                     btnSuivant.setDisable(false);
@@ -468,13 +490,10 @@ public class SpeakingTestController implements Initializable {
         historiqueBox.getChildren().add(item);
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    //  NAVIGATION
-    // ─────────────────────────────────────────────────────────────────────────
+    // ── Navigation ────────────────────────────────────────────────────────────
 
     @FXML
     private void handleSuivant() {
-        // Si pas de reponse enregistree pour cette question, ajouter placeholder
         if (reponses.size() <= questionIdx) {
             reponses.add("[Pas de reponse - Q" + (questionIdx+1) + "]");
         }
@@ -491,7 +510,7 @@ public class SpeakingTestController implements Initializable {
         btnSuivant.setDisable(true);
         btnEnregistrer.setDisable(true);
         btnEcouter.setDisable(true);
-        questionLabel.setText("Evaluation de votre performance par l'IA...");
+        questionLabel.setText("Évaluation de votre performance par l'IA...");
         setStatut("Groq analyse votre conversation...", "#6366f1");
         progressBar.setProgress(1.0);
         progressLabel.setText("Evaluation");
@@ -504,7 +523,6 @@ public class SpeakingTestController implements Initializable {
 
         new Thread(() -> {
             try {
-                // Completer les reponses manquantes
                 List<String> rep = new ArrayList<>(reponses);
                 while (rep.size() < questions.size())
                     rep.add("[Pas de reponse]");
@@ -525,7 +543,7 @@ public class SpeakingTestController implements Initializable {
                                 "Evaluation IA indisponible.",
                                 "Evaluation IA indisponible.",
                                 "Evaluation IA indisponible.",
-                                "Continuez a pratiquer l'oral.",
+                                "Continuez à pratiquer l'oral.",
                                 "Note automatique : 10/20."
                         );
                 sauvegarderResultat(fallback, reponses);
@@ -579,16 +597,14 @@ public class SpeakingTestController implements Initializable {
             scene.getStylesheets().add(
                     getClass().getResource("/css/style.css").toExternalForm());
             stage.setScene(scene);
-            stage.setTitle("LinguaLearn - Resultat Speaking");
+            stage.setTitle("LinguaLearn - Résultat Speaking");
         } catch (IOException e) {
             new Alert(Alert.AlertType.ERROR,
                     "Erreur navigation : " + e.getMessage()).showAndWait();
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    //  HELPERS
-    // ─────────────────────────────────────────────────────────────────────────
+    // ── Helpers ───────────────────────────────────────────────────────────────
 
     private void setStatut(String msg, String color) {
         if (statutLabel != null) {

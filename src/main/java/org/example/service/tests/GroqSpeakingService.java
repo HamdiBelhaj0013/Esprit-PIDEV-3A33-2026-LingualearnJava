@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 public class GroqSpeakingService {
 
     private static final Logger LOG      = Logger.getLogger(GroqSpeakingService.class.getName());
-    private static final String API_KEY  = "GROQ_API_KEY_HERE"; // ← même clé Groq que Writing
+    private static final String API_KEY  = "........................."; // ← même clé Groq que Writing
     private static final String ENDPOINT = "https://api.groq.com/openai/v1/chat/completions";
     private static final String MODEL    = "llama-3.3-70b-versatile";
 
