@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 public class GroqWritingService {
 
     private static final Logger LOG      = Logger.getLogger(GroqWritingService.class.getName());
-    private static final String API_KEY  = "......................"; // ← remplace par ta clé complète
+    private static final String API_KEY = System.getenv("GROQ_API_KEY");
     private static final String ENDPOINT = "https://api.groq.com/openai/v1/chat/completions";
     private static final String MODEL    = "llama-3.3-70b-versatile";
 

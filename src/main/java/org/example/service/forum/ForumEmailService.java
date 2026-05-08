@@ -1,44 +1,18 @@
 package org.example.service.forum;
 
-import jakarta.mail.*;
-import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.internet.MimeMessage;
-
-import java.util.Properties;
+import org.example.util.MailSender;
 
 /**
- * Service d'envoi d'emails via Gmail SMTP.
- * Utilise la configuration validée de l'équipe (benali.mohamedzh@gmail.com).
+ * Service d'envoi d'emails de modération — délègue à MailSender.
  */
 public class ForumEmailService {
 
-    private static final String SMTP_HOST  = "smtp.gmail.com";
-    private static final String SMTP_PORT  = "587";
-    private static final String FROM_EMAIL = "benali.mohamedzh@gmail.com";
-    private static final String FROM_PASS  = "rpgebnxdjqonnkcq";
     private static final String ADMIN_EMAIL = "asma.rhayem@esprit.tn";
 
     public static void sendBadWordWarning(String commentContent, String publicationTitle) {
         new Thread(() -> {
             try {
-                Properties props = new Properties();
-                props.put("mail.smtp.auth", "true");
-                props.put("mail.smtp.starttls.enable", "true");
-                props.put("mail.smtp.host", SMTP_HOST);
-                props.put("mail.smtp.port", SMTP_PORT);
-                props.put("mail.smtp.ssl.trust", SMTP_HOST);
-
-                Session session = Session.getInstance(props, new Authenticator() {
-                    @Override
-                    protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(FROM_EMAIL, FROM_PASS);
-                    }
-                });
-
-                Message message = new MimeMessage(session);
-                message.setFrom(new InternetAddress(FROM_EMAIL, "LinguaLearn Modération"));
-                message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(ADMIN_EMAIL));
-                message.setSubject("⚠️ Commentaire inapproprié détecté - LinguaLearn");
+                String subject = "⚠️ Commentaire inapproprié détecté - LinguaLearn";
 
                 String htmlBody = """
                     <!DOCTYPE html>
@@ -87,8 +61,7 @@ public class ForumEmailService {
                     </body></html>
                     """.formatted(publicationTitle, commentContent);
 
-                message.setContent(htmlBody, "text/html; charset=UTF-8");
-                Transport.send(message);
+                MailSender.send(ADMIN_EMAIL, subject, htmlBody);
                 System.out.println("✅ Email d'avertissement envoyé à " + ADMIN_EMAIL);
 
             } catch (Exception e) {
