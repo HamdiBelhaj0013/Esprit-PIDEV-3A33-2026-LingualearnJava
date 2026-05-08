@@ -488,50 +488,7 @@ mvn clean package
 java -jar target/lingualearn-1.0-jar-with-dependencies.jar
 ```
 
-### Database credentials
-
-Connection parameters are hardcoded in `src/main/java/org/example/util/MyDataBase.java` and in `src/main/resources/META-INF/persistence.xml`. Edit both files if your MySQL credentials differ from `root` / *(empty password)*.
-
----
-
-## Known Issues & Roadmap
-
-### Critical Security Issues (Fix Before Any Public Deployment)
-
-| Issue | Location | Risk |
-|-------|----------|------|
-| Gemini API key hardcoded in source | `GeminiService.java` | Quota abuse, billing attack |
-| Stripe test key hardcoded in source | `QuizStripeService.java` | Should be in environment variable |
-| Gmail app password hardcoded in source | `EmailService.java` | Email account compromise |
-| Pusher app ID / key / secret hardcoded | `PusherService.java` | Unauthorized notifications, channel hijacking |
-| MySQL root / empty password | `MyDataBase.java`, `persistence.xml` | Acceptable for local dev only |
-
-All of these credentials must be rotated and moved to environment variables before the project is deployed to any shared or internet-facing environment.
-
-### Architecture & Quality
-
-| Issue | Notes |
-|-------|-------|
-| Dual DB access strategies | `UserRepository` uses raw JDBC; `tests` module repositories use JPA. Should be unified |
-| Static session variables | `Session.java` uses static fields — not thread-safe, not serialisable |
-| In-memory OTP storage | Verification codes stored in a `HashMap` — lost on restart, no distributed-safe expiry |
-| No connection pooling on JDBC path | Single `java.sql.Connection` shared across all queries |
-| Blocking AI calls on UI thread | Some Ollama/Gemini calls must be wrapped in `Task<>` to avoid freezing the UI |
-| Hardcoded localhost URLs | `SUCCESS_URL`/`CANCEL_URL` in `StripeService` and embedded server ports are fixed |
-
-### Incomplete / Planned Features
-
-| Item | Status |
-|------|--------|
-| Email verification enforced before login | `isVerified` is stored but currently auto-set to `true` on registration |
-| Rate limiting on login attempts | Not implemented |
-| Full teacher role UI | `ROLE_TEACHER` exists in validation but no dedicated teacher dashboard |
-| Audit log for admin actions | Not implemented |
-| Internationalisation (i18n) | UI strings are in French and English, mixed |
-
----
-
 ## Contributors
 
 PIDEV 3A33 — Esprit School of Engineering, 2025–2026.  
-5-person team. Repository: [HamdiBelhaj0013/Esprit-PIDEV-3A33-2026-LingualearnJava](https://github.com/HamdiBelhaj0013/Esprit-PIDEV-3A33-2026-LingualearnJava)
+BrainUp. Repository: [HamdiBelhaj0013/Esprit-PIDEV-3A33-2026-LingualearnJava](https://github.com/HamdiBelhaj0013/Esprit-PIDEV-3A33-2026-LingualearnJava)
