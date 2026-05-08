@@ -1,559 +1,537 @@
 # LinguaLearn — Desktop Application
 
-A standalone JavaFX 21 desktop application for managing users on the LinguaLearn
-language-learning platform, using a MySQL database (`1lingualearn_db`).
+LinguaLearn is a full-featured **JavaFX 21 desktop application** for language learning, built as a school project (PIDEV 3A33 — Esprit, 2025–2026). It covers user management, course and quiz delivery, a community forum, support ticketing, mock examinations with anti-cheat proctoring, Stripe-based premium subscriptions, and AI-powered features powered by Gemini, Groq, and a locally-hosted Ollama model. The application uses a MySQL database (`1lingualearn_db`) accessed via raw JDBC and Hibernate/JPA and ships with four embedded HTTP servers that handle Stripe webhooks, certificate verification, hCaptcha serving, and anti-cheat event collection.
 
 ---
 
 ## Table of Contents
 
 1. [Tech Stack](#tech-stack)
-2. [Project Structure](#project-structure)
-3. [File Reference](#file-reference)
-4. [Database Schema](#database-schema)
-5. [Architecture](#architecture)
-6. [Connection Flow](#connection-flow)
-7. [Authentication & Role Routing](#authentication--role-routing)
-8. [Feature Status](#feature-status)
-9. [How to Run](#how-to-run)
+2. [Architecture Overview](#architecture-overview)
+3. [Project Structure](#project-structure)
+4. [Database Connection](#database-connection)
+5. [Feature Status](#feature-status)
+6. [External API Integration](#external-api-integration)
+7. [Security Practices](#security-practices)
+8. [How to Run](#how-to-run)
+9. [Known Issues & Roadmap](#known-issues--roadmap)
 
 ---
 
 ## Tech Stack
 
-| Layer | Technology | Version | Purpose |
-|-------|-----------|---------|---------|
-| Language | Java | 21 | Core language (records, pattern switch, sealed classes available) |
-| UI framework | JavaFX | 21 | FXML-based scene graph, CSS styling |
-| Build tool | Maven | 3.x | Dependency management, fat-JAR packaging |
-| Database | MySQL | 8.x | Persistent storage |
-| JDBC driver | mysql-connector-j | 8.3.0 | Raw JDBC connection to MySQL |
-| Password hashing | jbcrypt | 0.4 | BCrypt hashing for user passwords |
-| Bean Validation | hibernate-validator | 8.0.1.Final | `@NotBlank`, `@Size`, etc. on service-layer DTOs (no ORM) |
-| Validation API | jakarta.validation-api | 3.0.2 | API interfaces for bean validation |
-| EL support | jakarta.el | 4.0.2 | Required by Hibernate Validator for message expressions |
-| Logging | logback-classic | 1.5.13 | SLF4J backend |
-| Testing | junit-jupiter-api | 5.10.2 | Unit tests (test scope) |
+| Technology | Version | Role in Project |
+|-----------|---------|----------------|
+| Java | 21 | Core language |
+| JavaFX (`controls`, `fxml`, `web`, `media`) | 21 | UI framework — scene graph, FXML layouts, WebView for hCaptcha |
+| Maven | 3.x | Build tool, fat-JAR packaging |
+| MySQL | 8.x | Primary relational database (`1lingualearn_db`) |
+| `mysql-connector-j` | 8.3.0 | Raw JDBC driver |
+| `hibernate-core` | 6.4.4.Final | JPA/ORM (used for `User` + `LearningStats` entities via `EntityManagerFactory`) |
+| `jakarta.validation-api` | 3.0.2 | Bean validation API interfaces |
+| `hibernate-validator` | 8.0.1.Final | Bean validation implementation (`@NotBlank`, `@Size`, etc.) |
+| `jbcrypt` | 0.4 | BCrypt password hashing (12 rounds) |
+| `stripe-java` | 25.3.0 | Stripe payment processing and subscription management |
+| `pusher-java-client` | 2.4.0 | Real-time push notifications (support-ticket responses) |
+| `com.sun.mail` (jakarta.mail) | 2.0.1 | SMTP email for OTP and verification codes |
+| `itext7-core` | 7.2.5 | PDF certificate generation |
+| `zxing-core` + `zxing-javase` | 3.5.2 | QR code generation embedded in certificates |
+| `poi` + `poi-ooxml` | 5.0.0 | Excel report export |
+| `org.json` | 20240303 | JSON parsing for hCaptcha / Stripe responses |
+| `gson` | 2.10.1 | JSON serialisation for AI payloads |
+| `okhttp3` | 4.12.0 | HTTP client used by AI service calls |
+| `ikonli-javafx` + `ikonli-fontawesome5-pack` | 12.3.1 | Icon library for JavaFX UI |
+| `logback-classic` | 1.5.13 | SLF4J logging backend |
+| `junit-jupiter-api` | 5.10.2 | Unit tests (test scope) |
+| `javafx-maven-plugin` | 0.0.8 | `mvn javafx:run` launch |
+| `maven-assembly-plugin` | 3.6.0 | Fat-JAR with all dependencies |
+
+---
+
+## Architecture Overview
+
+The application is structured in a layered architecture inside the root package `org.example`.
+
+```
+┌────────────────────────────────────────────────────────────────┐
+│                      JavaFX UI Layer                          │
+│  70+ FXML files + CSS stylesheets  ←→  83 Controller classes  │
+└───────────────────────────┬────────────────────────────────────┘
+                            │ delegates to
+┌───────────────────────────▼────────────────────────────────────┐
+│                     Service Layer                              │
+│  45 service classes (UserService, MockTestService,            │
+│  GeminiService, GroqService, StripeService, …)                │
+│  ValidationService (static helpers)                           │
+└───────────────────────────┬────────────────────────────────────┘
+                            │ reads / writes via
+┌───────────────────────────▼────────────────────────────────────┐
+│                   Repository / DAO Layer                       │
+│  UserRepository (PreparedStatement + ResultSet)               │
+│  ReclamationDAO, SupportResponseDAO, DatabaseConnection       │
+│  JPA EntityManager (User, LearningStats entities)             │
+└───────────────────────────┬────────────────────────────────────┘
+                            │ uses
+┌───────────────────────────▼────────────────────────────────────┐
+│                  Infrastructure / Util                         │
+│  MyDataBase (JDBC Singleton)                                  │
+│  SessionManager, StageManager (navigation)                    │
+│  Session (static userId + role holder)                        │
+│  AppConfig (properties loader)                                │
+└────────────────────────────────────────────────────────────────┘
+```
+
+**Design rules enforced across the project:**
+- Controllers never contain SQL or business logic.
+- Repositories / DAOs own all JDBC calls and ResultSet mapping.
+- Services own validation, BCrypt, and multi-statement transactions.
+- Entities are plain POJOs (user management) or JPA-annotated classes (test module).
+
+**Four embedded HTTP servers** start at application launch and shut down on exit:
+
+| Server class | Port | Purpose |
+|---|---|---|
+| `CaptchaServer` | 18081 | Serves `captcha/captcha.html` over HTTP so JavaFX `WebView` can load it via `localhost` |
+| `AntiCheatApiServer` | 9091 | Receives proctoring events during mock tests |
+| `CertificateApiServer` | 9090 | Verifies certificate UUIDs for QR-code scanning |
+| `StripeWebhookServer` | 8000 | Processes Stripe payment lifecycle webhooks |
 
 ---
 
 ## Project Structure
 
 ```
-LingualearnJava/
-├── pom.xml                          Maven build descriptor
-├── README.md                        This file
-└── src/
-    └── main/
-        ├── java/org/example/
-        │   ├── App.java
-        │   ├── controller/
-        │   │   ├── LoginController.java
-        │   │   ├── RegisterController.java
-        │   │   ├── admin/
-        │   │   │   ├── AdminMainController.java
-        │   │   │   ├── DashboardViewController.java
-        │   │   │   ├── NotificationController.java
-        │   │   │   ├── StatsController.java
-        │   │   │   ├── UserDetailController.java
-        │   │   │   ├── UserFormController.java
-        │   │   │   └── UserListController.java
-        │   │   └── user/
-        │   │       ├── UserMainController.java
-        │   │       └── UserProfileController.java
-        │   ├── entity/
-        │   │   ├── User.java
-        │   │   └── LearningStats.java
-        │   ├── repository/
-        │   │   └── UserRepository.java
-        │   ├── service/
-        │   │   ├── IUserService.java
-        │   │   ├── UserService.java
-        │   │   └── NotificationService.java
-        │   ├── util/
-        │   │   ├── MyDataBase.java
-        │   │   ├── SessionManager.java
-        │   │   └── StageManager.java
-        │   └── validation/
-        │       └── ValidationService.java
-        └── resources/
-            ├── fxml/
-            │   ├── login.fxml
-            │   ├── Register.fxml
-            │   ├── admin/
-            │   │   ├── AdminMain.fxml
-            │   │   ├── DashboardView.fxml
-            │   │   ├── NotificationDialog.fxml
-            │   │   ├── StatsDialog.fxml
-            │   │   ├── UserDetailDialog.fxml
-            │   │   ├── UserFormDialog.fxml
-            │   │   └── UserListView.fxml
-            │   └── user/
-            │       ├── UserMain.fxml
-            │       └── UserProfileView.fxml
-            └── css/
-                ├── style.css
-                ├── admin.css
-                └── user.css
+src/main/java/org/example/
+├── App.java                          Application entry point
+├── controller/                       83 JavaFX controllers
+│   ├── LoginController.java
+│   ├── admin/
+│   │   ├── AdminMainController.java
+│   │   ├── DashboardViewController.java
+│   │   ├── UserListController.java
+│   │   ├── UserDetailController.java
+│   │   ├── UserFormController.java
+│   │   ├── StatsController.java
+│   │   ├── NotificationController.java
+│   │   ├── user_managment/           (6 controllers)
+│   │   ├── forum/                    (7 controllers)
+│   │   └── support-managment/        (3 controllers)
+│   └── user/
+│       ├── UserMainController.java
+│       ├── UserProfileController.java
+│       ├── user_managment/           (8 controllers)
+│       ├── forum/                    (7 controllers)
+│       └── support-managment/        (2 controllers)
+│   └── tests/                        (13 controllers)
+├── entity/
+│   ├── User.java                     JPA + POJO — users table
+│   ├── LearningStats.java            JPA — learning_stats table
+│   └── tests/
+│       ├── MockTest.java, TestQuestion.java, TestAnswer.java
+│       ├── TestResult.java, Certificate.java, PlatformLanguage.java
+├── entities/                         Non-JPA POJOs for other modules
+│   ├── Quiz.java, Exercice.java, Lesson.java, Course.java
+│   ├── FAQ.java, Rating.java
+│   ├── Reclamation.java, SupportResponse.java
+│   └── forum/  (Publication.java, Commentaire.java, Notification.java)
+├── repository/
+│   ├── user-managment/UserRepository.java   PreparedStatement DAO
+│   ├── support-managment/
+│   │   ├── DatabaseConnection.java
+│   │   ├── ReclamationDAO.java
+│   │   └── SupportResponseDAO.java
+│   └── tests/                        (6 JPA-based repositories)
+├── service/                          45 service classes
+│   ├── user_managment/
+│   │   ├── UserService.java, IUserService.java
+│   │   ├── EmailService.java, EmailVerificationService.java
+│   │   ├── PasswordResetService.java
+│   │   ├── StripeService.java, NotificationService.java
+│   ├── support-managment/            (10 classes inc. PusherService)
+│   ├── forum/                        (6 classes inc. GroqService)
+│   ├── tests/
+│   │   ├── MockTestService.java, CertificateService.java
+│   │   ├── AntiCheatGuard.java, AntiCheatApiServer.java
+│   │   ├── TestPerformanceAnalyzer.java
+│   │   ├── GroqSpeakingService.java, GroqWritingService.java
+│   │   └── (6 more)
+│   ├── ai/
+│   │   ├── OllamaService.java, AdminAiService.java
+│   │   ├── AiActionExecutor.java, UserDatasetBuilder.java
+│   │   └── AdminAiNotificationWriter.java
+│   ├── GeminiService.java
+│   ├── HCaptchaService.java
+│   └── QuizStripeService.java
+├── service_layer/                    CourseService, LessonService, etc.
+├── util/
+│   ├── MyDataBase.java               JDBC Singleton
+│   ├── Session.java                  Static userId + role holder
+│   ├── AppConfig.java                .properties loader
+│   └── user-managment/
+│       ├── SessionManager.java
+│       └── StageManager.java
+├── validation/
+│   └── user-managment/ValidationService.java
+└── webhook/
+    └── StripeWebhookServer.java
+
+src/main/resources/
+├── META-INF/persistence.xml          JPA persistence unit config
+├── fxml/                             70+ FXML screens
+│   ├── login.fxml, Register.fxml
+│   ├── ForgotPassword.fxml, NewPassword.fxml
+│   ├── VerifyEmail.fxml, VerifyOTP.fxml
+│   ├── admin/                        (12 FXML files)
+│   ├── user/                         (6 FXML files)
+│   ├── tests/                        (11 FXML files)
+│   └── modules/                      (6 FXML files)
+├── css/
+│   ├── style.css, styles.css
+│   ├── admin.css, user.css
+│   ├── backoffice.css, frontoffice.css
+│   └── ai-assistant.css
+└── captcha/captcha.html              hCaptcha HTML page
 ```
 
 ---
 
-## File Reference
+## Database Connection
 
-### Entry Point
+### Dual-access pattern
 
-#### `App.java`
-JavaFX `Application` subclass. Responsibilities:
-- `init()` — calls `MyDataBase.getInstance()` to open the JDBC connection at
-  startup so any configuration error surfaces immediately.
-- `start(Stage)` — registers the primary stage with `StageManager`, loads
-  `login.fxml`, and shows the window.
-- `stop()` — calls `MyDataBase.getInstance().closeConnection()` to cleanly
-  shut down the JDBC connection when the application exits.
+The project uses **two parallel DB access strategies**:
 
----
+**1. JDBC Singleton (`MyDataBase.java`)** — used by UserRepository, all DAOs, and the support-management module:
 
-### `util/` Package
-
-#### `MyDataBase.java`
-**Singleton JDBC connection.**
-
-```
-package org.example.util
-Pattern : classic Singleton (private constructor, static getInstance())
-Connection: DriverManager.getConnection(URL, USER, PASSWORD)
-URL  : jdbc:mysql://localhost:3306/1lingualearn_db
-User : root
-Pass : (empty)
-```
-
-- `getInstance()` — returns or creates the single instance.
-- `getConnection()` — returns the raw `java.sql.Connection`.
-- `closeConnection()` — closes the connection if open; prints
-  `"Connexion fermée !"`. Called by `App.stop()` on application exit.
-- Prints `"Connexion établie !"` to stdout on successful connect.
-- No connection pooling; no auto-reconnect. For a desktop app with a single
-  user this is intentional and sufficient.
-
-#### `SessionManager.java`
-**In-memory holder for the currently authenticated user.**
-
-- `setCurrentUser(User)` / `getCurrentUser()` — set/get after successful login.
-- `clearSession()` — called on logout; nulls the current user.
-
-#### `StageManager.java`
-**Centralised JavaFX scene switcher.**
-
-- `setPrimaryStage(Stage)` — called once from `App.start()`.
-- `switchScene(String fxmlPath)` — loads FXML, replaces current scene.
-- `switchScene(String fxmlPath, Consumer<C> init)` — same but lets the caller
-  initialise the controller before the scene becomes visible.
-
-Used by: `LoginController` (→ Register), `RegisterController` (→ Login).
-The dashboard navigation still uses direct `Stage` casting inside controllers.
-
----
-
-### `entity/` Package
-
-Both entities are **plain POJOs** — zero JPA annotations, zero Hibernate
-dependencies. The repository is solely responsible for reading and writing
-them via SQL.
-
-#### `User.java`
-  Called by `setSubscriptionPlan()`, `setSubscriptionExpiry()`, and explicitly
-  by `UserRepository.mapUser()` after all fields are loaded from the ResultSet.
-- `getRoles()` / `setRoles(List<String>)` — parse/serialize the JSON-array
-  format stored in the `roles` column.
-- `setRolesJson(String)` — sets the raw JSON string directly (used only by
-  the repository mapper).
-- `setId(Long)` / `setCreatedAt(LocalDateTime)` — needed by the repository
-  after INSERT returns a generated key.
-
-#### `LearningStats.java`
-
-| Field | Java type | DB column |
-|-------|-----------|-----------|
-| `id` | `Long` | `id` BIGINT AUTO |
-| `user` | `User` | `user_id` FK |
-| `totalXP` | `int` | `total_xp` |
-| `wordsLearned` | `int` | `words_learned` |
-| `totalMinutesStudied` | `int` | `total_minutes_studied` |
-| `lastStudySession` | `LocalDateTime` | `last_study_session` |
-
----
-
-### `repository/` Package
-
-#### `UserRepository.java`
-**All database access for users and learning stats.**
-Uses only `java.sql.PreparedStatement` and `java.sql.ResultSet`.
-Obtains its connection from `MyDataBase.getInstance().getConnection()`.
-
-| Method | SQL operation | Notes |
-|--------|--------------|-------|
-| `findById(Long)` | `SELECT … JOIN … WHERE u.id = ?` | Returns `Optional<User>` |
-| `findByEmail(String)` | `SELECT … JOIN … WHERE u.email = ?` | Returns `Optional<User>` |
-| `findAll()` | `SELECT … ORDER BY created_at DESC` | Full list |
-| `search(String)` | `WHERE LOWER(email/first/last) LIKE ?` | Case-insensitive |
-| `findByStatus(String)` | `WHERE u.status = ?` | |
-| `findExpiredSubscriptions()` | `WHERE is_premium=1 AND expiry < NOW()` | |
-| `findExpiringSubscriptions(LocalDateTime)` | `WHERE is_premium=1 AND expiry < ?` | Used by subscription checker |
-| `countAll()` | `SELECT COUNT(*)` | |
-| `countByStatus(String)` | `SELECT COUNT(*) WHERE status=?` | |
-| `countPremium()` | `SELECT COUNT(*) WHERE is_premium=1` | |
-| `register(User)` | duplicate check + `save()` | Throws `IllegalArgumentException` on duplicate email |
-| `save(User)` | INSERT or UPDATE | Branches on `user.getId() == null` |
-| `saveWithStats(User, LearningStats)` | INSERT user + INSERT stats | Single `setAutoCommit(false)` transaction |
-| `saveLearningStats(LearningStats)` | INSERT or UPDATE learning_stats | Branches on `stats.getId() == null` |
-| `delete(User)` | DELETE learning_stats + DELETE users | Single transaction |
-| `findAdvanced(…)` | Dynamic SQL with LIKE / WHERE / ORDER BY / LIMIT OFFSET | 7-param overload (with role + sort) |
-| `countAdvanced(…)` | Same filters, `COUNT(*)` only | Used for pagination |
-
-**Internal helpers:**
-- `mapUser(ResultSet)` — maps all `users` columns + LEFT JOIN `learning_stats`
-  columns into a `User` (and nested `LearningStats`) POJO.
-- `setTs(PreparedStatement, int, LocalDateTime)` — null-safe
-  `LocalDateTime → Timestamp` helper.
-- `bindParams(PreparedStatement, List<Object>)` — binds a dynamic parameter
-  list for advanced search queries.
-
----
-
-### `service/` Package
-
-#### `IUserService.java`
-Interface defining the public contract:
 ```java
-void registerUser(String firstName, String lastName, String email, String password);
-Optional<User> login(String email, String password);
-List<User> getAllUsers();
+// org.example.util.MyDataBase
+public class MyDataBase {
+    private static MyDataBase instance;
+    private Connection connection;
+
+    private final String URL      = "jdbc:mysql://localhost:3306/1lingualearn_db";
+    private final String USER     = "root";
+    private final String PASSWORD = "";         // empty for local dev
+
+    private MyDataBase() {
+        try {
+            connection = DriverManager.getConnection(URL, USER, PASSWORD);
+            System.out.println("Connexion établie !");
+        } catch (SQLException e) { e.printStackTrace(); }
+    }
+
+    public static MyDataBase getInstance() {
+        if (instance == null) instance = new MyDataBase();
+        return instance;
+    }
+
+    public Connection getConnection() { return connection; }
+    public void closeConnection() throws SQLException { connection.close(); }
+}
 ```
 
-#### `UserService.java`
-Implements `IUserService`. All business logic lives here.
+**2. JPA / Hibernate (`persistence.xml`)** — used by the tests module repositories:
 
-**Constructor:**
-- `UserService()` — creates a `UserRepository` and a `ValidationService`.
-
-**Selected method groups:**
-
-| Group | Methods |
-|-------|---------|
-| Registration | `registerUser()` — validates, hashes password with BCrypt, calls `repo.register()` |
-| Authentication | `authenticate(email, pw)`, `login(email, pw)` — finds user, checks status = active, verifies BCrypt hash |
-| Profile | `updateName()`, `updateProfile()`, `adminUpdateUser()` |
-| Status | `activateUser()`, `suspendUser()`, `deleteUser()` |
-| Subscription | `upgradeToPremium()`, `downgradeToFree()`, `checkExpiredSubscriptions()` |
-| Roles | `changeRoles()` — validates against allowed role set |
-| Password | `hashPassword()`, `verifyPassword()`, `adminResetPassword()` |
-| Stats | `initLearningStats()`, `updateLearningStats()` |
-| Counts | `countAll()`, `countByStatus()`, `countPremium()`, `countAdvanced()` |
-
-#### `NotificationService.java`
-Direct JDBC against the `notifications` table (no entity class).
-
-- `sendNotification(Long userId, String type, String message)` — INSERT.
-- `getRecentForUser(Long userId)` — returns up to 5 most-recent rows as
-  `List<NotifRow>` (inner static DTO).
-
----
-
-### `validation/` Package
-
-#### `ValidationService.java`
-Static utility methods for field validation (no state).
-
-| Method | Checks |
-|--------|--------|
-| `requireNonBlank(value, fieldName)` | not null, not blank |
-| `requireMinLength(value, fieldName, min)` | length ≥ min |
-| `requireValidEmail(email)` | regex `^[\w._%+\-]+@[\w.\-]+\.[a-zA-Z]{2,}$` |
-| `requirePasswordsMatch(pw, confirm)` | equality |
-| `requireValidPlan(plan)` | one of `FREE`, `MONTHLY`, `YEARLY` |
-| `requireValidRole(role)` | one of `ROLE_USER`, `ROLE_ADMIN`, `ROLE_TEACHER` |
-| `validateOrThrow(entity)` | full Jakarta Bean Validation on any object |
-
-All methods throw `IllegalArgumentException` with a human-readable message
-on failure — caught by controllers to display inline errors.
-
----
-
-### `controller/` Package
-
-#### `LoginController.java`
-- Reads email + password from `login.fxml` fields.
-- Calls `new UserService().authenticate(email, password)`.
-- Routes to `AdminMain.fxml` (admins) or `UserMain.fxml` (regular users) by
-  checking `user.getRoles().contains("ROLE_ADMIN")`.
-- `handleGoToRegister()` — uses `StageManager.switchScene("/fxml/Register.fxml")`.
-
-#### `RegisterController.java`
-- Validates all five fields inline (per-field error labels, no popups).
-- Calls `new UserService().registerUser(firstName, lastName, email, password)`.
-- On success navigates back to `login.fxml` via `StageManager`.
-- Email-already-taken errors from the service are displayed under the email
-  field; other errors go to a general error label.
-
-#### `admin/AdminMainController.java`
-Shell for the admin layout:
-- Sidebar buttons load `DashboardView.fxml` or `UserListView.fxml` into a
-  central `StackPane`.
-- Opens modal dialogs (`UserDetailDialog`, `UserFormDialog`) via `openStage()`.
-- `refreshCurrentView()` — called by child controllers after mutations.
-
-#### `admin/DashboardViewController.java`
-Stat summary cards + recent-users table. Fully JDBC-backed via `UserService`
-count methods.
-
-#### `admin/UserListController.java`
-Paginated, filterable, sortable user table with bulk actions. Fully
-JDBC-backed via `UserService`.
-
-#### `admin/UserDetailController.java`
-Read-only user detail popup with quick-action buttons (activate, suspend,
-grant premium, send notification, edit stats). Fully JDBC-backed.
-
-#### `admin/UserFormController.java`
-Create / edit user form dialog. Fully JDBC-backed via `UserService`.
-
-#### `admin/StatsController.java`
-Dialog to view and edit a user's `LearningStats` (XP, words, minutes).
-Calls `svc.initLearningStats()` and `svc.updateLearningStats()`.
-
-#### `admin/NotificationController.java`
-Dialog to send a notification to a user via `NotificationService`.
-
-#### `user/UserMainController.java`
-Shell for the user layout:
-- Sets `SessionManager.currentUser` after login.
-- Sidebar: Dashboard (placeholder) and My Profile.
-- Static `refreshUserInfo()` — called by `UserProfileController` after a
-  profile save to update the sidebar name/avatar without reloading the scene.
-- Avatar color derived from a deterministic hash of the user's full name.
-
-#### `user/UserProfileController.java`
-Two-card profile page — fully JDBC-backed:
-- **Card 1** — display / edit mode toggle. Saves name + email via
-  `UserService.updateName()` (which internally calls `UserRepository.save()`,
-  persisting all fields including email in one UPDATE).
-  Email uniqueness checked via `UserService.findByEmail()` before saving.
-- **Card 2** — password change with strength bar, match indicator, and
-  show/hide toggles. Saves via `UserService.adminResetPassword()`.
-
----
-
-### `resources/fxml/`
-
-| File | Controller | Description |
-|------|-----------|-------------|
-| `login.fxml` | `LoginController` | Email + password login card |
-| `Register.fxml` | `RegisterController` | 5-field registration card with inline errors |
-| `admin/AdminMain.fxml` | `AdminMainController` | Admin shell: sidebar + content area |
-| `admin/DashboardView.fxml` | `DashboardViewController` | Stat cards + recent-users table |
-| `admin/UserListView.fxml` | `UserListController` | Filterable paginated user table |
-| `admin/UserDetailDialog.fxml` | `UserDetailController` | User detail popup |
-| `admin/UserFormDialog.fxml` | `UserFormController` | Create / edit user form |
-| `admin/StatsDialog.fxml` | `StatsController` | Edit learning stats spinners |
-| `admin/NotificationDialog.fxml` | `NotificationController` | Send notification form |
-| `user/UserMain.fxml` | `UserMainController` | User shell: sidebar + content area |
-| `user/UserProfileView.fxml` | `UserProfileController` | Profile display + edit + password change |
-
-### `resources/css/`
-
-| File | Scope |
-|------|-------|
-| `style.css` | Global — login card, register card, shared input/button/error styles |
-| `admin.css` | Admin layout — sidebar, topbar, table badges, dialog styles |
-| `user.css` | User layout — profile card, password strength bar, avatar |
-
----
-
-## Database Schema
-
-```sql
--- Users
-CREATE TABLE users (
-    id                    BIGINT AUTO_INCREMENT PRIMARY KEY,
-    email                 VARCHAR(180)  NOT NULL UNIQUE,
-    password              VARCHAR(255)  NOT NULL,
-    roles                 JSON          NOT NULL DEFAULT ('["ROLE_USER"]'),
-    first_name            VARCHAR(100)  NOT NULL,
-    last_name             VARCHAR(100)  NOT NULL,
-    subscription_plan     VARCHAR(20)   NOT NULL DEFAULT 'FREE',
-    subscription_expiry   DATETIME      NULL,
-    is_premium            TINYINT(1)    NOT NULL DEFAULT 0,
-    last_payment_status   VARCHAR(50)   NULL,
-    status                VARCHAR(20)   NOT NULL DEFAULT 'active',
-    created_at            DATETIME      NULL,
-    is_verified           TINYINT(1)    NOT NULL DEFAULT 0,
-    stripe_customer_id    VARCHAR(255)  NULL,
-    stripe_subscription_id VARCHAR(255) NULL,
-    is_banned             TINYINT(1)    NOT NULL DEFAULT 0,
-    ban_reason            TEXT          NULL
-);
-
--- Learning statistics (one-to-one with users)
-CREATE TABLE learning_stats (
-    id                    BIGINT AUTO_INCREMENT PRIMARY KEY,
-    user_id               BIGINT        NOT NULL UNIQUE,
-    total_xp              INT           NOT NULL DEFAULT 0,
-    words_learned         INT           NOT NULL DEFAULT 0,
-    total_minutes_studied INT           NOT NULL DEFAULT 0,
-    last_study_session    DATETIME      NULL,
-    FOREIGN KEY (user_id) REFERENCES users(id)
-);
-
--- Notifications
-CREATE TABLE notifications (
-    id          BIGINT AUTO_INCREMENT PRIMARY KEY,
-    user_id     BIGINT       NOT NULL,
-    type        VARCHAR(50)  NOT NULL,
-    message     TEXT         NOT NULL,
-    is_read     TINYINT(1)   NOT NULL DEFAULT 0,
-    created_at  DATETIME     NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users(id)
-);
+```xml
+<!-- src/main/resources/META-INF/persistence.xml -->
+<persistence-unit name="lingualearn" transaction-type="RESOURCE_LOCAL">
+  <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+  <class>org.example.entity.User</class>
+  <class>org.example.entity.LearningStats</class>
+  <property name="jakarta.persistence.jdbc.url"
+            value="jdbc:mysql://localhost:3306/1lingualearn_db"/>
+  <property name="jakarta.persistence.jdbc.user"    value="root"/>
+  <property name="jakarta.persistence.jdbc.password" value=""/>
+  <property name="hibernate.dialect"
+            value="org.hibernate.dialect.MySQLDialect"/>
+  <property name="hibernate.hbm2ddl.auto" value="none"/>
+</persistence-unit>
 ```
 
-**`is_premium` is a derived column.**
-The Java code recomputes it on every load via `User.updatePremiumStatus()`:
-```
-isPremium = (plan == MONTHLY || plan == YEARLY)
-            && subscriptionExpiry != null
-            && subscriptionExpiry.isAfter(LocalDateTime.now())
-```
-
----
-
-## Architecture
-
-```
-┌─────────────────────────────────────────────────────┐
-│                   JavaFX UI Layer                   │
-│  FXML files + CSS  ←→  Controller classes           │
-└────────────────────────┬────────────────────────────┘
-                         │  calls
-┌────────────────────────▼────────────────────────────┐
-│                  Service Layer                      │
-│  UserService (implements IUserService)              │
-│  NotificationService                                │
-│  ValidationService (static helpers)                 │
-└────────────────────────┬────────────────────────────┘
-                         │  calls
-┌────────────────────────▼────────────────────────────┐
-│                Repository Layer                     │
-│  UserRepository  — PreparedStatement + ResultSet    │
-└────────────────────────┬────────────────────────────┘
-                         │  uses
-┌────────────────────────▼────────────────────────────┐
-│                  DB Utility                         │
-│  MyDataBase.getInstance().getConnection()           │
-│  → single java.sql.Connection to MySQL              │
-└─────────────────────────────────────────────────────┘
-```
-
-**Design rules:**
-- Controllers never contain SQL.
-- Repositories never contain business logic.
-- Services own transactions (via `Connection.setAutoCommit(false)` for
-  multi-statement operations).
-- Entities are plain POJOs — no framework annotations.
-
----
-
-## Connection Flow
-
-```
-App.init()
-  └─ MyDataBase.getInstance()
-       └─ DriverManager.getConnection("jdbc:mysql://localhost:3306/1lingualearn_db", "root", "")
-            └─ prints "Connexion établie !"
-
-App.stop()
-  └─ MyDataBase.getInstance().closeConnection()
-       └─ connection.close() → prints "Connexion fermée !"
-
-Controller action
-  └─ new UserService()
-       └─ new UserRepository()
-            └─ (on each method) MyDataBase.getInstance().getConnection()
-                 └─ PreparedStatement
-                      └─ ResultSet → POJO mapping
-```
-
----
-
-## Authentication & Role Routing
-
-```
-LoginController.handleLogin()
-  │
-  ├─ UserService.authenticate(email, password)
-  │    ├─ UserRepository.findByEmail(email)
-  │    ├─ check status == "active"
-  │    └─ BCrypt.checkpw(plain, hash)
-  │
-  └─ user.getRoles().contains("ROLE_ADMIN") ?
-        ├─ YES → AdminMain.fxml   (AdminMainController.setUser)
-        └─ NO  → UserMain.fxml    (UserMainController.setUser
-                                    → SessionManager.setCurrentUser)
-```
-
-**Roles stored** as a JSON array in the `roles` column:
-`["ROLE_USER"]` or `["ROLE_USER","ROLE_ADMIN"]`.
-
-**Session** is held in `SessionManager.currentUser` (static field).
-Cleared on logout via `SessionManager.clearSession()`.
+**Connection string:** `jdbc:mysql://localhost:3306/1lingualearn_db`  
+**Credentials:** `root` / *(empty — development only)*  
+**Pooling:** None. Single `java.sql.Connection` for the JDBC path; Hibernate manages its own internal pool for the JPA path.  
+**Lifecycle:** `App.init()` opens the JDBC connection; `App.stop()` closes it.
 
 ---
 
 ## Feature Status
 
-All features are fully JDBC-backed. No JPA/Hibernate runtime dependency.
+### User Management
 
-| Feature | Entry point |
-|---------|------------|
-| User registration | `Register.fxml` → `RegisterController` → `UserService.registerUser()` |
-| Login + role routing | `login.fxml` → `LoginController` → `UserService.authenticate()` |
-| Admin dashboard | `DashboardView.fxml` → `DashboardViewController` → `UserService` counts |
-| Admin user list | `UserListView.fxml` → `UserListController` → `UserService.findAdvanced()` |
-| Admin create/edit user | `UserFormDialog.fxml` → `UserFormController` → `UserService` |
-| Admin user detail | `UserDetailDialog.fxml` → `UserDetailController` → `UserService` |
-| Admin learning stats | `StatsDialog.fxml` → `StatsController` → `UserService.updateLearningStats()` |
-| Admin notifications | `NotificationDialog.fxml` → `NotificationController` → `NotificationService` |
-| User profile — view | `UserProfileView.fxml` → `UserProfileController.populateDisplayMode()` |
-| User profile — edit name + email | `UserProfileController.saveProfile()` → `UserService.updateName()` |
-| User profile — change password | `UserProfileController.updatePassword()` → `UserService.adminResetPassword()` |
-| Logout | `UserMainController.handleLogout()` → `SessionManager.clearSession()` |
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Registration (name, email, password) | ✅ Done | BCrypt hash, email uniqueness check |
+| Login + role-based routing | ✅ Done | Routes to `AdminMain.fxml` or `UserMain.fxml` |
+| Logout | ✅ Done | `SessionManager.clearSession()` |
+| Password reset via OTP email | ✅ Done | 6-digit code, 30-min expiry, SMTP via Gmail |
+| Email verification on signup | ✅ Done | `isVerified` flag; currently auto-verified |
+| Profile view & edit (name, email) | ✅ Done | Inline edit mode toggle |
+| Password change from profile | ✅ Done | Strength bar + match indicator |
+| Admin: user list (paginated, sortable, filterable) | ✅ Done | `UserListController` + `UserRepository.findAdvanced()` |
+| Admin: create / edit user | ✅ Done | `UserFormController` |
+| Admin: activate / suspend / delete user | ✅ Done | `UserDetailController` |
+| Admin: edit learning stats (XP, words, minutes) | ✅ Done | `StatsController` |
+| Admin: send in-app notification | ✅ Done | `NotificationController` → `NotificationService` |
+| Admin: ban user with reason | ✅ Done | `isBanned` + `banReason` fields |
+| AI-powered user search (natural language) | ✅ Done | `AdminAiService` → Ollama |
+| AI user insights & platform trends | ✅ Done | `AdminAiService` → Ollama |
+| hCaptcha on registration | ✅ Done | WebView loads `captcha.html` from `CaptchaServer:18081` |
+| Premium subscription upgrade/downgrade | ✅ Done | `StripeService` checkout session flow |
+| Stripe subscription management | ✅ Done | Cancel at period end, immediate cancel |
+| Stripe webhook processing | ✅ Done | `StripeWebhookServer:8000` handles lifecycle events |
+
+### Courses, Quizzes & Exercises
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Course listing | ✅ Done | `CourseService` + FXML views |
+| Lesson display | ✅ Done | `LessonService` |
+| Quiz listing | ✅ Done | `QuizController` |
+| Quiz play with scoring | ✅ Done | `QuizPlayController` + `AntiCheatGuard` |
+| AI quiz explanation (post-quiz) | ✅ Done | `GeminiService` — gemini-2.5-flash |
+| Quiz result display | ✅ Done | `QuizResultController` |
+| Exercise view | ✅ Done | `ExerciceController` |
+| Premium quiz paywall (Stripe) | ✅ Done | `QuizStripeService` |
+
+### Mock Tests & Certification
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Mock test CRUD (admin) | ✅ Done | `MockTestService` |
+| Test question management | ✅ Done | `TestQuestionService` |
+| Test taking with timer | ✅ Done | `MockTestTakingController` |
+| Anti-cheat: focus-loss detection | ✅ Done | `AntiCheatGuard` → `AntiCheatApiServer:9091` |
+| Anti-cheat: copy/paste blocking | ✅ Done | Ctrl+C / Ctrl+V intercepted |
+| Anti-cheat: forced submission on 2nd violation | ✅ Done | −50% score penalty |
+| AI speaking evaluation (Groq) | ✅ Done | `GroqSpeakingService` |
+| AI writing evaluation (Groq) | ✅ Done | `GroqWritingService` |
+| Test performance analysis | ✅ Done | `TestPerformanceAnalyzer` |
+| PDF certificate generation (iText7 + QR code) | ✅ Done | `CertificateService` → `CertificateApiServer:9090` |
+| Multi-language support selection | ✅ Done | `PlatformLanguage` entity |
+
+### Forum
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Create / edit / delete posts | ✅ Done | `ServicePublication` |
+| Comments | ✅ Done | `ServiceCommentaire` |
+| AI response suggestion (Groq) | ✅ Done | `GroqService` (forum) |
+| Bad word filtering | ✅ Done | `BadWordChecker` |
+| Forum notifications | ✅ Done | `NotificationManager` |
+| AI moderation suggestions (Gemini) | ✅ Done | Forum-specific `GeminiService` |
+
+### Support / Reclamations
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Submit support ticket (with image) | ✅ Done | `ReclamationDAO` — stores image path in `uploads/reclamations/` |
+| Admin: view & respond to tickets | ✅ Done | `SupportResponseDAO` |
+| Real-time push notification on response | ✅ Done | `PusherService` (Pusher.com, cluster `eu`) |
+| Priority auto-detection | ✅ Done | `PriorityDetector` |
+| Bad word filtering on tickets | ✅ Done | `BadWordsFilter` |
+| SLA deadline tracking | ✅ Done | `sla_deadline` column in `reclamation` table |
+| FAQ management | ✅ Done | `FAQ` entity + CRUD |
+
+---
+
+## External API Integration
+
+### hCaptcha
+
+hCaptcha is integrated on the **registration screen** to prevent bot sign-ups.
+
+**Architecture:** Because JavaFX `WebView` cannot submit cross-origin forms, the application embeds a local HTTP server (`CaptchaServer`) that serves `captcha/captcha.html` on `http://localhost:18081`. The FXML `WebView` loads this URL, renders the hCaptcha widget (using the public site key embedded in the HTML), and on challenge completion executes a JavaScript bridge that posts the `h-captcha-response` token back to the JavaFX controller via `WebEngine.executeScript()`.
+
+**Verification:** `HCaptchaService.verify(String token)` POSTs the token to `https://api.hcaptcha.com/siteverify` along with the secret (read from `System.getenv("HCAPTCHA_SECRET")`). A JSON response of `{"success":true}` allows registration to proceed.
+
+**Status:** Fully implemented and correctly secured — secret key is read from an environment variable, not hardcoded.
+
+### Stripe Payments
+
+- **Library:** `stripe-java` 25.3.0
+- **Flow:** `StripeService.createCheckoutSession(user, plan)` creates a hosted Stripe Checkout session and returns the URL. A JavaFX `WebView` opens this URL. On completion, Stripe calls the embedded webhook server at `http://127.0.0.1:8000/stripe/webhook`.
+- **Webhook signature validation:** `Webhook.constructEvent(body, sig, secret)` — HMAC-SHA256.
+- **Events handled:** `checkout.session.completed`, `customer.subscription.updated`, `customer.subscription.deleted`, `invoice.payment_succeeded`.
+- **Secret key:** `System.getenv("STRIPE_SECRET_KEY")` — correctly secured in `StripeService`.
+- **Known issue:** `QuizStripeService` hardcodes a test key directly in source (see Known Issues).
+
+### Gemini (Google Generative Language API)
+
+- **Model:** `gemini-2.5-flash`
+- **Used for:** Quiz answer explanations, forum content moderation suggestions.
+- **Known issue:** API key is hardcoded in `GeminiService.java` (see Known Issues).
+
+### Groq
+
+- **Endpoint:** `https://api.groq.com/openai/v1/chat/completions`
+- **Used for:** AI writing evaluation (`GroqWritingService`), AI speaking evaluation (`GroqSpeakingService`), forum reply suggestions (`GroqService`).
+- **Key resolution:** `GroqSpeakingService` and `GroqWritingService` check `GROQ_API_KEY` then `GROK_API_KEY` environment variables, then `System.getProperty("GROQ_API_KEY")`.
+
+### Ollama (Local LLM)
+
+- **Endpoint:** `http://127.0.0.1:11434/api/chat`
+- **Used for:** Admin AI assistant (`AdminAiService`) — natural language user search, user insights, platform trend analysis.
+- **Requires:** Ollama running locally with a model loaded (e.g. `mistral`).
+
+### Pusher
+
+- **Cluster:** `eu`
+- **Used for:** Real-time notification to users when an admin responds to a support ticket. `PusherService.notifierUser(int userId, String subject)` sends a signed HTTP POST to the Pusher API on channel `user-{userId}` with event `nouvelle-reponse`.
+- **Known issue:** App ID, key, and secret are hardcoded in `PusherService.java` (see Known Issues).
+
+---
+
+## Security Practices
+
+### Password Hashing
+
+BCrypt via `org.mindrot.jbcrypt` (version 0.4), 12 rounds:
+
+```java
+// org.example.service.user_managment.UserService
+private static final int BCRYPT_ROUNDS = 12;
+
+public String hashPassword(String plain) {
+    return BCrypt.hashpw(plain, BCrypt.gensalt(BCRYPT_ROUNDS));
+}
+
+public boolean verifyPassword(String plain, String hash) {
+    // Handles both $2a$ and $2y$ BCrypt prefixes
+    if (hash != null && hash.startsWith("$2y$"))
+        hash = "$2a$" + hash.substring(4);
+    return BCrypt.checkpw(plain, hash);
+}
+```
+
+### SQL Injection Prevention
+
+`UserRepository` and the support-management DAOs use `PreparedStatement` for all parameterised queries including dynamic search (`LIKE ?`) and multi-column sorts. No user input is concatenated directly into SQL strings.
+
+```java
+// UserRepository.search()
+String sql = SELECT_BASE +
+    " WHERE LOWER(u.email) LIKE ? OR LOWER(u.first_name) LIKE ? OR LOWER(u.last_name) LIKE ?";
+PreparedStatement ps = conn.prepareStatement(sql);
+ps.setString(1, "%" + term.toLowerCase() + "%");
+ps.setString(2, "%" + term.toLowerCase() + "%");
+ps.setString(3, "%" + term.toLowerCase() + "%");
+```
+
+### Input Validation
+
+`ValidationService` provides static validators called from the service layer before any DB write:
+
+| Validator | Rule |
+|-----------|------|
+| `requireNonBlank(value, field)` | not null, not whitespace-only |
+| `requireMinLength(value, field, min)` | `value.length() >= min` |
+| `requireValidEmail(email)` | regex `^[\w._%+\-]+@[\w.\-]+\.[a-zA-Z]{2,}$` |
+| `requirePasswordsMatch(pw, confirm)` | equality check |
+| `requireValidPlan(plan)` | one of `FREE`, `MONTHLY`, `YEARLY` |
+| `requireValidRole(role)` | one of `ROLE_USER`, `ROLE_ADMIN`, `ROLE_TEACHER` |
+| `validateOrThrow(entity)` | full Jakarta Bean Validation |
+
+### hCaptcha
+
+Bot-prevention on registration. Secret verified server-side via `HCaptchaService`. Secret key loaded from `System.getenv("HCAPTCHA_SECRET")` — not hardcoded.
+
+### Stripe Webhook Verification
+
+Every incoming webhook payload is verified via Stripe's HMAC-SHA256 signature before processing. Secret loaded from `System.getenv("STRIPE_WEBHOOK_SECRET")`.
+
+### AI Data Privacy
+
+`UserDatasetBuilder` strips `password`, `stripeCustomerId`, `stripeSubscriptionId`, and internal tokens from the user dataset before any AI API call.
 
 ---
 
 ## How to Run
 
 ### Prerequisites
-- JDK 21+
-- Maven 3.8+
-- MySQL 8 running locally on port 3306
-- Database `1lingualearn_db` created and populated
 
-### Start the app
+| Requirement | Version |
+|------------|---------|
+| JDK | 21+ |
+| Maven | 3.8+ |
+| MySQL | 8.x, running on `localhost:3306` |
+| Database | `1lingualearn_db` created and schema migrated |
+| Ollama *(optional)* | Latest, with a model loaded (e.g. `mistral`) |
+
+### Environment Variables
+
+The following variables must be set before launch for full functionality:
+
+```bash
+export STRIPE_SECRET_KEY=sk_live_...
+export STRIPE_WEBHOOK_SECRET=whsec_...
+export HCAPTCHA_SECRET=<your-hcaptcha-secret>
+export GROQ_API_KEY=<your-groq-api-key>
+```
+
+### Create the database
+
+```sql
+CREATE DATABASE 1lingualearn_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+### Run (development)
+
 ```bash
 mvn javafx:run
 ```
 
 ### Build a fat JAR
+
 ```bash
-mvn package
+mvn clean package
 java -jar target/lingualearn-1.0-jar-with-dependencies.jar
 ```
 
-### Database connection
-Credentials are hardcoded in `MyDataBase.java`:
-```java
-private final String URL      = "jdbc:mysql://localhost:3306/1lingualearn_db";
-private final String USER     = "root";
-private final String PASSWORD = "";
-```
-Change these directly in the file if your MySQL setup differs.
+### Database credentials
+
+Connection parameters are hardcoded in `src/main/java/org/example/util/MyDataBase.java` and in `src/main/resources/META-INF/persistence.xml`. Edit both files if your MySQL credentials differ from `root` / *(empty password)*.
+
+---
+
+## Known Issues & Roadmap
+
+### Critical Security Issues (Fix Before Any Public Deployment)
+
+| Issue | Location | Risk |
+|-------|----------|------|
+| Gemini API key hardcoded in source | `GeminiService.java` | Quota abuse, billing attack |
+| Stripe test key hardcoded in source | `QuizStripeService.java` | Should be in environment variable |
+| Gmail app password hardcoded in source | `EmailService.java` | Email account compromise |
+| Pusher app ID / key / secret hardcoded | `PusherService.java` | Unauthorized notifications, channel hijacking |
+| MySQL root / empty password | `MyDataBase.java`, `persistence.xml` | Acceptable for local dev only |
+
+All of these credentials must be rotated and moved to environment variables before the project is deployed to any shared or internet-facing environment.
+
+### Architecture & Quality
+
+| Issue | Notes |
+|-------|-------|
+| Dual DB access strategies | `UserRepository` uses raw JDBC; `tests` module repositories use JPA. Should be unified |
+| Static session variables | `Session.java` uses static fields — not thread-safe, not serialisable |
+| In-memory OTP storage | Verification codes stored in a `HashMap` — lost on restart, no distributed-safe expiry |
+| No connection pooling on JDBC path | Single `java.sql.Connection` shared across all queries |
+| Blocking AI calls on UI thread | Some Ollama/Gemini calls must be wrapped in `Task<>` to avoid freezing the UI |
+| Hardcoded localhost URLs | `SUCCESS_URL`/`CANCEL_URL` in `StripeService` and embedded server ports are fixed |
+
+### Incomplete / Planned Features
+
+| Item | Status |
+|------|--------|
+| Email verification enforced before login | `isVerified` is stored but currently auto-set to `true` on registration |
+| Rate limiting on login attempts | Not implemented |
+| Full teacher role UI | `ROLE_TEACHER` exists in validation but no dedicated teacher dashboard |
+| Audit log for admin actions | Not implemented |
+| Internationalisation (i18n) | UI strings are in French and English, mixed |
+
+---
+
+## Contributors
+
+PIDEV 3A33 — Esprit School of Engineering, 2025–2026.  
+5-person team. Repository: [HamdiBelhaj0013/Esprit-PIDEV-3A33-2026-LingualearnJava](https://github.com/HamdiBelhaj0013/Esprit-PIDEV-3A33-2026-LingualearnJava)
