@@ -20,8 +20,7 @@ public class GroqService {
     private static final String API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
     // Clé de secours – fonctionne même sans variable d'environnement
-    private static final String FALLBACK_API_KEY =
-            "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";
+    private static final String FALLBACK_API_KEY = System.getenv("GROQ_API_KEY");
 
     // Plusieurs modèles testés en cascade si l'un est indisponible
     private static final String[] MODELS = {
