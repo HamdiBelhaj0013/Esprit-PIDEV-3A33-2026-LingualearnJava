@@ -8,6 +8,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.example.entities.forum.Notification;
 import org.example.service.forum.NotificationManager;
+import org.example.util.SessionManager;
 
 import java.util.List;
 
@@ -20,9 +21,18 @@ public class NotificationController {
         loadNotifications();
     }
 
+    private int currentUserId() {
+        try {
+            var user = SessionManager.getCurrentUser();
+            if (user != null && user.getId() != null) return user.getId().intValue();
+        } catch (Exception ignored) {}
+        return -1;
+    }
+
     public void loadNotifications() {
         notificationsContainer.getChildren().clear();
-        List<Notification> notifications = NotificationManager.getInstance().getAll();
+        // Only show notifications addressed to the currently logged-in user
+        List<Notification> notifications = NotificationManager.getInstance().getForUser(currentUserId());
 
         if (notifications.isEmpty()) {
             Label empty = new Label("Aucune notification.");
@@ -83,7 +93,7 @@ public class NotificationController {
 
     @FXML
     private void handleMarquerLues() {
-        NotificationManager.getInstance().marquerToutesLues();
+        NotificationManager.getInstance().marquerLuesPourUser(currentUserId());
         loadNotifications();
     }
 }

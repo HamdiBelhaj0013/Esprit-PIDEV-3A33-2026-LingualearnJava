@@ -2,7 +2,9 @@ package org.example.service.forum;
 
 import org.example.interfaces.IServices;
 import org.example.entities.forum.Commentaire;
+import org.example.entity.User;
 import org.example.util.MyDataBase;
+import org.example.util.SessionManager;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -28,11 +30,23 @@ public class ServiceCommentaire implements IServices<Commentaire> {
         ps.setInt(3, c.getPublicationId());
         ps.setInt(4, c.getUtilisateurId());
         ps.executeUpdate();
-        System.out.println("✅ Commentaire enregistré en DB !");
+        System.out.println("Commentaire enregistre en DB !");
     }
 
     @Override
     public void update(Commentaire c) throws Exception {
+        // Guard: only the author or an admin may update
+        User currentUser = SessionManager.getCurrentUser();
+        if (currentUser == null) {
+            throw new SecurityException("Not authenticated");
+        }
+        boolean isAdmin = currentUser.hasRole("ROLE_ADMIN");
+        boolean isOwner = currentUser.getId() != null
+                && c.getUtilisateurId() == currentUser.getId().intValue();
+        if (!isAdmin && !isOwner) {
+            throw new SecurityException("Access denied: you are not the author of this comment");
+        }
+
         String sql = "UPDATE commentaire SET contenu_c=? WHERE id=?";
         PreparedStatement ps = cnx.prepareStatement(sql);
         ps.setString(1, c.getContenuC());
@@ -42,6 +56,22 @@ public class ServiceCommentaire implements IServices<Commentaire> {
 
     @Override
     public void delete(int id) throws Exception {
+        // Guard: only the author or an admin may delete
+        User currentUser = SessionManager.getCurrentUser();
+        if (currentUser == null) {
+            throw new SecurityException("Not authenticated");
+        }
+        boolean isAdmin = currentUser.hasRole("ROLE_ADMIN");
+        if (!isAdmin) {
+            Commentaire existing = getById(id);
+            if (existing == null) throw new Exception("Comment not found: " + id);
+            boolean isOwner = currentUser.getId() != null
+                    && existing.getUtilisateurId() == currentUser.getId().intValue();
+            if (!isOwner) {
+                throw new SecurityException("Access denied: you are not the author of this comment");
+            }
+        }
+
         String sql = "DELETE FROM commentaire WHERE id=?";
         PreparedStatement ps = cnx.prepareStatement(sql);
         ps.setInt(1, id);
@@ -70,7 +100,7 @@ public class ServiceCommentaire implements IServices<Commentaire> {
         return null;
     }
 
-    // Récupérer les commentaires d'une publication
+    // Recuperer les commentaires d'une publication
     public List<Commentaire> getByPublicationId(int publicationId) throws Exception {
         List<Commentaire> list = new ArrayList<>();
         String sql = "SELECT * FROM commentaire WHERE publication_id=? ORDER BY date_com ASC";
@@ -107,4 +137,3 @@ public class ServiceCommentaire implements IServices<Commentaire> {
         return c;
     }
 }
-

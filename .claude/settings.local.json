@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs wc:*)",
+      "Bash(mvn compile:*)",
+      "Bash(cmd.exe /c \"mvn compile 2>&1\")",
+      "Bash(powershell.exe -Command \"& mvn compile 2>&1\")",
+      "Bash(/c/Users/belha/.m2/wrapper/dists/apache-maven-3.8.5-bin/5i5jha092a3i37g0paqnfr15e0/apache-maven-3.8.5/bin/mvn compile:*)",
+      "Bash(JAVA_HOME=\"/c/jdk-23\" /c/Users/belha/.m2/wrapper/dists/apache-maven-3.8.5-bin/5i5jha092a3i37g0paqnfr15e0/apache-maven-3.8.5/bin/mvn compile)"
+    ]
+  }
+}

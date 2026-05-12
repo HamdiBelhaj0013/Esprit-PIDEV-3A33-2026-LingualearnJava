@@ -25,6 +25,8 @@ public class CommentaireController {
     private BadWordChecker badWordChecker = new BadWordChecker();
     private int publicationId;
     private String publicationTitre = "Publication inconnue";
+    /** ID of the user who authored the publication — used to route notifications correctly. */
+    private int publicationAuthorId = -1;
     private VBox listeCommentaires = new VBox(6);
 
     public void init(int publicationId, VBox container) {
@@ -32,7 +34,10 @@ public class CommentaireController {
         this.listeCommentaires = container;
         try {
             Publication pub = servicePublication.getById(publicationId);
-            if (pub != null) publicationTitre = pub.getTitrePub();
+            if (pub != null) {
+                publicationTitre = pub.getTitrePub();
+                publicationAuthorId = pub.getUtilisateurId();
+            }
         } catch (Exception ignored) {}
         loadCommentaires();
     }
@@ -53,6 +58,19 @@ public class CommentaireController {
         }
         System.out.println("[DEBUG][CommentaireController] Aucun utilisateur en session → -1");
         return -1;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // HELPER : Returns true if the current user has the ROLE_ADMIN role
+    // ─────────────────────────────────────────────────────────────────────────
+    private boolean currentUserIsAdmin() {
+        try {
+            var user = SessionManager.getCurrentUser();
+            return user != null && user.hasRole("ROLE_ADMIN");
+        } catch (Exception e) {
+            System.err.println("[WARN] Role check failed: " + e.getMessage());
+            return false;
+        }
     }
 
     public void loadCommentaires() {
@@ -128,10 +146,14 @@ public class CommentaireController {
                     c.setUtilisateurId(uid);
 
                     serviceCommentaire.add(c);
-                    NotificationManager.getInstance().ajouterNotification(
-                            "💬 Nouveau commentaire sur : \"" + publicationTitre + "\"",
-                            "commentaire",
-                            publicationId);
+                    // Notify the post author — skip if the commenter IS the author
+                    if (publicationAuthorId != -1 && uid != publicationAuthorId) {
+                        NotificationManager.getInstance().ajouterNotification(
+                                "💬 Nouveau commentaire sur : \"" + publicationTitre + "\"",
+                                "commentaire",
+                                publicationId,
+                                publicationAuthorId);
+                    }
 
                     loadCommentaires();
                     commentField.clear();
@@ -178,16 +200,18 @@ public class CommentaireController {
         contentBox.getChildren().addAll(contenuLabel, dateLabel);
         HBox.setHgrow(contentBox, Priority.ALWAYS);
 
-        // ✅ CORRIGÉ : vérification propriété robuste
+        // Ownership + admin check
         int currentUserId = getCurrentUserId();
         boolean isOwner = currentUserId != -1 && c.getUtilisateurId() == currentUserId;
+        boolean canManage = isOwner || currentUserIsAdmin();
 
         System.out.println("[DEBUG][CARD_COM] com.utilisateurId=" + c.getUtilisateurId()
-                + "  session.userId=" + currentUserId + "  isOwner=" + isOwner);
+                + "  session.userId=" + currentUserId + "  isOwner=" + isOwner
+                + "  canManage=" + canManage);
 
         commentCard.getChildren().addAll(avatar, contentBox);
 
-        if (isOwner) {
+        if (canManage) {
             Label modifier = new Label("✏️");
             modifier.setStyle(
                     "-fx-font-size: 12px; -fx-text-fill: #3498db; -fx-cursor: hand;");

@@ -64,6 +64,19 @@ public class PublicationController {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
+    // HELPER: Returns true if the current user has the ROLE_ADMIN role
+    // ─────────────────────────────────────────────────────────────────────────
+    private boolean currentUserIsAdmin() {
+        try {
+            var user = SessionManager.getCurrentUser();
+            return user != null && user.hasRole("ROLE_ADMIN");
+        } catch (Exception e) {
+            System.err.println("[WARN] Role check failed: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
     // HELPER: Get author name by user ID
     // ─────────────────────────────────────────────────────────────────────────
     private String getAuthorName(int utilisateurId) {
@@ -171,14 +184,15 @@ public class PublicationController {
         // Get current user ID for permission checks
         int currentUserId = getCurrentUserId();
         boolean isOwner = currentUserId != -1 && p.getUtilisateurId() == currentUserId;
+        boolean canManage = isOwner || currentUserIsAdmin();
 
         System.out.println("[DEBUG][CARD] pub.id=" + p.getId()
                 + "  pub.utilisateurId=" + p.getUtilisateurId()
                 + "  session.userId=" + currentUserId
-                + "  isOwner=" + isOwner);
+                + "  isOwner=" + isOwner + "  canManage=" + canManage);
 
-        // ✅ FIXED: Only show edit/delete buttons if user owns the publication
-        if (isOwner) {
+        // Only show edit/delete buttons if user owns the publication or is an admin
+        if (canManage) {
             // MODIFY BUTTON
             Label modifier = new Label("✏️");
             modifier.setStyle("-fx-font-size: 16px; -fx-text-fill: #3498db; -fx-cursor: hand; -fx-padding: 5; -fx-background-radius: 50;");
@@ -299,10 +313,14 @@ public class PublicationController {
                     likes.setText("👍  " + p.getLikes());
                     likes.setStyle(LIKE_ACTIVE);
                     etatVote[0] = 1;
-                    NotificationManager.getInstance().ajouterNotification(
-                            "👍 Someone liked your publication: \"" + p.getTitrePub() + "\"",
-                            "like", p.getId()
-                    );
+                    // Notify the post author — skip if the liker IS the author
+                    int likerId = getCurrentUserId();
+                    if (likerId != p.getUtilisateurId()) {
+                        NotificationManager.getInstance().ajouterNotification(
+                                "👍 Someone liked your publication: \"" + p.getTitrePub() + "\"",
+                                "like", p.getId(), p.getUtilisateurId()
+                        );
+                    }
                 }
                 updateRatioBar(ratioBar, p.getLikes(), p.getDislikes());
             } catch (Exception ex) {
@@ -330,10 +348,14 @@ public class PublicationController {
                     dislikes.setText("👎  " + p.getDislikes());
                     dislikes.setStyle(DISLIKE_ACTIVE);
                     etatVote[0] = -1;
-                    NotificationManager.getInstance().ajouterNotification(
-                            "👎 Someone disliked your publication: \"" + p.getTitrePub() + "\"",
-                            "dislike", p.getId()
-                    );
+                    // Notify the post author — skip if the disliker IS the author
+                    int dislikerId = getCurrentUserId();
+                    if (dislikerId != p.getUtilisateurId()) {
+                        NotificationManager.getInstance().ajouterNotification(
+                                "👎 Someone disliked your publication: \"" + p.getTitrePub() + "\"",
+                                "dislike", p.getId(), p.getUtilisateurId()
+                        );
+                    }
                 }
                 updateRatioBar(ratioBar, p.getLikes(), p.getDislikes());
             } catch (Exception ex) {
@@ -566,13 +588,14 @@ public class PublicationController {
 
             int currentUserId = getCurrentUserId();
             boolean isOwner = currentUserId != -1 && current.getUtilisateurId() == currentUserId;
+            boolean canManage = isOwner || currentUserIsAdmin();
 
             HBox header = new HBox(10);
             header.setAlignment(javafx.geometry.Pos.CENTER);
             header.setPadding(new Insets(10));
             header.setStyle("-fx-background-color: #1a1a2e;");
 
-            if (isOwner) {
+            if (canManage) {
                 Label modifierStory = new Label("✏️");
                 modifierStory.setStyle("-fx-font-size: 18px; -fx-text-fill: white; -fx-cursor: hand;");
                 modifierStory.setOnMouseClicked(e -> ouvrirModifierStory(current));
@@ -704,10 +727,14 @@ public class PublicationController {
                         likes.setText("👍  " + current.getLikes());
                         likes.setStyle(S_LIKE_ACTIVE);
                         etatVote[0] = 1;
-                        NotificationManager.getInstance().ajouterNotification(
-                                "👍 Someone liked your story: \"" + current.getTitrePub() + "\"",
-                                "like", current.getId()
-                        );
+                        // Notify the story author — skip if the liker IS the author
+                        int storyLikerId = getCurrentUserId();
+                        if (storyLikerId != current.getUtilisateurId()) {
+                            NotificationManager.getInstance().ajouterNotification(
+                                    "👍 Someone liked your story: \"" + current.getTitrePub() + "\"",
+                                    "like", current.getId(), current.getUtilisateurId()
+                            );
+                        }
                     }
                     updateRatioBar(storyRatioBar, current.getLikes(), current.getDislikes());
                 } catch (Exception ex) {
@@ -735,10 +762,14 @@ public class PublicationController {
                         dislikes.setText("👎  " + current.getDislikes());
                         dislikes.setStyle(S_DISLIKE_ACTIVE);
                         etatVote[0] = -1;
-                        NotificationManager.getInstance().ajouterNotification(
-                                "👎 Someone disliked your story: \"" + current.getTitrePub() + "\"",
-                                "dislike", current.getId()
-                        );
+                        // Notify the story author — skip if the disliker IS the author
+                        int storyDislikerId = getCurrentUserId();
+                        if (storyDislikerId != current.getUtilisateurId()) {
+                            NotificationManager.getInstance().ajouterNotification(
+                                    "👎 Someone disliked your story: \"" + current.getTitrePub() + "\"",
+                                    "dislike", current.getId(), current.getUtilisateurId()
+                            );
+                        }
                     }
                     updateRatioBar(storyRatioBar, current.getLikes(), current.getDislikes());
                 } catch (Exception ex) {

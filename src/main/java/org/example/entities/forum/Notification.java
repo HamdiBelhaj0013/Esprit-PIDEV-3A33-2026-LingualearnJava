@@ -4,15 +4,18 @@ import java.time.LocalDateTime;
 
 public class Notification {
     private String message;
-    private String type; // "like" ou "commentaire"
+    private String type; // "like", "dislike", ou "commentaire"
     private LocalDateTime date;
     private boolean lue;
     private int publicationId;
+    /** ID of the user who should receive this notification (the post author). */
+    private int recipientId;
 
-    public Notification(String message, String type, int publicationId) {
+    public Notification(String message, String type, int publicationId, int recipientId) {
         this.message = message;
         this.type = type;
         this.publicationId = publicationId;
+        this.recipientId = recipientId;
         this.date = LocalDateTime.now();
         this.lue = false;
     }
@@ -23,4 +26,5 @@ public class Notification {
     public boolean isLue() { return lue; }
     public void setLue(boolean lue) { this.lue = lue; }
     public int getPublicationId() { return publicationId; }
+    public int getRecipientId() { return recipientId; }
 }

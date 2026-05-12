@@ -2,7 +2,9 @@ package org.example.service.forum;
 
 import org.example.interfaces.IServices;
 import org.example.entities.forum.Publication;
+import org.example.entity.User;
 import org.example.util.MyDataBase;
+import org.example.util.SessionManager;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -19,21 +21,35 @@ public class ServicePublication implements IServices<Publication> {
     private int pageActuelle = 1;
     private final int PUBLICATIONS_PAR_PAGE = 5;
     private List<Publication> toutesPublications = new ArrayList<>();
+
     @Override
     public void add(Publication p) throws Exception {
-        String sql = "INSERT INTO publication (titre_pub, type_pub, lien_pub, contenu_pub, date_pub, likes, dislikes, user_id) VALUES (?, ?, ?, ?, ?, 0, 0, 1)";
+        String sql = "INSERT INTO publication (titre_pub, type_pub, lien_pub, contenu_pub, date_pub, likes, dislikes, user_id) VALUES (?, ?, ?, ?, ?, 0, 0, ?)";
         PreparedStatement ps = cnx.prepareStatement(sql);
         ps.setString(1, p.getTitrePub());
         ps.setString(2, p.getTypePub());
         ps.setString(3, p.getLienPub());
         ps.setString(4, p.getContenuPub());
         ps.setTimestamp(5, Timestamp.valueOf(p.getDatePub()));
+        ps.setInt(6, p.getUtilisateurId());
         ps.executeUpdate();
-        System.out.println("Ã¢Åâ¦ Publication ajoutÃÂ©e !");
+        System.out.println("Publication ajoutee !");
     }
 
     @Override
     public void update(Publication p) throws Exception {
+        // Guard: only the author or an admin may update
+        User currentUser = SessionManager.getCurrentUser();
+        if (currentUser == null) {
+            throw new SecurityException("Not authenticated");
+        }
+        boolean isAdmin = currentUser.hasRole("ROLE_ADMIN");
+        boolean isOwner = currentUser.getId() != null
+                && p.getUtilisateurId() == currentUser.getId().intValue();
+        if (!isAdmin && !isOwner) {
+            throw new SecurityException("Access denied: you are not the author of this publication");
+        }
+
         String sql = "UPDATE publication SET titre_pub=?, type_pub=?, lien_pub=?, contenu_pub=? WHERE id=?";
         PreparedStatement ps = cnx.prepareStatement(sql);
         ps.setString(1, p.getTitrePub());
@@ -46,19 +62,35 @@ public class ServicePublication implements IServices<Publication> {
 
     @Override
     public void delete(int id) throws Exception {
-        // Supprimer d'abord tous les commentaires associÃÂ©s ÃÂ  cette publication
+        // Guard: only the author or an admin may delete
+        User currentUser = SessionManager.getCurrentUser();
+        if (currentUser == null) {
+            throw new SecurityException("Not authenticated");
+        }
+        boolean isAdmin = currentUser.hasRole("ROLE_ADMIN");
+        if (!isAdmin) {
+            Publication existing = getById(id);
+            if (existing == null) throw new Exception("Publication not found: " + id);
+            boolean isOwner = currentUser.getId() != null
+                    && existing.getUtilisateurId() == currentUser.getId().intValue();
+            if (!isOwner) {
+                throw new SecurityException("Access denied: you are not the author of this publication");
+            }
+        }
+
+        // Delete all associated comments first
         String deleteCommentsSql = "DELETE FROM commentaire WHERE publication_id=?";
         PreparedStatement psComments = cnx.prepareStatement(deleteCommentsSql);
         psComments.setInt(1, id);
         psComments.executeUpdate();
-        
-        // Ensuite supprimer la publication
+
+        // Then delete the publication
         String sql = "DELETE FROM publication WHERE id=?";
         PreparedStatement ps = cnx.prepareStatement(sql);
         ps.setInt(1, id);
         ps.executeUpdate();
-        
-        System.out.println("Ã¢Åâ¦ Publication et ses commentaires supprimÃÂ©s !");
+
+        System.out.println("Publication et ses commentaires supprimes !");
     }
 
     @Override
@@ -146,9 +178,8 @@ public class ServicePublication implements IServices<Publication> {
         p.setDatePub(rs.getTimestamp("date_pub").toLocalDateTime());
         p.setLikes(rs.getInt("likes"));
         p.setDislikes(rs.getInt("dislikes"));
-        p.setUtilisateurId(1); // statique jusqu'ÃÂ  implÃÂ©mentation auth
+        p.setUtilisateurId(rs.getInt("user_id"));
         try { p.setReportPub(rs.getInt("report_pub")); } catch (Exception ignored) {}
         return p;
     }
 }
-

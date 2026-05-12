@@ -47,9 +47,11 @@ public class MainController {
 
         // Nouvelle notification → toast + rafraîchissement si panel ouvert
         NotificationManager.getInstance().setOnNewNotification(() -> {
+            int uid = currentUserId();
             updateBadge();
-            List<Notification> all = NotificationManager.getInstance().getAll();
-            if (!all.isEmpty()) showNotificationPopup(all.get(0));
+            // Show toast only if the newest notification is addressed to the current user
+            List<Notification> mine = NotificationManager.getInstance().getForUser(uid);
+            if (!mine.isEmpty()) showNotificationPopup(mine.get(0));
             if (dropdownOpen) populateList();
         });
 
@@ -65,9 +67,18 @@ public class MainController {
         loadView("/fxml/user/forum/fxml/PublicationView.fxml");
     }
 
+    // ── Helpers ──────────────────────────────────────────────────
+    private int currentUserId() {
+        try {
+            var user = SessionManager.getCurrentUser();
+            if (user != null && user.getId() != null) return user.getId().intValue();
+        } catch (Exception ignored) {}
+        return -1;
+    }
+
     // ── Badge ────────────────────────────────────────────────────
     private void updateBadge() {
-        int count = NotificationManager.getInstance().getNombreNonLues();
+        int count = NotificationManager.getInstance().getNombreNonLuesPourUser(currentUserId());
         btnNotifications.setText("🔔 Notifications" + (count > 0 ? " (" + count + ")" : ""));
         btnNotifications.setStyle(count > 0
             ? "-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-background-radius: 6; -fx-font-size: 13px; -fx-cursor: hand; -fx-padding: 8 15;"
@@ -167,7 +178,8 @@ public class MainController {
     // ── Peupler la liste du dropdown ──────────────────────────
     private void populateList() {
         notificationDropdownList.getChildren().clear();
-        List<Notification> notifications = NotificationManager.getInstance().getAll();
+        // Only show notifications addressed to the currently logged-in user
+        List<Notification> notifications = NotificationManager.getInstance().getForUser(currentUserId());
 
         if (notifications.isEmpty()) {
             Label empty = new Label("Aucune notification pour l'instant.");
@@ -179,8 +191,8 @@ public class MainController {
             }
         }
 
-        // Marquer comme lues (déclenche seulement onBadgeUpdate, pas de toast)
-        NotificationManager.getInstance().marquerToutesLues();
+        // Mark only the current user's notifications as read
+        NotificationManager.getInstance().marquerLuesPourUser(currentUserId());
     }
 
     private HBox buildDropdownItem(Notification n) {
@@ -237,7 +249,7 @@ public class MainController {
     // ── Bouton "Tout marquer lu" dans le header ─────────────
     @FXML
     void handleMarquerLues() {
-        NotificationManager.getInstance().marquerToutesLues();
+        NotificationManager.getInstance().marquerLuesPourUser(currentUserId());
         populateList();
     }
 
