@@ -50,6 +50,11 @@ public class ProfileController implements Initializable {
     @FXML private VBox recommendationsContainer;
     @FXML private HBox certificatsContainer;
 
+    // ── Embedded mode support ─────────────────────────────────────────────────
+    @FXML private HBox embeddedHeader;
+    private javafx.scene.layout.StackPane contentArea;
+    private Runnable embeddedOnBack;
+
     // ── State ─────────────────────────────────────────────────────────────────
     private User                               currentUser;
     private UserDashboardController            dashboardController;
@@ -60,6 +65,16 @@ public class ProfileController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {}
+
+    public void setContentArea(javafx.scene.layout.StackPane ca) {
+        this.contentArea = ca;
+        if (embeddedHeader != null) {
+            embeddedHeader.setVisible(false);
+            embeddedHeader.setManaged(false);
+        }
+    }
+
+    public void setOnBack(Runnable onBack) { this.embeddedOnBack = onBack; }
 
     /**
      * Entrée depuis LanguageSelect (mode PROFILE) — avec langue sélectionnée.
@@ -666,6 +681,10 @@ public class ProfileController implements Initializable {
 
     @FXML
     private void handleBack() {
-        if (dashboardController != null) dashboardController.returnToDashboard();
+        if (contentArea != null && embeddedOnBack != null) {
+            embeddedOnBack.run();
+        } else if (dashboardController != null) {
+            dashboardController.returnToDashboard();
+        }
     }
 }
