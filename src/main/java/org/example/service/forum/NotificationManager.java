@@ -2,14 +2,19 @@ package org.example.service.forum;
 
 import org.example.entities.forum.Notification;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
+/**
+ * Singleton facade for forum notifications.
+ * All storage is delegated to ServiceNotification (MySQL); the in-memory
+ * ArrayList has been removed. Public method signatures are unchanged so
+ * callers (MainController, NotificationController, PublicationController,
+ * CommentaireController) require no modification.
+ */
 public class NotificationManager {
 
     private static NotificationManager instance;
-    private List<Notification> notifications = new ArrayList<>();
+    private final ServiceNotification service = new ServiceNotification();
     private Runnable onNewNotification;
     private Runnable onBadgeUpdate;
 
@@ -20,65 +25,72 @@ public class NotificationManager {
         return instance;
     }
 
+    // ── Write ─────────────────────────────────────────────────────────────────
+
     /**
-     * Add a notification targeted at a specific recipient (the post author).
-     * Call sites must pass the author's user ID as recipientId.
+     * Persist a notification to the DB and fire the onNewNotification callback
+     * so the UI badge / toast updates immediately.
      */
-    public void ajouterNotification(String message, String type, int publicationId, int recipientId) {
-        notifications.add(0, new Notification(message, type, publicationId, recipientId));
+    public void ajouterNotification(String message, String type,
+                                    int publicationId, int recipientId) {
+        service.ajouterNotification(message, type, publicationId, recipientId);
         if (onNewNotification != null) {
             javafx.application.Platform.runLater(onNewNotification);
         }
     }
 
-    // ── Full list (used only for legacy callers; prefer getForUser) ──────────
-    public List<Notification> getAll() { return notifications; }
-
-    // ── Recipient-filtered accessors ─────────────────────────────────────────
-
-    /** Returns all notifications whose recipientId matches userId. */
-    public List<Notification> getForUser(int userId) {
-        return notifications.stream()
-                .filter(n -> n.getRecipientId() == userId)
-                .collect(Collectors.toList());
-    }
-
-    /** Returns unread notifications for a specific user. */
-    public List<Notification> getNonLuesPourUser(int userId) {
-        return notifications.stream()
-                .filter(n -> n.getRecipientId() == userId && !n.isLue())
-                .collect(Collectors.toList());
-    }
-
-    /** Returns the count of unread notifications for a specific user. */
-    public int getNombreNonLuesPourUser(int userId) {
-        return getNonLuesPourUser(userId).size();
-    }
-
-    /** Marks all notifications for a specific user as read, then fires the badge callback. */
+    /** Mark all notifications for userId as read, then fire the badge callback. */
     public void marquerLuesPourUser(int userId) {
-        notifications.stream()
-                .filter(n -> n.getRecipientId() == userId)
-                .forEach(n -> n.setLue(true));
+        service.marquerLuesPourUser(userId);
         if (onBadgeUpdate != null) {
             javafx.application.Platform.runLater(onBadgeUpdate);
         }
+    }
+
+    // ── Read (recipient-filtered) ─────────────────────────────────────────────
+
+    /** All notifications for userId, newest first. */
+    public List<Notification> getForUser(int userId) {
+        return service.getForUser(userId);
+    }
+
+    /** Unread notifications for userId. */
+    public List<Notification> getNonLuesPourUser(int userId) {
+        return service.getNonLuesPourUser(userId);
+    }
+
+    /** Count of unread notifications for userId. */
+    public int getNombreNonLuesPourUser(int userId) {
+        return service.getNombreNonLuesPourUser(userId);
     }
 
     // ── Legacy helpers (kept for any callers outside the forum module) ────────
 
-    public List<Notification> getNonLues() {
-        return notifications.stream().filter(n -> !n.isLue()).collect(Collectors.toList());
+    /** All notifications in the DB regardless of recipient. */
+    public List<Notification> getAll() {
+        return service.getAll();
     }
 
-    public int getNombreNonLues() { return getNonLues().size(); }
+    public List<Notification> getNonLues() {
+        // Without a "current user" in context, return all unread rows.
+        // Prefer getNonLuesPourUser(userId) at call sites.
+        return service.getAll().stream()
+                .filter(n -> !n.isLue())
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    public int getNombreNonLues() {
+        return (int) getNonLues().size();
+    }
 
     public void marquerToutesLues() {
-        notifications.forEach(n -> n.setLue(true));
+        service.marquerToutesLues();
         if (onBadgeUpdate != null) {
             javafx.application.Platform.runLater(onBadgeUpdate);
         }
     }
+
+    // ── Callbacks ─────────────────────────────────────────────────────────────
 
     public void setOnNewNotification(Runnable callback) { this.onNewNotification = callback; }
 

@@ -53,6 +53,12 @@ public class LanguageSelectController implements Initializable {
         initWithMode(service, user, null, stage, Mode.TEST);
     }
 
+    public void initEmbeddedProfile(MockTestService service, User user,
+                                    Runnable onBack, Stage stage) {
+        this.onBack = onBack;
+        initWithMode(service, user, null, stage, Mode.PROFILE);
+    }
+
     private void initWithMode(MockTestService service, User user,
                               UserDashboardController dashboardController,
                               Stage stage, Mode mode) {

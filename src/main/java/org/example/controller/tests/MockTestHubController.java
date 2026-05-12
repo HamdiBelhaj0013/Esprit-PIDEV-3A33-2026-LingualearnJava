@@ -172,7 +172,7 @@ public class MockTestHubController {
                     getClass().getResource("/fxml/tests/LanguageSelectView.fxml"));
             Node view = loader.load();
             LanguageSelectController ctrl = loader.getController();
-            ctrl.initEmbedded(service, currentUser, onBack, currentStage, contentArea);
+            ctrl.initEmbedded(service, currentUser, onBack, currentStage);
             contentArea.getChildren().setAll(view);
         } catch (IOException e) {
             System.err.println("Erreur navigation take test : " + e.getMessage());
@@ -186,7 +186,7 @@ public class MockTestHubController {
                     getClass().getResource("/fxml/tests/LanguageSelectView.fxml"));
             Node view = loader.load();
             LanguageSelectController ctrl = loader.getController();
-            ctrl.initEmbeddedProfile(service, currentUser, onBack, currentStage, contentArea);
+            ctrl.initEmbeddedProfile(service, currentUser, onBack, currentStage);
             contentArea.getChildren().setAll(view);
         } catch (IOException e) {
             System.err.println("Erreur navigation profil : " + e.getMessage());
