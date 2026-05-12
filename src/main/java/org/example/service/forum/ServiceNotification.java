@@ -10,14 +10,14 @@ import java.util.List;
 
 /**
  * DB-backed persistence for forum notifications.
- * Creates the table on first use if it does not already exist.
+ * Uses the dedicated table forum_notifications (separate from the
+ * user-management notifications table).
+ * The connection is obtained fresh from MyDataBase on every method call,
+ * matching the pattern used by ServicePublication and ServiceCommentaire.
  */
 public class ServiceNotification {
 
-    private Connection cnx;
-
     public ServiceNotification() {
-        cnx = MyDataBase.getInstance().getConnection();
         createTableIfNotExists();
     }
 
@@ -25,7 +25,7 @@ public class ServiceNotification {
 
     private void createTableIfNotExists() {
         String sql =
-            "CREATE TABLE IF NOT EXISTS notifications (" +
+            "CREATE TABLE IF NOT EXISTS forum_notifications (" +
             "  id             INT AUTO_INCREMENT PRIMARY KEY," +
             "  message        VARCHAR(500) NOT NULL," +
             "  type           VARCHAR(20)  NOT NULL," +
@@ -34,6 +34,7 @@ public class ServiceNotification {
             "  date           DATETIME     NOT NULL," +
             "  lue            TINYINT(1)   DEFAULT 0" +
             ")";
+        Connection cnx = MyDataBase.getInstance().getConnection();
         try (Statement st = cnx.createStatement()) {
             st.executeUpdate(sql);
         } catch (SQLException e) {
@@ -45,9 +46,10 @@ public class ServiceNotification {
 
     public void ajouterNotification(String message, String type,
                                     int publicationId, int recipientId) {
-        String sql = "INSERT INTO notifications " +
+        String sql = "INSERT INTO forum_notifications " +
                      "(message, type, publication_id, recipient_id, date, lue) " +
                      "VALUES (?, ?, ?, ?, ?, 0)";
+        Connection cnx = MyDataBase.getInstance().getConnection();
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
             ps.setString(1, message);
             ps.setString(2, type);
@@ -61,7 +63,8 @@ public class ServiceNotification {
     }
 
     public void marquerLuesPourUser(int userId) {
-        String sql = "UPDATE notifications SET lue = 1 WHERE recipient_id = ?";
+        String sql = "UPDATE forum_notifications SET lue = 1 WHERE recipient_id = ?";
+        Connection cnx = MyDataBase.getInstance().getConnection();
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.executeUpdate();
@@ -71,7 +74,8 @@ public class ServiceNotification {
     }
 
     public void marquerToutesLues() {
-        String sql = "UPDATE notifications SET lue = 1";
+        String sql = "UPDATE forum_notifications SET lue = 1";
+        Connection cnx = MyDataBase.getInstance().getConnection();
         try (Statement st = cnx.createStatement()) {
             st.executeUpdate(sql);
         } catch (SQLException e) {
@@ -83,19 +87,20 @@ public class ServiceNotification {
 
     /** All notifications for a given user, newest first. */
     public List<Notification> getForUser(int userId) {
-        String sql = "SELECT * FROM notifications WHERE recipient_id = ? ORDER BY date DESC";
+        String sql = "SELECT * FROM forum_notifications WHERE recipient_id = ? ORDER BY date DESC";
         return query(sql, userId);
     }
 
     /** Unread notifications for a given user, newest first. */
     public List<Notification> getNonLuesPourUser(int userId) {
-        String sql = "SELECT * FROM notifications WHERE recipient_id = ? AND lue = 0 ORDER BY date DESC";
+        String sql = "SELECT * FROM forum_notifications WHERE recipient_id = ? AND lue = 0 ORDER BY date DESC";
         return query(sql, userId);
     }
 
     /** Count of unread notifications for a given user. */
     public int getNombreNonLuesPourUser(int userId) {
-        String sql = "SELECT COUNT(*) FROM notifications WHERE recipient_id = ? AND lue = 0";
+        String sql = "SELECT COUNT(*) FROM forum_notifications WHERE recipient_id = ? AND lue = 0";
+        Connection cnx = MyDataBase.getInstance().getConnection();
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ResultSet rs = ps.executeQuery();
@@ -108,8 +113,9 @@ public class ServiceNotification {
 
     /** All notifications in the table (legacy / admin use). */
     public List<Notification> getAll() {
-        String sql = "SELECT * FROM notifications ORDER BY date DESC";
+        String sql = "SELECT * FROM forum_notifications ORDER BY date DESC";
         List<Notification> list = new ArrayList<>();
+        Connection cnx = MyDataBase.getInstance().getConnection();
         try (Statement st = cnx.createStatement();
              ResultSet rs = st.executeQuery(sql)) {
             while (rs.next()) list.add(mapRow(rs));
@@ -123,6 +129,7 @@ public class ServiceNotification {
 
     private List<Notification> query(String sql, int userId) {
         List<Notification> list = new ArrayList<>();
+        Connection cnx = MyDataBase.getInstance().getConnection();
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ResultSet rs = ps.executeQuery();
