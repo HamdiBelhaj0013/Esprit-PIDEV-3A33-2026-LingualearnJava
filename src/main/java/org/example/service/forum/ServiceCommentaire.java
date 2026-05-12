@@ -19,13 +19,14 @@ public class ServiceCommentaire implements IServices<Commentaire> {
 
     @Override
     public void add(Commentaire c) throws Exception {
-        String sql = "INSERT INTO commentaire (contenu_c, date_com, publication_id) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO commentaire (contenu_c, date_com, publication_id, utilisateur_id) VALUES (?, ?, ?, ?)";
         PreparedStatement ps = cnx.prepareStatement(sql);
         ps.setString(1, c.getContenuC());
         ps.setTimestamp(2, c.getDateCom() != null
                 ? Timestamp.valueOf(c.getDateCom())
                 : Timestamp.valueOf(LocalDateTime.now()));
         ps.setInt(3, c.getPublicationId());
+        ps.setInt(4, c.getUtilisateurId());
         ps.executeUpdate();
         System.out.println("✅ Commentaire enregistré en DB !");
     }
@@ -102,6 +103,7 @@ public class ServiceCommentaire implements IServices<Commentaire> {
         Timestamp ts = rs.getTimestamp("date_com");
         if (ts != null) c.setDateCom(ts.toLocalDateTime());
         c.setPublicationId(rs.getInt("publication_id"));
+        c.setUtilisateurId(rs.getInt("utilisateur_id"));
         return c;
     }
 }

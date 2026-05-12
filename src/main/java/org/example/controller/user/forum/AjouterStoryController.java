@@ -11,6 +11,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.example.entities.forum.Publication;
 import org.example.service.forum.ServicePublication;
+import org.example.util.SessionManager;
 
 import java.io.File;
 import java.time.LocalDateTime;
@@ -98,13 +99,20 @@ public class AjouterStoryController {
         try {
             Publication p = new Publication();
             p.setTitrePub(titreField.getText().trim());
-            p.setTypePub("story"); // → type story
+            p.setTypePub("story");
             p.setLienPub(selectedImagePath);
             p.setContenuPub(contenuArea.getText().trim());
             p.setDatePub(LocalDateTime.now());
             p.setLikes(0);
             p.setDislikes(0);
-            p.setUtilisateurId(1);
+
+            // ✅ CORRIGÉ : récupérer l'ID de l'utilisateur connecté
+            int uid = getCurrentUserId();
+            if (uid == -1) {
+                showAlert(Alert.AlertType.WARNING, "Non connecté", "Vous devez être connecté pour publier.");
+                return;
+            }
+            p.setUtilisateurId(uid);
 
             servicePublication.add(p);
 
@@ -117,6 +125,22 @@ public class AjouterStoryController {
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Erreur", e.getMessage());
         }
+    }
+
+    // ✅ NOUVEAU : helper pour récupérer l'ID utilisateur sécurisé
+    private int getCurrentUserId() {
+        try {
+            if (SessionManager.getCurrentUser() != null
+                    && SessionManager.getCurrentUser().getId() != null) {
+                int id = SessionManager.getCurrentUser().getId().intValue();
+                System.out.println("[DEBUG] Utilisateur connecté, ID = " + id);
+                return id;
+            }
+        } catch (Exception e) {
+            System.err.println("[WARN] Impossible de lire l'ID de session : " + e.getMessage());
+        }
+        System.out.println("[DEBUG] Aucun utilisateur en session → -1");
+        return -1;
     }
 
     @FXML

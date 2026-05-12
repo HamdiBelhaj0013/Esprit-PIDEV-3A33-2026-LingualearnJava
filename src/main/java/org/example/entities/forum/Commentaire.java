@@ -7,16 +7,18 @@ public class Commentaire {
     private String contenuC;
     private LocalDateTime dateCom;
     private int publicationId;
+    private int utilisateurId;
 
     // Constructeur vide
     public Commentaire() {}
 
     // Constructeur complet
-    public Commentaire(int id, String contenuC, LocalDateTime dateCom, int publicationId) {
+    public Commentaire(int id, String contenuC, LocalDateTime dateCom, int publicationId, int utilisateurId) {
         this.id = id;
         this.contenuC = contenuC;
         this.dateCom = dateCom;
         this.publicationId = publicationId;
+        this.utilisateurId = utilisateurId;
     }
 
     // Getters & Setters
@@ -32,9 +34,13 @@ public class Commentaire {
     public int getPublicationId() { return publicationId; }
     public void setPublicationId(int publicationId) { this.publicationId = publicationId; }
 
+    public int getUtilisateurId() { return utilisateurId; }
+    public void setUtilisateurId(int utilisateurId) { this.utilisateurId = utilisateurId; }
+
     @Override
     public String toString() {
         return "Commentaire{id=" + id + ", contenu='" + contenuC +
-                "', dateCom=" + dateCom + ", publicationId=" + publicationId + "}";
+                "', dateCom=" + dateCom + ", publicationId=" + publicationId +
+                ", utilisateurId=" + utilisateurId + "}";
     }
 }

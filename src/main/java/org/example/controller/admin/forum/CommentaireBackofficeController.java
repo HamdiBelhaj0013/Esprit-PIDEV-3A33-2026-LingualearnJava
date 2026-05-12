@@ -1,6 +1,7 @@
 package org.example.controller.admin.forum;
-
+import javafx.scene.layout.HBox;
 import org.example.entities.forum.Commentaire;
+import org.example.entity.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -13,6 +14,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.example.service.forum.ServiceCommentaire;
+import org.example.service.user_managment.UserService;
+import org.example.util.SessionManager;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -24,6 +27,8 @@ public class CommentaireBackofficeController {
     @FXML private TableColumn<Commentaire, Integer> colId;
     @FXML private TableColumn<Commentaire, String> colContenu;
     @FXML private TableColumn<Commentaire, Integer> colPublicationId;
+    @FXML private TableColumn<Commentaire, String> colAuteur;
+    @FXML private TableColumn<Commentaire, String> colActions;
 
     @FXML private TextField searchContenuField;
     @FXML private TextField filterPublicationIdField;
@@ -38,6 +43,7 @@ public class CommentaireBackofficeController {
     @FXML private Label pageInfoLabel;
 
     private final ServiceCommentaire serviceCommentaire = new ServiceCommentaire();
+    private final UserService userService = new UserService();
     private final ObservableList<Commentaire> masterData = FXCollections.observableArrayList();
     private final FilteredList<Commentaire> filteredData = new FilteredList<>(masterData, c -> true);
     private List<Commentaire> pagedSource = new ArrayList<>();
@@ -47,6 +53,57 @@ public class CommentaireBackofficeController {
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colContenu.setCellValueFactory(new PropertyValueFactory<>("contenuC"));
         colPublicationId.setCellValueFactory(new PropertyValueFactory<>("publicationId"));
+
+        // ✅ NOUVEAU : Colonne Auteur avec le nom de l'utilisateur
+        colAuteur.setCellValueFactory(cellData -> {
+            Commentaire c = cellData.getValue();
+            String authorName = "Utilisateur inconnu";
+            try {
+                User user = userService.findById((long)c.getUtilisateurId()).orElse(null);
+                if (user != null) {
+                    authorName = user.getFullName();
+                }
+            } catch (Exception e) {
+                System.err.println("Erreur récupération utilisateur : " + e.getMessage());
+            }
+            return new javafx.beans.property.SimpleStringProperty(authorName);
+        });
+
+        // ✅ NOUVEAU : Colonne Actions
+        colActions.setCellFactory(col -> new TableCell<Commentaire, String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    Commentaire c = getTableView().getItems().get(getIndex());
+                    HBox actions = new HBox(5);
+
+                    // ✅ Admin peut TOUJOURS modifier et supprimer
+                    Button btnModifier = new Button("✏️");
+                    btnModifier.setStyle(
+                            "-fx-background-color: #3498db;" +
+                                    "-fx-text-fill: white;" +
+                                    "-fx-background-radius: 5;" +
+                                    "-fx-cursor: hand; -fx-padding: 4 8;"
+                    );
+                    btnModifier.setOnAction(e -> openEditPage(c));
+
+                    Button btnSupprimer = new Button("🗑️");
+                    btnSupprimer.setStyle(
+                            "-fx-background-color: #e74c3c;" +
+                                    "-fx-text-fill: white;" +
+                                    "-fx-background-radius: 5;" +
+                                    "-fx-cursor: hand; -fx-padding: 4 8;"
+                    );
+                    btnSupprimer.setOnAction(e -> deleteCommentaire(c));
+
+                    actions.getChildren().addAll(btnModifier, btnSupprimer);
+                    setGraphic(actions);
+                }
+            }
+        });
 
         pageSizeComboBox.setItems(FXCollections.observableArrayList(5, 10, 15, 20));
         pageSizeComboBox.getSelectionModel().select(Integer.valueOf(10));
@@ -191,18 +248,12 @@ public class CommentaireBackofficeController {
         }
     }
 
-    @FXML
-    public void openEditPage() {
-        Commentaire selected = commentaireTable.getSelectionModel().getSelectedItem();
-        if (selected == null) {
-            showWarning("Selectionne un commentaire a modifier.");
-            return;
-        }
+    private void openEditPage(Commentaire c) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/admin/forum/fxml/commentaire_edit.fxml"));
             Parent root = loader.load();
             CommentaireEditController controller = loader.getController();
-            controller.setCommentaire(selected);
+            controller.setCommentaire(c);
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.initOwner(commentaireTable.getScene().getWindow());
@@ -213,6 +264,16 @@ public class CommentaireBackofficeController {
         } catch (Exception e) {
             showError("Ouverture page modification impossible", e.getMessage());
         }
+    }
+
+    @FXML
+    public void openEditPage() {
+        Commentaire selected = commentaireTable.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            showWarning("Selectionne un commentaire a modifier.");
+            return;
+        }
+        openEditPage(selected);
     }
 
     @FXML
@@ -238,6 +299,24 @@ public class CommentaireBackofficeController {
         }
     }
 
+    private void deleteCommentaire(Commentaire c) {
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setHeaderText("Supprimer le commentaire ?");
+        confirm.setContentText("ID " + c.getId() + " - " +
+                (c.getContenuC().length() > 50 ? c.getContenuC().substring(0, 50) + "..." : c.getContenuC()));
+        if (confirm.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) {
+            return;
+        }
+
+        try {
+            serviceCommentaire.delete(c.getId());
+            refresh();
+            setStatus("Commentaire supprime.", false);
+        } catch (Exception e) {
+            showError("Suppression commentaire impossible", e.getMessage());
+        }
+    }
+
     @FXML
     public void deleteCommentaire() {
         Commentaire selected = commentaireTable.getSelectionModel().getSelectedItem();
@@ -245,21 +324,7 @@ public class CommentaireBackofficeController {
             showWarning("Selectionne un commentaire a supprimer.");
             return;
         }
-
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setHeaderText("Supprimer le commentaire ?");
-        confirm.setContentText("ID " + selected.getId());
-        if (confirm.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) {
-            return;
-        }
-
-        try {
-            serviceCommentaire.delete(selected.getId());
-            refresh();
-            setStatus("Commentaire supprime.", false);
-        } catch (Exception e) {
-            showError("Suppression commentaire impossible", e.getMessage());
-        }
+        deleteCommentaire(selected);
     }
 
     @FXML
@@ -300,10 +365,3 @@ public class CommentaireBackofficeController {
         BackofficeNav.navigateToDashboard(commentaireTable);
     }
 }
-
-
-
-
-
-
-
