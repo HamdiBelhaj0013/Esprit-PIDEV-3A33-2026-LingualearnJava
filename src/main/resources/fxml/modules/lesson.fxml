@@ -81,12 +81,12 @@
 
                 <HBox spacing="16">
                     <VBox spacing="4" HBox.hgrow="ALWAYS">
-                        <Label text="Vocabulary Data (JSON)" styleClass="form-label"/>
-                        <TextArea fx:id="txtVocabularyData" promptText='["word1","word2"]' prefRowCount="2"/>
+                        <Label text="Vocabulary Data" styleClass="form-label"/>
+                        <TextArea fx:id="txtVocabularyData" promptText='Word 1 , Word 2' prefRowCount="2"/>
                     </VBox>
                     <VBox spacing="4" HBox.hgrow="ALWAYS">
-                        <Label text="Grammar Data (JSON)" styleClass="form-label"/>
-                        <TextArea fx:id="txtGrammarData" promptText='{"grammar":"present"}' prefRowCount="2"/>
+                        <Label text="Grammar Data" styleClass="form-label"/>
+                        <TextArea fx:id="txtGrammarData" promptText='"grammar":"present"' prefRowCount="2"/>
                     </VBox>
                 </HBox>
 
