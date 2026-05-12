@@ -76,7 +76,7 @@
                 <CheckBox fx:id="chkEnabled" text="Enable this language"/>
 
                 <HBox spacing="10">
-                    <Button text="💾  Save" onAction="#addLanguage" styleClass="btn-success"/>
+                    <Button text="💾  Add" onAction="#addLanguage" styleClass="btn-success"/>
                     <Button text="✏  Update" onAction="#updateLanguage" styleClass="btn-warning"/>
                     <Button text="🗑  Delete" onAction="#deleteLanguage" styleClass="btn-danger"/>
                     <Button text="Reset" onAction="#resetForm" styleClass="btn-secondary"/>

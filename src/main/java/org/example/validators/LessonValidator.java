@@ -22,14 +22,10 @@ public class LessonValidator {
 
         if (lesson.getVocabularyData() == null || lesson.getVocabularyData().trim().isEmpty()) {
             errors.add("Vocabulary data est obligatoire.");
-        } else if (!isValidJson(lesson.getVocabularyData())) {
-            errors.add("Vocabulary data doit être en JSON valide. Exemple : [\"word1\",\"word2\"]");
         }
 
         if (lesson.getGrammarData() == null || lesson.getGrammarData().trim().isEmpty()) {
             errors.add("Grammar data est obligatoire.");
-        } else if (!isValidJson(lesson.getGrammarData())) {
-            errors.add("Grammar data doit être en JSON valide. Exemple : {\"grammar\":\"present\"}");
         }
 
         if (lesson.getXpReward() < 0) {

@@ -64,16 +64,7 @@
                                     styleClass="player-step-tab player-step-tab-active"
                                     maxWidth="Infinity"
                                     HBox.hgrow="ALWAYS"/>
-                            <Button fx:id="btnVocabTab"
-                                    text="🔤  Vocab"
-                                    styleClass="player-step-tab"
-                                    maxWidth="Infinity"
-                                    HBox.hgrow="ALWAYS"/>
-                            <Button fx:id="btnQuizTab"
-                                    text="🧩  Quiz"
-                                    styleClass="player-step-tab"
-                                    maxWidth="Infinity"
-                                    HBox.hgrow="ALWAYS"/>
+
                             <Button fx:id="btnDoneTab"
                                     text="✅  Done"
                                     styleClass="player-step-tab"
@@ -110,14 +101,7 @@
                     text="📖  Reading"
                     styleClass="side-step side-step-active"
                     maxWidth="Infinity"/>
-            <Button fx:id="sideVocabButton"
-                    text="🔤  Vocabulary"
-                    styleClass="side-step"
-                    maxWidth="Infinity"/>
-            <Button fx:id="sideQuizButton"
-                    text="🧩  Quick Quiz"
-                    styleClass="side-step"
-                    maxWidth="Infinity"/>
+
             <Button fx:id="sideDoneButton"
                     text="✅  Complete"
                     styleClass="side-step"

@@ -1,18 +1,23 @@
 package org.example.controllers;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.util.Duration;
 import org.example.entities.Lesson;
 import org.example.services.FrontProgressService;
 import org.example.services.LessonService;
 
-import java.sql.SQLException;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class FrontLessonsController {
 
@@ -23,44 +28,61 @@ public class FrontLessonsController {
     @FXML private StackPane contentHolder;
 
     @FXML private Button btnReadTab;
-    @FXML private Button btnVocabTab;
-    @FXML private Button btnQuizTab;
     @FXML private Button btnDoneTab;
 
     @FXML private Button sideReadButton;
-    @FXML private Button sideVocabButton;
-    @FXML private Button sideQuizButton;
     @FXML private Button sideDoneButton;
 
     @FXML private Label xpRewardLabel;
 
-    private final LessonService lessonService = new LessonService();
+    private final LessonService lessonService          = new LessonService();
     private final FrontProgressService progressService = new FrontProgressService();
 
-    private List<Lesson> lessons = new ArrayList<>();
-    private Lesson currentLesson;
-    private int currentLessonIndex = 0;
-    private int currentStep = 0; // 0 read, 1 vocab, 2 quiz, 3 done
+    private List<Lesson> lessons           = new ArrayList<>();
+    private Lesson       currentLesson;
+    private int          currentLessonIndex = 0;
+    private int          currentStep        = 0; // 0 = read, 1 = done
 
-    private final Random random = new Random();
+    // ── Reading timer ──
+    private boolean  lessonRead      = false;
+    private int      readSecondsLeft = 0;
+    private Timeline readTimer       = null;
+
+    private Process currentTtsProcess = null;
+
+    private static com.sun.net.httpserver.HttpServer micServer = null;
+    private static int micPort = 0;
+    private volatile boolean forceStop = false;
+
+    // ─────────────────────────────────────────────────────────────
+    // INIT
+    // ─────────────────────────────────────────────────────────────
 
     @FXML
     public void initialize() {
         courseTitle.setText(FrontNavigationState.getSelectedCourseTitle());
-        backToCoursesLabel.setOnMouseClicked(e -> FrontRouter.goTo("/fxml/modules/frontoffice/front-courses.fxml"));
+        backToCoursesLabel.setOnMouseClicked(e ->
+                FrontRouter.goTo("/fxml/modules/frontoffice/front-courses.fxml")
+        );
 
         btnReadTab.setOnAction(e -> switchStep(0));
-        btnVocabTab.setOnAction(e -> switchStep(1));
-        btnQuizTab.setOnAction(e -> switchStep(2));
-        btnDoneTab.setOnAction(e -> switchStep(3));
+        btnDoneTab.setOnAction(e -> {
+            if (!lessonRead) showReadFirstWarning();
+            else switchStep(1);
+        });
 
         sideReadButton.setOnAction(e -> switchStep(0));
-        sideVocabButton.setOnAction(e -> switchStep(1));
-        sideQuizButton.setOnAction(e -> switchStep(2));
-        sideDoneButton.setOnAction(e -> switchStep(3));
+        sideDoneButton.setOnAction(e -> {
+            if (!lessonRead) showReadFirstWarning();
+            else switchStep(1);
+        });
 
         loadLessons();
     }
+
+    // ─────────────────────────────────────────────────────────────
+    // LOAD
+    // ─────────────────────────────────────────────────────────────
 
     private void loadLessons() {
         try {
@@ -73,9 +95,13 @@ public class FrontLessonsController {
             }
 
             currentLessonIndex = 0;
-            currentLesson = lessons.get(currentLessonIndex);
+            currentLesson      = lessons.get(currentLessonIndex);
+            lessonRead         = false;
             xpRewardLabel.setText(currentLesson.getXpReward() + " XP");
+
+            updateDoneTabState();
             switchStep(0);
+
         } catch (Exception e) {
             e.printStackTrace();
             showEmptyState();
@@ -97,6 +123,10 @@ public class FrontLessonsController {
         contentHolder.getChildren().setAll(box);
     }
 
+    // ─────────────────────────────────────────────────────────────
+    // NAVIGATION
+    // ─────────────────────────────────────────────────────────────
+
     private void switchStep(int step) {
         currentStep = step;
         updateTabs();
@@ -109,30 +139,24 @@ public class FrontLessonsController {
         }
 
         xpRewardLabel.setText(currentLesson.getXpReward() + " XP");
-
-        Node content = switch (step) {
-            case 0 -> buildReadView();
-            case 1 -> buildVocabView();
-            case 2 -> buildQuizView();
-            case 3 -> buildDoneView();
-            default -> buildReadView();
-        };
-
+        Node content = (step == 0) ? buildReadView() : buildDoneView();
         contentHolder.getChildren().setAll(content);
     }
 
     private void updateTabs() {
         setTabActive(btnReadTab, currentStep == 0);
-        setTabActive(btnVocabTab, currentStep == 1);
-        setTabActive(btnQuizTab, currentStep == 2);
-        setTabActive(btnDoneTab, currentStep == 3);
+        setTabActive(btnDoneTab, currentStep == 1);
     }
 
     private void updateSideMenu() {
         setSideActive(sideReadButton, currentStep == 0);
-        setSideActive(sideVocabButton, currentStep == 1);
-        setSideActive(sideQuizButton, currentStep == 2);
-        setSideActive(sideDoneButton, currentStep == 3);
+        setSideActive(sideDoneButton, currentStep == 1);
+    }
+
+    private void updateProgress() {
+        double progress = (currentStep + 1) / 2.0;
+        lessonProgressBar.setProgress(progress);
+        progressText.setText((currentStep + 1) + " / 2");
     }
 
     private void setTabActive(Button button, boolean active) {
@@ -152,21 +176,111 @@ public class FrontLessonsController {
         }
     }
 
-    private void updateProgress() {
-        double progress = (currentStep + 1) / 4.0;
-        lessonProgressBar.setProgress(progress);
-        progressText.setText((currentStep + 1) + " / 4");
+    // ─────────────────────────────────────────────────────────────
+    // DONE TAB STATE
+    // ─────────────────────────────────────────────────────────────
+
+    private void updateDoneTabState() {
+        btnDoneTab.setDisable(!lessonRead);
+        sideDoneButton.setDisable(!lessonRead);
+
+        if (!lessonRead) {
+            btnDoneTab.setTooltip(new Tooltip("📖 Read the lesson first!"));
+            sideDoneButton.setTooltip(new Tooltip("📖 Read the lesson first!"));
+        } else {
+            btnDoneTab.setTooltip(null);
+            sideDoneButton.setTooltip(null);
+        }
     }
 
-    // ── HTTP server for speech recognition ───────────────────────────────────
-    private static com.sun.net.httpserver.HttpServer micServer = null;
-    private static int micPort = 0;
+    private void showReadFirstWarning() {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setHeaderText(null);
+        alert.setTitle("Read First!");
+        alert.setContentText("📖 You must finish reading the lesson before completing it.\nWait for the timer to finish.");
+        alert.showAndWait();
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // READING TIMER
+    // ─────────────────────────────────────────────────────────────
+
+    /**
+     * Temps minimum de lecture calculé selon le nombre de mots :
+     * ~200 mots/minute → minimum 30s, maximum 120s.
+     */
+    private int computeReadSeconds(String content) {
+        if (content == null || content.isBlank()) return 30;
+        int words   = content.trim().split("\\s+").length;
+        int seconds = (int) Math.round(words / 200.0 * 60);
+        return Math.max(30, Math.min(seconds, 120));
+    }
+
+    private void startReadTimer(ProgressBar timerBar, Label timerLabel, Button quickDoneBtn) {
+        stopReadTimer();
+
+        readSecondsLeft  = computeReadSeconds(currentLesson != null ? currentLesson.getContent() : "");
+        int totalSeconds = readSecondsLeft;
+
+        timerBar.setProgress(0);
+        timerBar.setStyle("-fx-accent:#f59e0b;");
+        updateTimerLabel(timerLabel, readSecondsLeft);
+
+        readTimer = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
+            readSecondsLeft--;
+            double progress = 1.0 - (readSecondsLeft / (double) totalSeconds);
+            timerBar.setProgress(progress);
+            updateTimerLabel(timerLabel, readSecondsLeft);
+
+            if (readSecondsLeft <= 0) {
+                readTimer.stop();
+                lessonRead = true;
+
+                timerBar.setProgress(1.0);
+                timerBar.setStyle("-fx-accent:#16a34a;");
+
+                timerLabel.setText("✅ Reading complete! You can now go to Done.");
+                timerLabel.setStyle("-fx-font-size:13px; -fx-font-weight:bold; -fx-text-fill:#16a34a;");
+
+                quickDoneBtn.setDisable(false);
+                updateDoneTabState();
+            }
+        }));
+
+        readTimer.setCycleCount(totalSeconds);
+        readTimer.play();
+    }
+
+    private void stopReadTimer() {
+        if (readTimer != null) {
+            readTimer.stop();
+            readTimer = null;
+        }
+    }
+
+    private void updateTimerLabel(Label label, int secondsLeft) {
+        int mins = secondsLeft / 60;
+        int secs = secondsLeft % 60;
+        String time = String.format("%d:%02d", mins, secs);
+
+        if (secondsLeft > 10) {
+            label.setText("⏳ Read time remaining: " + time);
+            label.setStyle("-fx-font-size:13px; -fx-font-weight:bold; -fx-text-fill:#92400e;");
+        } else {
+            label.setText("🔥 Almost done! " + time);
+            label.setStyle("-fx-font-size:13px; -fx-font-weight:bold; -fx-text-fill:#dc2626;");
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // READ VIEW
+    // ─────────────────────────────────────────────────────────────
 
     private Node buildReadView() {
         VBox wrapper = new VBox(24);
         wrapper.setAlignment(Pos.TOP_CENTER);
         wrapper.setMaxWidth(760);
-        wrapper.setPadding(new javafx.geometry.Insets(0, 0, 60, 0));
+        wrapper.setPadding(new Insets(0, 0, 60, 0));
 
         Label lessonIndex = new Label("LESSON " + (currentLessonIndex + 1) + " OF " + lessons.size());
         lessonIndex.getStyleClass().add("player-progress-text");
@@ -174,31 +288,91 @@ public class FrontLessonsController {
         VBox card = new VBox(20);
         card.getStyleClass().add("read-card");
 
+        // ── Titre de la leçon ──
         Label title = new Label(currentLesson.getTitle());
         title.getStyleClass().add("lesson-title");
 
-        // The user explicitly requested to NOT see the lesson text here.
-        // We only keep the title and the practice modules.
+        // ── Contenu de la leçon (affiché sous le titre) ──
+        Label contentLabel = new Label(safeText(currentLesson.getContent(), "No content available."));
+        contentLabel.setWrapText(true);
+        contentLabel.setStyle(
+                "-fx-font-size:14px;" +
+                        "-fx-text-fill:#334155;" +
+                        "-fx-line-spacing:4;"
+        );
 
-        // ── Top Buttons (PDF, Start, Stop) ───────────────────────────────────
+        VBox contentBox = new VBox(contentLabel);
+        contentBox.setStyle(
+                "-fx-background-color:#f8fafc;" +
+                        "-fx-background-radius:10;" +
+                        "-fx-border-color:#e2e8f0;" +
+                        "-fx-border-width:1;" +
+                        "-fx-border-radius:10;" +
+                        "-fx-padding:16;"
+        );
+
+        // ── Timer box ──
+        VBox timerBox = new VBox(8);
+        timerBox.setStyle(
+                "-fx-background-color:#fffbeb;" +
+                        "-fx-background-radius:10;" +
+                        "-fx-border-color:#fde68a;" +
+                        "-fx-border-radius:10;" +
+                        "-fx-padding:14 16;"
+        );
+
+        int totalSecs = computeReadSeconds(currentLesson.getContent());
+        int mins      = totalSecs / 60;
+        int secs      = totalSecs % 60;
+
+        Label timerHint = new Label(
+                "📖 Minimum reading time: " + String.format("%d:%02d", mins, secs) +
+                        " min  —  Done unlocks when the timer reaches 100%."
+        );
+        timerHint.setStyle("-fx-font-size:11px; -fx-text-fill:#92400e;");
+        timerHint.setWrapText(true);
+
+        ProgressBar timerBar = new ProgressBar(0);
+        timerBar.setMaxWidth(Double.MAX_VALUE);
+        timerBar.setPrefHeight(12);
+        timerBar.setStyle("-fx-accent:#f59e0b;");
+
+        Label timerLabel = new Label();
+        timerLabel.setStyle("-fx-font-size:13px; -fx-font-weight:bold; -fx-text-fill:#92400e;");
+
+        timerBox.getChildren().addAll(timerHint, timerBar, timerLabel);
+
+        // ── Boutons ──
         Button btnPdf = new Button("📄 Download PDF");
         btnPdf.setStyle("-fx-background-color:#dc2626; -fx-text-fill:white; -fx-font-weight:bold; -fx-background-radius:8; -fx-padding:10 18; -fx-cursor:hand;");
         btnPdf.setOnAction(e -> exportPdf());
 
-        Button btnStart = new Button("▶ Start");
+        Button btnStart = new Button("▶ Start Audio");
         btnStart.setStyle("-fx-background-color:#16a34a; -fx-text-fill:white; -fx-font-weight:bold; -fx-background-radius:8; -fx-padding:10 18; -fx-cursor:hand;");
-        btnStart.setOnAction(e -> speakText(currentLesson.getContent()));
 
         Button btnStop = new Button("⏹ Stop");
         btnStop.setStyle("-fx-background-color:#dc2626; -fx-text-fill:white; -fx-font-weight:bold; -fx-background-radius:8; -fx-padding:10 18; -fx-cursor:hand;");
         btnStop.setOnAction(e -> stopSpeaking());
 
-        HBox topButtons = new HBox(12, btnPdf, btnStart, btnStop);
+        Button quickDoneBtn = new Button("✅ Done Reading →");
+        quickDoneBtn.setStyle(
+                "-fx-background-color:#2563eb; -fx-text-fill:white; -fx-font-weight:bold;" +
+                        "-fx-background-radius:8; -fx-padding:10 18; -fx-cursor:hand;"
+        );
+        quickDoneBtn.setDisable(!lessonRead);
+        quickDoneBtn.setOnAction(e -> switchStep(1));
+
+        btnStart.setOnAction(e -> speakText(currentLesson.getContent()));
+
+        HBox topButtons = new HBox(12, btnPdf, btnStart, btnStop, quickDoneBtn);
         topButtons.setAlignment(Pos.CENTER_LEFT);
 
-        // ── Pronunciation Practice ───────────────────────────────────────────
+        // ── Pronunciation practice ──
         VBox practiceBox = new VBox(12);
-        practiceBox.setStyle("-fx-background-color:#f8fafc; -fx-border-color:#e2e8f0; -fx-border-width:1; -fx-border-radius:12; -fx-background-radius:12; -fx-padding:20;");
+        practiceBox.setStyle(
+                "-fx-background-color:#f8fafc; -fx-border-color:#e2e8f0;" +
+                        "-fx-border-width:1; -fx-border-radius:12; -fx-background-radius:12; -fx-padding:20;"
+        );
 
         Label practiceTitle = new Label("🎤 Pronunciation Practice");
         practiceTitle.setStyle("-fx-font-size:16px; -fx-font-weight:bold; -fx-text-fill:#1e293b;");
@@ -210,9 +384,7 @@ public class FrontLessonsController {
         Button btnEcouter = new Button("🔊 Écouter");
         btnEcouter.setStyle("-fx-background-color:#16a34a; -fx-text-fill:white; -fx-font-weight:bold; -fx-background-radius:8; -fx-padding:10 20; -fx-cursor:hand;");
         btnEcouter.setOnAction(e -> {
-            if (!wordInput.getText().trim().isEmpty()) {
-                speakText(wordInput.getText().trim());
-            }
+            if (!wordInput.getText().trim().isEmpty()) speakText(wordInput.getText().trim());
         });
 
         Button btnParler = new Button("🎤 Parler 3s");
@@ -232,65 +404,244 @@ public class FrontLessonsController {
 
         btnParler.setOnAction(e -> {
             String targetWord = wordInput.getText().trim();
-            if (targetWord.isEmpty()) {
-                lblMotReconnu.setText("Veuillez écrire un mot d'abord.");
-                return;
-            }
+            if (targetWord.isEmpty()) { lblMotReconnu.setText("Veuillez écrire un mot d'abord."); return; }
             lblMotReconnu.setText("Mot reconnu : Écoute en cours...");
             lblScore.setText("Score : -");
             lblFeedback.setText("Feedback : -");
             openSpeechBrowser(targetWord, lblMotReconnu, lblScore, lblFeedback);
         });
 
-        practiceBox.getChildren().addAll(practiceTitle, wordInput, practiceButtons, lblMotReconnu, lblScore, lblFeedback);
+        practiceBox.getChildren().addAll(
+                practiceTitle, wordInput, practiceButtons,
+                lblMotReconnu, lblScore, lblFeedback
+        );
 
-        // ── Next Button ──────────────────────────────────────────────────────
-        Button next = new Button("Next: Vocabulary →");
-        next.getStyleClass().add("lesson-step-button");
-        next.setOnAction(e -> switchStep(1));
-        HBox bottomBar = new HBox(next);
-        bottomBar.setAlignment(Pos.CENTER_RIGHT);
-        bottomBar.setPadding(new javafx.geometry.Insets(10, 0, 20, 0));
-
-        card.getChildren().addAll(title, topButtons, practiceBox, bottomBar);
+        // ── Assemblage : titre → contenu → timer → boutons → pratique ──
+        card.getChildren().addAll(title, contentBox, timerBox, topButtons, practiceBox);
         wrapper.getChildren().addAll(lessonIndex, card);
+
+        // ── Démarrer le timer automatiquement ──
+        if (!lessonRead) {
+            startReadTimer(timerBar, timerLabel, quickDoneBtn);
+        } else {
+            timerBar.setProgress(1.0);
+            timerBar.setStyle("-fx-accent:#16a34a;");
+            timerLabel.setText("✅ Reading complete! You can now go to Done.");
+            timerLabel.setStyle("-fx-font-size:13px; -fx-font-weight:bold; -fx-text-fill:#16a34a;");
+        }
+
         return wrapper;
     }
 
-    private Process currentTtsProcess = null;
+    // ─────────────────────────────────────────────────────────────
+    // DONE VIEW
+    // ─────────────────────────────────────────────────────────────
+
+    private Node buildDoneView() {
+        stopReadTimer();
+
+        VBox wrapper = new VBox(18);
+        wrapper.setAlignment(Pos.TOP_CENTER);
+        wrapper.setMaxWidth(760);
+
+        VBox doneCard = new VBox(12);
+        doneCard.getStyleClass().add("done-card");
+
+        Label title    = new Label("Lesson Complete!");
+        title.getStyleClass().add("done-title");
+
+        Label subtitle = new Label("Great work finishing " + currentLesson.getTitle() + ".");
+        subtitle.getStyleClass().add("done-subtitle");
+
+        Label xp = new Label("⭐ +" + currentLesson.getXpReward() + " XP earned");
+        xp.getStyleClass().add("xp-badge");
+
+        HBox actions = new HBox(12);
+        actions.setAlignment(Pos.CENTER);
+
+        Button complete = new Button("✅ Lesson Completed!");
+        complete.getStyleClass().add("success-button");
+
+        Button allLessons = new Button("📚 All Lessons");
+        allLessons.getStyleClass().add("secondary-pill-button");
+        allLessons.setOnAction(e ->
+                FrontRouter.goTo("/fxml/modules/frontoffice/front-courses.fxml")
+        );
+
+        Button nextLesson = new Button("Next Lesson →");
+        nextLesson.getStyleClass().add("lesson-step-button");
+        nextLesson.setOnAction(e -> openNextLesson());
+
+        actions.getChildren().addAll(complete, allLessons, nextLesson);
+
+        VBox recommendationArea = new VBox(12);
+        recommendationArea.setAlignment(Pos.CENTER_LEFT);
+        recommendationArea.setPadding(new Insets(20, 0, 0, 0));
+        recommendationArea.setVisible(false);
+        recommendationArea.setManaged(false);
+
+        complete.setOnAction(e -> {
+            completeCurrentLesson();
+            complete.setDisable(true);
+            complete.setText("✅ Lesson Completed!");
+            loadRecommendations(recommendationArea);
+            recommendationArea.setVisible(true);
+            recommendationArea.setManaged(true);
+        });
+
+        doneCard.getChildren().addAll(title, subtitle, xp, actions, recommendationArea);
+        wrapper.getChildren().add(doneCard);
+
+        return wrapper;
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // RECOMMENDATIONS
+    // ─────────────────────────────────────────────────────────────
+
+    private void loadRecommendations(VBox recommendationArea) {
+        recommendationArea.getChildren().clear();
+
+        Label recTitle = new Label("🎯 Recommended Next Lessons");
+        recTitle.setStyle("-fx-font-size:15px; -fx-font-weight:bold; -fx-text-fill:#1e293b;");
+        recommendationArea.getChildren().add(recTitle);
+
+        List<Lesson> recommended = new ArrayList<>();
+        for (int i = currentLessonIndex + 1; i < lessons.size(); i++) {
+            recommended.add(lessons.get(i));
+            if (recommended.size() == 3) break;
+        }
+
+        if (recommended.isEmpty()) {
+            Label done = new Label("🎉 You've completed all lessons in this course!");
+            done.setStyle("-fx-font-size:13px; -fx-text-fill:#16a34a; -fx-font-weight:bold;");
+            recommendationArea.getChildren().add(done);
+            return;
+        }
+
+        for (Lesson lesson : recommended) {
+            HBox card = new HBox(12);
+            card.setAlignment(Pos.CENTER_LEFT);
+            card.setStyle(
+                    "-fx-background-color:#f1f5f9; -fx-background-radius:10;" +
+                            "-fx-border-color:#e2e8f0; -fx-border-radius:10; -fx-padding:12 16;"
+            );
+            card.setCursor(javafx.scene.Cursor.HAND);
+
+            VBox info = new VBox(4);
+            HBox.setHgrow(info, Priority.ALWAYS);
+
+            Label name = new Label("📘 " + lesson.getTitle());
+            name.setStyle("-fx-font-size:14px; -fx-font-weight:bold; -fx-text-fill:#1e293b;");
+
+            Label xpLabel = new Label("⭐ " + lesson.getXpReward() + " XP");
+            xpLabel.setStyle("-fx-font-size:12px; -fx-text-fill:#64748b;");
+
+            info.getChildren().addAll(name, xpLabel);
+
+            Button goBtn = new Button("Start →");
+            goBtn.setStyle(
+                    "-fx-background-color:#2563eb; -fx-text-fill:white; -fx-font-weight:bold;" +
+                            "-fx-background-radius:8; -fx-padding:8 14; -fx-cursor:hand;"
+            );
+
+            int lessonIdx = lessons.indexOf(lesson);
+            goBtn.setOnAction(ev -> {
+                currentLessonIndex = lessonIdx;
+                currentLesson      = lessons.get(currentLessonIndex);
+                lessonRead         = false;
+                xpRewardLabel.setText(currentLesson.getXpReward() + " XP");
+                updateDoneTabState();
+                switchStep(0);
+            });
+
+            card.getChildren().addAll(info, goBtn);
+            recommendationArea.getChildren().add(card);
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // COMPLETE & NEXT
+    // ─────────────────────────────────────────────────────────────
+
+    private void completeCurrentLesson() {
+        try {
+            int currentUserId = 124;
+            progressService.completeLesson(
+                    currentUserId,
+                    currentLesson.getId(),
+                    currentLesson.getXpReward()
+            );
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText(null);
+            alert.setTitle("Success");
+            alert.setContentText("Lesson completed and XP added.");
+            alert.showAndWait();
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText(null);
+            alert.setTitle("Error");
+            alert.setContentText("Could not complete lesson.");
+            alert.showAndWait();
+        }
+    }
+
+    private void openNextLesson() {
+        if (currentLessonIndex + 1 < lessons.size()) {
+            currentLessonIndex++;
+            currentLesson = lessons.get(currentLessonIndex);
+            lessonRead    = false;
+            xpRewardLabel.setText(currentLesson.getXpReward() + " XP");
+            updateDoneTabState();
+            switchStep(0);
+        } else {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText(null);
+            alert.setTitle("Done");
+            alert.setContentText("You finished all lessons in this course.");
+            alert.showAndWait();
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // TTS
+    // ─────────────────────────────────────────────────────────────
 
     private void speakText(String text) {
         stopSpeaking();
         new Thread(() -> {
             try {
-                String psCommand = "Add-Type -AssemblyName System.Speech; " +
-                        "$synth = New-Object System.Speech.Synthesis.SpeechSynthesizer; " +
-                        "$synth.Speak('" + text.replace("'", "''") + "');";
+                String safe = safeText(text, "").replace("'", "''");
+                String psCommand =
+                        "Add-Type -AssemblyName System.Speech; " +
+                                "$synth = New-Object System.Speech.Synthesis.SpeechSynthesizer; " +
+                                "$synth.Speak('" + safe + "');";
                 ProcessBuilder pb = new ProcessBuilder("powershell.exe", "-Command", psCommand);
                 currentTtsProcess = pb.start();
                 currentTtsProcess.waitFor();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+            } catch (Exception ex) { ex.printStackTrace(); }
         }).start();
     }
 
     private void stopSpeaking() {
         if (currentTtsProcess != null && currentTtsProcess.isAlive()) {
             currentTtsProcess.destroyForcibly();
-            try {
-                new ProcessBuilder("taskkill", "/F", "/IM", "powershell.exe").start();
-            } catch (Exception ignored) {}
+            try { new ProcessBuilder("taskkill", "/F", "/IM", "powershell.exe").start(); }
+            catch (Exception ignored) {}
         }
     }
 
-    private volatile boolean forceStop = false;
+    // ─────────────────────────────────────────────────────────────
+    // SPEECH BROWSER
+    // ─────────────────────────────────────────────────────────────
 
     private void openSpeechBrowser(String targetWord, Label lblMotReconnu, Label lblScore, Label lblFeedback) {
         try {
             if (micServer == null) {
-                micServer = com.sun.net.httpserver.HttpServer.create(
-                        new java.net.InetSocketAddress(0), 0);
+                micServer = com.sun.net.httpserver.HttpServer.create(new java.net.InetSocketAddress(0), 0);
                 micPort = micServer.getAddress().getPort();
             } else {
                 try { micServer.removeContext("/speech.html"); } catch (Exception ignored) {}
@@ -299,8 +650,8 @@ public class FrontLessonsController {
             }
 
             forceStop = false;
-
             String html = buildSpeechHtml();
+
             micServer.createContext("/speech.html", exchange -> {
                 byte[] bytes = html.getBytes(java.nio.charset.StandardCharsets.UTF_8);
                 exchange.getResponseHeaders().set("Content-Type", "text/html; charset=UTF-8");
@@ -309,19 +660,21 @@ public class FrontLessonsController {
                 exchange.getResponseBody().close();
             });
 
-            // Browser POSTs recognised text here
             micServer.createContext("/result", exchange -> {
                 if ("POST".equalsIgnoreCase(exchange.getRequestMethod())) {
-                    String spoken = new String(exchange.getRequestBody().readAllBytes(),
+                    String spoken = new String(
+                            exchange.getRequestBody().readAllBytes(),
                             java.nio.charset.StandardCharsets.UTF_8).trim();
+
                     exchange.sendResponseHeaders(200, 0);
                     exchange.getResponseBody().close();
 
                     int score = computeSimilarity(targetWord, spoken);
+
                     javafx.application.Platform.runLater(() -> {
                         lblMotReconnu.setText("Mot reconnu : " + spoken);
                         lblScore.setText("Score : " + score + "%");
-                        
+
                         if (score >= 70) {
                             lblFeedback.setText("Feedback : Excellent !");
                             lblFeedback.setStyle("-fx-font-size:14px; -fx-font-weight:bold; -fx-text-fill:#16a34a;");
@@ -332,8 +685,7 @@ public class FrontLessonsController {
                             lblFeedback.setText("Feedback : Incorrect.");
                             lblFeedback.setStyle("-fx-font-size:14px; -fx-font-weight:bold; -fx-text-fill:#dc2626;");
                         }
-                        
-                        // Reset global labels back to default style for next times
+
                         lblMotReconnu.setStyle("-fx-font-size:14px; -fx-font-weight:bold; -fx-text-fill:#334155;");
                         lblScore.setStyle("-fx-font-size:14px; -fx-font-weight:bold; -fx-text-fill:#334155;");
                     });
@@ -343,7 +695,6 @@ public class FrontLessonsController {
                 }
             });
 
-            // Polling endpoint for the browser to know if user clicked "Arrêter"
             micServer.createContext("/poll", exchange -> {
                 exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
                 byte[] b = (forceStop ? "STOP" : "RUN").getBytes();
@@ -357,108 +708,70 @@ public class FrontLessonsController {
 
             java.awt.Desktop.getDesktop().browse(
                     new java.net.URI("http://localhost:" + micPort + "/speech.html"));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+
+        } catch (Exception ex) { ex.printStackTrace(); }
     }
 
     private String buildSpeechHtml() {
         String port = String.valueOf(micPort);
         return "<!DOCTYPE html><html><head><meta charset='UTF-8'/><title>LinguaLearn – Pratique vocale</title>"
-            + "<style>"
-            + "body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:#eff6ff;"
-            + "display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px;box-sizing:border-box;}"
-            + "h2{color:#2563eb;margin-bottom:6px;font-size:22px;}"
-            + "p.sub{color:#64748b;font-size:13px;margin-bottom:28px;}"
-            + "#micBtn{width:100px;height:100px;border-radius:50%;border:none;font-size:44px;"
-            + "background:#dbeafe;cursor:pointer;transition:all .2s;box-shadow:0 4px 14px rgba(37,99,235,.2);}"
-            + "#micBtn.active{background:#fee2e2;animation:pulse 1s infinite;}"
-            + "@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}"
-            + "#status{margin:18px 0 12px;font-size:14px;font-weight:600;color:#64748b;}"
-            + "#transcript{width:90%;max-width:460px;min-height:64px;padding:14px 16px;"
-            + "background:white;border-radius:12px;border:2px solid #bfdbfe;"
-            + "font-size:16px;color:#1e40af;line-height:1.5;word-break:break-word;}"
-            + "#sendStatus{margin-top:14px;font-size:13px;color:#16a34a;font-weight:bold;min-height:20px;}"
-            + "</style></head>"
-            + "<body>"
-            + "<h2>🎤 Pratique de prononciation</h2>"
-            + "<p class='sub'>Parlez maintenant — l'écoute démarre automatiquement</p>"
-            + "<button id='micBtn' onclick='toggle()'>🎤</button>"
-            + "<div id='status'>En attente du microphone…</div>"
-            + "<div id='transcript'>Le texte reconnu apparaîtra ici…</div>"
-            + "<div id='sendStatus'></div>"
-            + "<script>"
-            + "var rec,active=false,full='';"
-            + "function start(){"
-            + "  var R=window.SpeechRecognition||window.webkitSpeechRecognition;"
-            + "  if(!R){document.getElementById('status').innerText='❌ Utilisez Chrome ou Edge';return;}"
-            + "  rec=new R();"
-            + "  rec.lang='fr-FR';"
-            + "  rec.continuous=true;"
-            + "  rec.interimResults=true;"
-            + "  rec.onstart=function(){"
-            + "    active=true;full='';"
-            + "    document.getElementById('micBtn').className='active';"
-            + "    document.getElementById('micBtn').innerText='⏹';"
-            + "    document.getElementById('status').innerText='🔴 Écoute en cours…';"
-            + "  };"
-            + "  rec.onresult=function(e){"
-            + "    var interim='',final_='';"
-            + "    for(var i=0;i<e.results.length;i++){"
-            + "      if(e.results[i].isFinal)final_+=e.results[i][0].transcript;"
-            + "      else interim+=e.results[i][0].transcript;"
-            + "    }"
-            + "    full=final_;"
-            + "    document.getElementById('transcript').innerText=(final_+' '+interim).trim();"
-            + "  };"
-            + "  rec.onerror=function(e){"
-            + "    document.getElementById('status').innerText='Erreur: '+e.error;"
-            + "    active=false;"
-            + "    document.getElementById('micBtn').className='';"
-            + "    document.getElementById('micBtn').innerText='🎤';"
-            + "  };"
-            + "  rec.onend=function(){"
-            + "    active=false;"
-            + "    document.getElementById('micBtn').className='';"
-            + "    document.getElementById('micBtn').innerText='🎤';"
-            + "    document.getElementById('status').innerText='✅ Envoi du résultat…';"
-            + "    var text=document.getElementById('transcript').innerText.trim();"
-            + "    if(text&&text!=='Le texte reconnu apparaîtra ici…'){"
-            + "      fetch('http://localhost:" + port + "/result',{"
-            + "        method:'POST',"
-            + "        headers:{'Content-Type':'text/plain;charset=UTF-8'},"
-            + "        body:text"
-            + "      }).then(function(){"
-            + "        document.getElementById('sendStatus').innerText='✅ Résultat envoyé à LinguaLearn !';"
-            + "        document.getElementById('status').innerText='Terminé. Vous pouvez fermer cet onglet.';"
-            + "      }).catch(function(){"
-            + "        document.getElementById('sendStatus').innerText='⚠️ Envoi échoué — vérifiez la connexion.';"
-            + "      });"
-            + "    } else {"
-            + "      document.getElementById('status').innerText='Aucun texte capturé. Réessayez.';"
-            + "    }"
-            + "  };"
-            + "  rec.start();"
-            + "}"
-            + "function toggle(){if(active&&rec)rec.stop();else start();}"
-            + "setInterval(function(){"
-            + "  if(active) {"
-            + "    fetch('http://localhost:" + port + "/poll')"
-            + "      .then(function(r){return r.text();})"
-            + "      .then(function(t){ if(t==='STOP'){ active=false; rec.stop(); } });"
-            + "  }"
-            + "}, 1000);"
-            + "window.onload=function(){setTimeout(start,600);};"
-            + "</script></body></html>";
+                + "<style>"
+                + "body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:#eff6ff;"
+                + "display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px;box-sizing:border-box;}"
+                + "h2{color:#2563eb;margin-bottom:6px;font-size:22px;}"
+                + "p.sub{color:#64748b;font-size:13px;margin-bottom:28px;}"
+                + "#micBtn{width:100px;height:100px;border-radius:50%;border:none;font-size:44px;"
+                + "background:#dbeafe;cursor:pointer;transition:all .2s;box-shadow:0 4px 14px rgba(37,99,235,.2);}"
+                + "#micBtn.active{background:#fee2e2;animation:pulse 1s infinite;}"
+                + "@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}"
+                + "#status{margin:18px 0 12px;font-size:14px;font-weight:600;color:#64748b;}"
+                + "#transcript{width:90%;max-width:460px;min-height:64px;padding:14px 16px;"
+                + "background:white;border-radius:12px;border:2px solid #bfdbfe;"
+                + "font-size:16px;color:#1e40af;line-height:1.5;word-break:break-word;}"
+                + "#sendStatus{margin-top:14px;font-size:13px;color:#16a34a;font-weight:bold;min-height:20px;}"
+                + "</style></head><body>"
+                + "<h2>🎤 Pratique de prononciation</h2>"
+                + "<p class='sub'>Parlez maintenant — l'écoute démarre automatiquement</p>"
+                + "<button id='micBtn' onclick='toggle()'>🎤</button>"
+                + "<div id='status'>En attente du microphone…</div>"
+                + "<div id='transcript'>Le texte reconnu apparaîtra ici…</div>"
+                + "<div id='sendStatus'></div>"
+                + "<script>"
+                + "var rec,active=false,full='';"
+                + "function start(){var R=window.SpeechRecognition||window.webkitSpeechRecognition;"
+                + "if(!R){document.getElementById('status').innerText='❌ Utilisez Chrome ou Edge';return;}"
+                + "rec=new R();rec.lang='fr-FR';rec.continuous=true;rec.interimResults=true;"
+                + "rec.onstart=function(){active=true;full='';document.getElementById('micBtn').className='active';document.getElementById('micBtn').innerText='⏹';document.getElementById('status').innerText='🔴 Écoute en cours…';};"
+                + "rec.onresult=function(e){var interim='',final_='';for(var i=0;i<e.results.length;i++){if(e.results[i].isFinal)final_+=e.results[i][0].transcript;else interim+=e.results[i][0].transcript;}full=final_;document.getElementById('transcript').innerText=(final_+' '+interim).trim();};"
+                + "rec.onerror=function(e){document.getElementById('status').innerText='Erreur: '+e.error;active=false;document.getElementById('micBtn').className='';document.getElementById('micBtn').innerText='🎤';};"
+                + "rec.onend=function(){active=false;document.getElementById('micBtn').className='';document.getElementById('micBtn').innerText='🎤';document.getElementById('status').innerText='✅ Envoi du résultat…';"
+                + "var text=document.getElementById('transcript').innerText.trim();"
+                + "if(text&&text!=='Le texte reconnu apparaîtra ici…'){"
+                + "fetch('http://localhost:" + port + "/result',{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:text})"
+                + ".then(function(){document.getElementById('sendStatus').innerText='✅ Résultat envoyé à LinguaLearn !';document.getElementById('status').innerText='Terminé. Vous pouvez fermer cet onglet.';})"
+                + ".catch(function(){document.getElementById('sendStatus').innerText='⚠️ Envoi échoué — vérifiez la connexion.';});"
+                + "}else{document.getElementById('status').innerText='Aucun texte capturé. Réessayez.';}};"
+                + "rec.start();}"
+                + "function toggle(){if(active&&rec)rec.stop();else start();}"
+                + "setInterval(function(){if(active){fetch('http://localhost:" + port + "/poll').then(function(r){return r.text();}).then(function(t){if(t==='STOP'){active=false;rec.stop();}});}},1000);"
+                + "window.onload=function(){setTimeout(start,600);};"
+                + "</script></body></html>";
     }
 
+    // ─────────────────────────────────────────────────────────────
+    // UTILS
+    // ─────────────────────────────────────────────────────────────
 
-    /** Word-overlap similarity score 0–100 */
     private int computeSimilarity(String reference, String spoken) {
         if (reference == null || spoken == null || spoken.isBlank()) return 0;
-        String[] refWords = reference.toLowerCase().replaceAll("[^a-zàâçéèêëîïôûùüÿœæ ]", " ").split("\\s+");
-        String[] spokenWords = spoken.toLowerCase().replaceAll("[^a-zàâçéèêëîïôûùüÿœæ ]", " ").split("\\s+");
+
+        String[] refWords = reference.toLowerCase()
+                .replaceAll("[^a-zàâçéèêëîïôûùüÿœæ ]", " ").split("\\s+");
+        String[] spokenWords = spoken.toLowerCase()
+                .replaceAll("[^a-zàâçéèêëîïôûùüÿœæ ]", " ").split("\\s+");
+
         if (refWords.length == 0) return 0;
+
         Set<String> refSet = new HashSet<>(Arrays.asList(refWords));
         long matches = Arrays.stream(spokenWords).filter(refSet::contains).count();
         return (int) Math.min(100, (matches * 100) / refWords.length);
@@ -466,61 +779,42 @@ public class FrontLessonsController {
 
     private void exportPdf() {
         if (currentLesson == null) return;
+
         javafx.stage.FileChooser fc = new javafx.stage.FileChooser();
         fc.setTitle("Save Lesson PDF");
-        fc.getExtensionFilters().add(
-                new javafx.stage.FileChooser.ExtensionFilter("PDF files", "*.pdf"));
+        fc.getExtensionFilters().add(new javafx.stage.FileChooser.ExtensionFilter("PDF files", "*.pdf"));
         fc.setInitialFileName(currentLesson.getTitle().replaceAll("[^a-zA-Z0-9]", "_") + ".pdf");
+
         java.io.File file = fc.showSaveDialog(null);
         if (file == null) return;
 
         new Thread(() -> {
             try {
-                com.itextpdf.kernel.pdf.PdfWriter writer =
-                        new com.itextpdf.kernel.pdf.PdfWriter(file.getAbsolutePath());
-                com.itextpdf.kernel.pdf.PdfDocument pdf =
-                        new com.itextpdf.kernel.pdf.PdfDocument(writer);
-                com.itextpdf.layout.Document doc = new com.itextpdf.layout.Document(pdf);
+                com.itextpdf.kernel.pdf.PdfWriter   writer = new com.itextpdf.kernel.pdf.PdfWriter(file.getAbsolutePath());
+                com.itextpdf.kernel.pdf.PdfDocument pdf    = new com.itextpdf.kernel.pdf.PdfDocument(writer);
+                com.itextpdf.layout.Document        doc    = new com.itextpdf.layout.Document(pdf);
 
-                com.itextpdf.kernel.colors.Color blue =
-                        new com.itextpdf.kernel.colors.DeviceRgb(37, 99, 235);
-                com.itextpdf.kernel.colors.Color gray =
-                        new com.itextpdf.kernel.colors.DeviceRgb(100, 116, 139);
+                com.itextpdf.kernel.colors.Color blue = new com.itextpdf.kernel.colors.DeviceRgb(37,  99, 235);
+                com.itextpdf.kernel.colors.Color gray = new com.itextpdf.kernel.colors.DeviceRgb(100, 116, 139);
 
                 doc.add(new com.itextpdf.layout.element.Paragraph(currentLesson.getTitle())
                         .setFontSize(22).setBold().setFontColor(blue).setMarginBottom(8));
-
-                doc.add(new com.itextpdf.layout.element.Paragraph("Course: "
-                        + FrontNavigationState.getSelectedCourseTitle())
+                doc.add(new com.itextpdf.layout.element.Paragraph("Course: " + FrontNavigationState.getSelectedCourseTitle())
                         .setFontSize(11).setFontColor(gray).setMarginBottom(4));
-
-                doc.add(new com.itextpdf.layout.element.Paragraph("XP Reward: "
-                        + currentLesson.getXpReward() + " XP")
+                doc.add(new com.itextpdf.layout.element.Paragraph("XP Reward: " + currentLesson.getXpReward() + " XP")
                         .setFontSize(11).setFontColor(gray).setMarginBottom(16));
-
                 doc.add(new com.itextpdf.layout.element.LineSeparator(
                         new com.itextpdf.kernel.pdf.canvas.draw.SolidLine()).setMarginBottom(16));
-
                 doc.add(new com.itextpdf.layout.element.Paragraph("📖 Lesson Content")
                         .setFontSize(14).setBold().setMarginBottom(8));
-
-                String text = safeText(currentLesson.getContent(), "No content available.");
-                doc.add(new com.itextpdf.layout.element.Paragraph(text)
+                doc.add(new com.itextpdf.layout.element.Paragraph(
+                        safeText(currentLesson.getContent(), "No content available."))
                         .setFontSize(12).setMarginBottom(16));
-
-                if (currentLesson.getVocabularyData() != null
-                        && !currentLesson.getVocabularyData().isBlank()) {
-                    doc.add(new com.itextpdf.layout.element.Paragraph("🔤 Vocabulary")
-                            .setFontSize(14).setBold().setMarginBottom(8));
-                    doc.add(new com.itextpdf.layout.element.Paragraph(currentLesson.getVocabularyData())
-                            .setFontSize(11).setFontColor(gray));
-                }
-
                 doc.close();
+
                 javafx.application.Platform.runLater(() -> {
                     Alert a = new Alert(Alert.AlertType.INFORMATION);
-                    a.setHeaderText(null);
-                    a.setTitle("PDF Saved");
+                    a.setHeaderText(null); a.setTitle("PDF Saved");
                     a.setContentText("✅ Lesson saved to:\n" + file.getAbsolutePath());
                     a.showAndWait();
                 });
@@ -536,361 +830,7 @@ public class FrontLessonsController {
         }).start();
     }
 
-
-    private Node buildVocabView() {
-        VBox wrapper = new VBox(18);
-        wrapper.setAlignment(Pos.TOP_CENTER);
-        wrapper.setMaxWidth(760);
-
-        List<VocabItem> vocabItems = parseVocabulary(currentLesson.getVocabularyData());
-
-        Label tip = new Label("Click any card to reveal the translation.");
-        tip.getStyleClass().add("player-muted");
-
-        VBox list = new VBox(14);
-
-        if (vocabItems.isEmpty()) {
-            VBox empty = new VBox(10);
-            empty.getStyleClass().add("vocab-card");
-            Label msg = new Label("No vocabulary data found for this lesson.");
-            msg.getStyleClass().add("lesson-placeholder");
-            empty.getChildren().add(msg);
-            list.getChildren().add(empty);
-        } else {
-            for (VocabItem item : vocabItems) {
-                list.getChildren().add(createVocabCard(item));
-            }
-        }
-
-        HBox footer = new HBox(12);
-        footer.setAlignment(Pos.CENTER_RIGHT);
-
-        Button goQuiz = new Button("Next: Quiz →");
-        goQuiz.getStyleClass().add("lesson-step-button");
-        goQuiz.setOnAction(e -> switchStep(2));
-
-        footer.getChildren().add(goQuiz);
-
-        wrapper.getChildren().addAll(tip, list, footer);
-        return wrapper;
-    }
-
-    private Node createVocabCard(VocabItem item) {
-        VBox card = new VBox(8);
-        card.getStyleClass().add("vocab-card");
-        card.setAlignment(Pos.CENTER);
-        card.setPadding(new Insets(26));
-        card.setMaxWidth(Double.MAX_VALUE);
-
-        Label word = new Label(item.word());
-        word.getStyleClass().add("vocab-word");
-
-        Label hint = new Label("TAP TO REVEAL");
-        hint.getStyleClass().add("player-progress-text");
-
-        Label translation = new Label(item.translation());
-        translation.getStyleClass().add("vocab-translation");
-        translation.setVisible(false);
-        translation.setManaged(false);
-
-        card.getChildren().addAll(word, hint, translation);
-
-        card.setOnMouseClicked(e -> {
-            boolean show = !translation.isVisible();
-            translation.setVisible(show);
-            translation.setManaged(show);
-            hint.setText(show ? "REVEALED" : "TAP TO REVEAL");
-        });
-
-        return card;
-    }
-
-    private Node buildQuizView() {
-        VBox wrapper = new VBox(18);
-        wrapper.setAlignment(Pos.TOP_CENTER);
-        wrapper.setMaxWidth(760);
-
-        List<VocabItem> vocabItems = parseVocabulary(currentLesson.getVocabularyData());
-
-        if (vocabItems.isEmpty()) {
-            VBox empty = new VBox(12);
-            empty.getStyleClass().add("quiz-card");
-            Label title = new Label("No quiz available");
-            title.getStyleClass().add("quiz-question");
-            Label sub = new Label("Add vocabulary pairs in the lesson to auto-build a quiz.");
-            sub.getStyleClass().add("lesson-placeholder");
-
-            Button goDone = new Button("Go to completion →");
-            goDone.getStyleClass().add("lesson-step-button");
-            goDone.setOnAction(e -> switchStep(3));
-
-            empty.getChildren().addAll(title, sub, goDone);
-            return empty;
-        }
-
-        VBox quizList = new VBox(18);
-        int maxQuestions = Math.min(3, vocabItems.size());
-
-        for (int i = 0; i < maxQuestions; i++) {
-            quizList.getChildren().add(createQuizCard(vocabItems.get(i), vocabItems));
-        }
-
-        HBox footer = new HBox(12);
-        footer.setAlignment(Pos.CENTER_RIGHT);
-
-        Button done = new Button("Next: Complete →");
-        done.getStyleClass().add("lesson-step-button");
-        done.setOnAction(e -> switchStep(3));
-
-        footer.getChildren().add(done);
-        wrapper.getChildren().addAll(quizList, footer);
-        return wrapper;
-    }
-
-    private Node createQuizCard(VocabItem questionItem, List<VocabItem> allItems) {
-        VBox card = new VBox(12);
-        card.getStyleClass().add("quiz-card");
-
-        Label question = new Label("What is the translation of \"" + questionItem.word() + "\"?");
-        question.getStyleClass().add("quiz-question");
-
-        List<String> options = buildOptions(questionItem.translation(), allItems);
-        VBox choices = new VBox(10);
-
-        Label resultLabel = new Label();
-        resultLabel.getStyleClass().add("player-muted");
-
-        for (String option : options) {
-            Button choice = new Button(option);
-            choice.getStyleClass().add("quiz-option");
-            choice.setMaxWidth(Double.MAX_VALUE);
-
-            choice.setOnAction(e -> {
-                boolean correct = option.equalsIgnoreCase(questionItem.translation());
-                resultLabel.setText(correct ? "Correct answer." : "Wrong answer. Correct: " + questionItem.translation());
-                if (correct) {
-                    choice.setStyle("-fx-background-color: #e9f9ef; -fx-border-color: #16a34a;");
-                } else {
-                    choice.setStyle("-fx-background-color: #fff1f2; -fx-border-color: #ef4444;");
-                }
-            });
-
-            choices.getChildren().add(choice);
-        }
-
-        card.getChildren().addAll(question, choices, resultLabel);
-        return card;
-    }
-
-    private List<String> buildOptions(String correct, List<VocabItem> allItems) {
-        LinkedHashSet<String> options = new LinkedHashSet<>();
-        options.add(correct);
-
-        List<String> others = allItems.stream()
-                .map(VocabItem::translation)
-                .filter(v -> !v.equalsIgnoreCase(correct))
-                .distinct()
-                .collect(Collectors.toList());
-
-        Collections.shuffle(others);
-
-        for (String other : others) {
-            if (options.size() >= 3) {
-                break;
-            }
-            options.add(other);
-        }
-
-        List<String> finalOptions = new ArrayList<>(options);
-        Collections.shuffle(finalOptions);
-        return finalOptions;
-    }
-
-    private Node buildDoneView() {
-        VBox wrapper = new VBox(18);
-        wrapper.setAlignment(Pos.TOP_CENTER);
-        wrapper.setMaxWidth(760);
-
-        VBox doneCard = new VBox(12);
-        doneCard.getStyleClass().add("done-card");
-
-        Label title = new Label("Lesson Complete!");
-        title.getStyleClass().add("done-title");
-
-        Label subtitle = new Label("Great work finishing " + currentLesson.getTitle() + ".");
-        subtitle.getStyleClass().add("done-subtitle");
-
-        Label xp = new Label("⭐ +" + currentLesson.getXpReward() + " XP earned");
-        xp.getStyleClass().add("xp-badge");
-
-        HBox actions = new HBox(12);
-        actions.setAlignment(Pos.CENTER);
-
-        Button complete = new Button("✅ Complete Lesson (+" + currentLesson.getXpReward() + " XP)");
-        complete.getStyleClass().add("success-button");
-        complete.setOnAction(e -> completeCurrentLesson());
-
-        Button allLessons = new Button("📚 All Lessons");
-        allLessons.getStyleClass().add("secondary-pill-button");
-        allLessons.setOnAction(e -> FrontRouter.goTo("/fxml/modules/frontoffice/front-courses.fxml"));
-
-        Button nextLesson = new Button("Next Lesson →");
-        nextLesson.getStyleClass().add("lesson-step-button");
-        nextLesson.setOnAction(e -> openNextLesson());
-
-        actions.getChildren().addAll(complete, allLessons, nextLesson);
-        
-        // Recommendation Area
-        VBox recommendationArea = new VBox(15);
-        recommendationArea.setAlignment(Pos.CENTER);
-        recommendationArea.setPadding(new Insets(20, 0, 0, 0));
-        recommendationArea.setVisible(false);
-        recommendationArea.setManaged(false);
-
-        Label recHeader = new Label("🌟 Recommended For You");
-        recHeader.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1e293b;");
-        
-        Lesson recommended = getRecommendedLesson();
-        if (recommended != null) {
-            VBox recCard = new VBox(10);
-            recCard.setStyle("-fx-background-color: #f1f5f9; -fx-padding: 20; -fx-background-radius: 12; -fx-border-color: #cbd5e1; -fx-border-radius: 12;");
-            recCard.setMaxWidth(400);
-            recCard.setAlignment(Pos.CENTER);
-
-            Label recTitle = new Label(recommended.getTitle());
-            recTitle.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #334155;");
-            
-            Button startRec = new Button("Start This Lesson");
-            startRec.getStyleClass().add("success-button");
-            startRec.setOnAction(e -> {
-                currentLesson = recommended;
-                // Ideally we'd fetch all lessons of the new course if it's different, 
-                // but for simplicity we'll just show this one.
-                switchStep(0);
-            });
-
-            recCard.getChildren().addAll(recTitle, startRec);
-            recommendationArea.getChildren().addAll(recHeader, recCard);
-        }
-
-        doneCard.getChildren().addAll(title, subtitle, xp, actions, recommendationArea);
-        
-        // Save ref to show it later
-        complete.setOnAction(e -> {
-            completeCurrentLesson();
-            recommendationArea.setVisible(true);
-            recommendationArea.setManaged(true);
-            complete.setDisable(true);
-            complete.setText("✅ Lesson Completed!");
-        });
-
-        wrapper.getChildren().add(doneCard);
-        return wrapper;
-    }
-
-    private Lesson getRecommendedLesson() {
-        // 1. Try next lesson in same course
-        if (currentLessonIndex + 1 < lessons.size()) {
-            return lessons.get(currentLessonIndex + 1);
-        }
-        
-        // 2. Try a random lesson from another course
-        try {
-            List<Lesson> all = lessonService.getAll();
-            List<Lesson> others = all.stream()
-                .filter(l -> l.getCourseId() != currentLesson.getCourseId())
-                .collect(Collectors.toList());
-            
-            if (!others.isEmpty()) {
-                return others.get(random.nextInt(others.size()));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        
-        return null;
-    }
-
-    private void completeCurrentLesson() {
-        try {
-            int currentUserId = 124; // Remplace par l'id réel du user connecté
-            progressService.completeLesson(currentUserId, currentLesson.getId(), currentLesson.getXpReward());
-
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setHeaderText(null);
-            alert.setTitle("Success");
-            alert.setContentText("Lesson completed and XP added.");
-            alert.showAndWait();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setHeaderText(null);
-            alert.setTitle("Error");
-            alert.setContentText("Could not complete lesson.");
-            alert.showAndWait();
-        }
-    }
-
-    private void openNextLesson() {
-        if (currentLessonIndex + 1 < lessons.size()) {
-            currentLessonIndex++;
-            currentLesson = lessons.get(currentLessonIndex);
-            xpRewardLabel.setText(currentLesson.getXpReward() + " XP");
-            switchStep(0);
-        } else {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setHeaderText(null);
-            alert.setTitle("Done");
-            alert.setContentText("You finished all lessons in this course.");
-            alert.showAndWait();
-        }
-    }
-
-    private List<VocabItem> parseVocabulary(String raw) {
-        List<VocabItem> items = new ArrayList<>();
-
-        if (raw == null || raw.isBlank()) {
-            return items;
-        }
-
-        String normalized = raw.replace("\r", "\n");
-        String[] lines = normalized.split("[;\n]+");
-
-        for (String line : lines) {
-            String value = line.trim();
-            if (value.isBlank()) {
-                continue;
-            }
-
-            String[] parts;
-            if (value.contains("=")) {
-                parts = value.split("=", 2);
-            } else if (value.contains(":")) {
-                parts = value.split(":", 2);
-            } else if (value.contains("-")) {
-                parts = value.split("-", 2);
-            } else if (value.contains("->")) {
-                parts = value.split("->", 2);
-            } else {
-                continue;
-            }
-
-            String left = parts[0].trim();
-            String right = parts[1].trim();
-
-            if (!left.isBlank() && !right.isBlank()) {
-                items.add(new VocabItem(left, right));
-            }
-        }
-
-        return items;
-    }
-
     private String safeText(String value, String fallback) {
-        return (value == null || value.isBlank()) ? fallback : value;
-    }
-
-    private record VocabItem(String word, String translation) {
+        return value == null || value.isBlank() ? fallback : value;
     }
 }
