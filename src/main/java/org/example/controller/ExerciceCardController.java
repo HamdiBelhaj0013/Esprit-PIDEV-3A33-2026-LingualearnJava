@@ -2,10 +2,10 @@ package org.example.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import org.example.entities.Exercice;
 import org.example.service.QuizService;
 import org.kordamp.ikonli.javafx.FontIcon;
-import javafx.scene.layout.HBox;
 
 import java.util.function.Consumer;
 
@@ -14,12 +14,11 @@ public class ExerciceCardController {
     @FXML private Label labelId;
     @FXML private Label labelType;
     @FXML private Label labelQuestion;
-    @FXML private Label labelAnswer;
     @FXML private Label labelQuiz;
     @FXML private HBox diffContainer;
     @FXML private Label labelStatus;
     @FXML private Label labelRating;
-    
+
     @FXML private javafx.scene.control.Button btnEdit;
     @FXML private javafx.scene.control.Button btnDelete;
 
@@ -31,7 +30,11 @@ public class ExerciceCardController {
     private final QuizService quizService = new QuizService();
     private final org.example.service.RatingService ratingService = new org.example.service.RatingService();
 
-    public void setData(Exercice ex, Consumer<Exercice> onView, Consumer<Exercice> onEdit, Consumer<Exercice> onDelete) {
+    public void setData(Exercice ex,
+                        Consumer<Exercice> onView,
+                        Consumer<Exercice> onEdit,
+                        Consumer<Exercice> onDelete) {
+
         this.exercice = ex;
         this.onView = onView;
         this.onEdit = onEdit;
@@ -39,7 +42,10 @@ public class ExerciceCardController {
 
         labelId.setText("#" + ex.getId());
         labelQuestion.setText(ex.getQuestion());
-        labelAnswer.setText(ex.getCorrectAnswer());
+
+        // IMPORTANT:
+        // Ne pas afficher la réponse correcte ici.
+        // La réponse doit apparaître uniquement dans les détails.
 
         // Type badge
         String typeLabel = ex.getType().toUpperCase().replace("_", " ");
@@ -47,14 +53,17 @@ public class ExerciceCardController {
 
         // Difficulty stars
         diffContainer.getChildren().clear();
+
         for (int i = 0; i < 5; i++) {
             FontIcon star = new FontIcon("fas-star");
             star.setIconSize(12);
+
             if (i < ex.getDifficulty()) {
                 star.setIconColor(javafx.scene.paint.Color.web("#f59e0b"));
             } else {
                 star.setIconColor(javafx.scene.paint.Color.web("#cbd5e1"));
             }
+
             diffContainer.getChildren().add(star);
         }
 
@@ -77,25 +86,38 @@ public class ExerciceCardController {
                 .findFirst()
                 .ifPresent(q -> labelQuiz.setText(q.getTitle()));
 
+        // Hide admin actions for normal users
         if (!org.example.util.Session.isAdmin()) {
-            if (btnEdit != null) { btnEdit.setVisible(false); btnEdit.setManaged(false); }
-            if (btnDelete != null) { btnDelete.setVisible(false); btnDelete.setManaged(false); }
+            if (btnEdit != null) {
+                btnEdit.setVisible(false);
+                btnEdit.setManaged(false);
+            }
+
+            if (btnDelete != null) {
+                btnDelete.setVisible(false);
+                btnDelete.setManaged(false);
+            }
         }
     }
 
     @FXML
     private void handleView() {
-        if (onView != null) onView.accept(exercice);
+        if (onView != null) {
+            onView.accept(exercice);
+        }
     }
 
     @FXML
     private void handleEdit() {
-        if (onEdit != null) onEdit.accept(exercice);
+        if (onEdit != null) {
+            onEdit.accept(exercice);
+        }
     }
 
     @FXML
     private void handleDelete() {
-        if (onDelete != null) onDelete.accept(exercice);
+        if (onDelete != null) {
+            onDelete.accept(exercice);
+        }
     }
 }
-
