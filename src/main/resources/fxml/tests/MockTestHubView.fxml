@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.controller.tests.MockTestHubController"
+      stylesheets="@../../css/style.css"
+      spacing="0"
+      style="-fx-background-color: #f0f4ff;">
+
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                style="-fx-background: #f0f4ff; -fx-background-color: #f0f4ff; -fx-border-width: 0;">
+        <VBox spacing="32" style="-fx-padding: 36 48;">
+
+            <!-- Hero greeting -->
+            <VBox spacing="6">
+                <Label fx:id="userGreetingLabel" text="Bonjour 👋"
+                       style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #1a237e;"/>
+                <Label text="Que souhaitez-vous faire aujourd'hui ?"
+                       style="-fx-font-size: 14px; -fx-text-fill: #6c7a99;"/>
+            </VBox>
+
+            <!-- Two action cards -->
+            <HBox spacing="24">
+
+                <!-- Card 1: Passer un test -->
+                <VBox spacing="16" HBox.hgrow="ALWAYS"
+                      style="-fx-background-color: white; -fx-background-radius: 14;
+                             -fx-border-color: #e3e8f0; -fx-border-radius: 14; -fx-border-width: 1;
+                             -fx-padding: 32;
+                             -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.07),12,0,0,3);">
+                    <Label text="📝" style="-fx-font-size: 42px;"/>
+                    <VBox spacing="8">
+                        <Label text="Passer un test de certification"
+                               style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1a237e;"
+                               wrapText="true"/>
+                        <Label text="Choisissez votre langue et niveau, puis passez un test officiel"
+                               style="-fx-font-size: 13px; -fx-text-fill: #6c7a99;" wrapText="true"/>
+                    </VBox>
+                    <Region VBox.vgrow="ALWAYS"/>
+                    <Button text="Commencer →" onAction="#handleTakeTest"
+                            maxWidth="Infinity"
+                            style="-fx-background-color: #3b5bdb; -fx-text-fill: white;
+                                   -fx-font-size: 14px; -fx-font-weight: bold;
+                                   -fx-background-radius: 8; -fx-cursor: hand;
+                                   -fx-padding: 12 24;"/>
+                </VBox>
+
+                <!-- Card 2: Mon profil -->
+                <VBox spacing="16" HBox.hgrow="ALWAYS"
+                      style="-fx-background-color: white; -fx-background-radius: 14;
+                             -fx-border-color: #e3e8f0; -fx-border-radius: 14; -fx-border-width: 1;
+                             -fx-padding: 32;
+                             -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.07),12,0,0,3);">
+                    <Label text="📊" style="-fx-font-size: 42px;"/>
+                    <VBox spacing="8">
+                        <Label text="Mon profil de certification"
+                               style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1a237e;"
+                               wrapText="true"/>
+                        <Label text="Consultez vos scores, statistiques et certificats obtenus"
+                               style="-fx-font-size: 13px; -fx-text-fill: #6c7a99;" wrapText="true"/>
+                    </VBox>
+                    <Region VBox.vgrow="ALWAYS"/>
+                    <Button text="Voir mon profil →" onAction="#handleViewProfile"
+                            maxWidth="Infinity"
+                            style="-fx-background-color: #2e7d32; -fx-text-fill: white;
+                                   -fx-font-size: 14px; -fx-font-weight: bold;
+                                   -fx-background-radius: 8; -fx-cursor: hand;
+                                   -fx-padding: 12 24;"/>
+                </VBox>
+            </HBox>
+
+            <!-- Stats summary row -->
+            <HBox spacing="16">
+                <VBox spacing="4" alignment="CENTER" HBox.hgrow="ALWAYS"
+                      style="-fx-background-color: white; -fx-background-radius: 12;
+                             -fx-border-color: #3b5bdb; -fx-border-width: 0 0 0 4;
+                             -fx-padding: 18;
+                             -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.05),8,0,0,2);">
+                    <Label fx:id="totalTestsLabel" text="0"
+                           style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #3b5bdb;"/>
+                    <Label text="Tests passés"
+                           style="-fx-font-size: 12px; -fx-text-fill: #6c7a99;"/>
+                </VBox>
+                <VBox spacing="4" alignment="CENTER" HBox.hgrow="ALWAYS"
+                      style="-fx-background-color: white; -fx-background-radius: 12;
+                             -fx-border-color: #f59f00; -fx-border-width: 0 0 0 4;
+                             -fx-padding: 18;
+                             -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.05),8,0,0,2);">
+                    <Label fx:id="bestScoreLabel" text="—"
+                           style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #f59f00;"/>
+                    <Label text="Meilleur score"
+                           style="-fx-font-size: 12px; -fx-text-fill: #6c7a99;"/>
+                </VBox>
+                <VBox spacing="4" alignment="CENTER" HBox.hgrow="ALWAYS"
+                      style="-fx-background-color: white; -fx-background-radius: 12;
+                             -fx-border-color: #2e7d32; -fx-border-width: 0 0 0 4;
+                             -fx-padding: 18;
+                             -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.05),8,0,0,2);">
+                    <Label fx:id="certificatesLabel" text="0"
+                           style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #2e7d32;"/>
+                    <Label text="Tests réussis (≥60%)"
+                           style="-fx-font-size: 12px; -fx-text-fill: #6c7a99;"/>
+                </VBox>
+            </HBox>
+
+            <!-- Recent activity -->
+            <VBox spacing="12">
+                <Label text="Activité récente"
+                       style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1a1f36;"/>
+                <VBox fx:id="recentActivityBox" spacing="8"/>
+            </VBox>
+
+        </VBox>
+    </ScrollPane>
+
+</VBox>
