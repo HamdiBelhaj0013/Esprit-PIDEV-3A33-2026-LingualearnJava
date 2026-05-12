@@ -11,10 +11,15 @@
       stylesheets="@../../css/style.css"
       spacing="0">
 
-    <!-- ══ HEADER ═══════════════════════════════════════════════════════════ -->
-    <HBox styleClass="dashboard-header" alignment="CENTER_LEFT" spacing="16">
+    <!-- ══ HEADER PART 1 : branding — masqué en mode embedded ══════════════ -->
+    <HBox fx:id="embeddedHeader" styleClass="dashboard-header" alignment="CENTER_LEFT" spacing="16">
         <Label text="LinguaLearn" styleClass="header-title"/>
         <Region HBox.hgrow="ALWAYS"/>
+    </HBox>
+
+    <!-- ══ HEADER PART 2 : timer + anti-triche + retour — TOUJOURS visible ══ -->
+    <HBox alignment="CENTER_LEFT" spacing="16"
+          style="-fx-background-color: #1a237e; -fx-padding: 8 24;">
 
         <!-- Label anti-triche (caché par défaut, s'affiche si sortie détectée) -->
         <Label fx:id="antiCheatLabel" text=""
@@ -23,7 +28,9 @@
                       -fx-background-color:#f59f00;-fx-background-radius:6;
                       -fx-padding:5 14;"/>
 
-        <!-- Chronomètre -->
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <!-- Chronomètre — toujours visible -->
         <VBox fx:id="chronoBox" alignment="CENTER" spacing="2"
               style="-fx-background-color: rgba(0,0,0,0.25); -fx-background-radius: 10;
                      -fx-padding: 6 16; -fx-min-width: 120;">

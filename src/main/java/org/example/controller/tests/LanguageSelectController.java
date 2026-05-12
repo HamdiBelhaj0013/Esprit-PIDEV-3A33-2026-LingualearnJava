@@ -4,10 +4,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.example.controller.UserDashboardController;
@@ -22,14 +25,18 @@ import java.util.ResourceBundle;
 
 public class LanguageSelectController implements Initializable {
 
-    @FXML private Label    userNameLabel;
-    @FXML private FlowPane languageCardsPane;
+    @FXML private Label     userNameLabel;
+    @FXML private FlowPane  languageCardsPane;
+    @FXML private HBox      embeddedHeader;
+    @FXML private VBox      embeddedHero;
+    @FXML private HBox      embeddedWave;
 
     private MockTestService         service;
     private User                    currentUser;
     private UserDashboardController dashboardController;
     private Stage                   currentStage;
     private Runnable                onBack;
+    private StackPane               contentArea;
 
     public enum Mode { TEST, PROFILE }
     private Mode mode = Mode.TEST;
@@ -53,10 +60,39 @@ public class LanguageSelectController implements Initializable {
         initWithMode(service, user, null, stage, Mode.TEST);
     }
 
+    public void initEmbedded(MockTestService service, User user,
+                             Runnable onBack, Stage stage, StackPane contentArea) {
+        this.contentArea = contentArea;
+        this.onBack = onBack;
+        initWithMode(service, user, null, stage, Mode.TEST);
+        hideInternalChrome();
+    }
+
     public void initEmbeddedProfile(MockTestService service, User user,
                                     Runnable onBack, Stage stage) {
+        this.contentArea = contentArea;
         this.onBack = onBack;
         initWithMode(service, user, null, stage, Mode.PROFILE);
+        hideInternalChrome();
+    }
+
+    private void hideInternalChrome() {
+        if (embeddedHeader != null) { embeddedHeader.setVisible(false); embeddedHeader.setManaged(false); }
+        if (embeddedHero   != null) { embeddedHero.setVisible(false);   embeddedHero.setManaged(false); }
+        if (embeddedWave   != null) { embeddedWave.setVisible(false);   embeddedWave.setManaged(false); }
+    }
+
+    private void loadHub() {
+        if (contentArea == null) return;
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/tests/MockTestHubView.fxml"));
+            Node view = loader.load();
+            MockTestHubController ctrl = loader.getController();
+            ctrl.init(service, currentUser, currentStage, contentArea, onBack);
+            contentArea.getChildren().setAll(view);
+        } catch (IOException e) {
+            System.err.println("Erreur retour hub : " + e.getMessage());
+        }
     }
 
     private void initWithMode(MockTestService service, User user,
@@ -156,12 +192,16 @@ public class LanguageSelectController implements Initializable {
             Parent root = loader.load();
             LevelSelectController ctrl = loader.getController();
             ctrl.init(service, currentUser, dashboardController, currentStage, lang);
-            ctrl.setOnBack(onBack);
-            Scene scene = new Scene(root);
-            scene.getStylesheets().add(
-                    getClass().getResource("/css/style.css").toExternalForm());
-            currentStage.setScene(scene);
-            currentStage.setTitle("LinguaLearn — Niveau");
+            ctrl.setOnBack(contentArea != null ? this::loadHub : onBack);
+            if (contentArea != null) {
+                contentArea.getChildren().setAll(root);
+            } else {
+                Scene scene = new Scene(root);
+                scene.getStylesheets().add(
+                        getClass().getResource("/css/style.css").toExternalForm());
+                currentStage.setScene(scene);
+                currentStage.setTitle("LinguaLearn — Niveau");
+            }
         } catch (IOException e) {
             System.err.println("Erreur navigation niveau : " + e.getMessage());
         }
@@ -174,14 +214,20 @@ public class LanguageSelectController implements Initializable {
             Parent root = loader.load();
             ProfileController ctrl = loader.getController();
             ctrl.init(currentUser, dashboardController, currentStage, service, lang);
-            Scene scene = new Scene(root);
-            scene.getStylesheets().add(
-                    getClass().getResource("/css/style.css").toExternalForm());
-            currentStage.setScene(scene);
-            currentStage.setTitle("LinguaLearn — Mon Profil · " + lang.getName());
-            currentStage.setMinWidth(1100);
-            currentStage.setMinHeight(700);
-            currentStage.centerOnScreen();
+            if (contentArea != null) {
+                ctrl.setContentArea(contentArea);
+                ctrl.setOnBack(this::loadHub);
+                contentArea.getChildren().setAll(root);
+            } else {
+                Scene scene = new Scene(root);
+                scene.getStylesheets().add(
+                        getClass().getResource("/css/style.css").toExternalForm());
+                currentStage.setScene(scene);
+                currentStage.setTitle("LinguaLearn — Mon Profil · " + lang.getName());
+                currentStage.setMinWidth(1100);
+                currentStage.setMinHeight(700);
+                currentStage.centerOnScreen();
+            }
         } catch (IOException e) {
             System.err.println("Erreur navigation profil : " + e.getMessage());
         }
@@ -189,8 +235,10 @@ public class LanguageSelectController implements Initializable {
 
     @FXML
     private void handleBack() {
-        if (onBack != null) {
-            onBack.run(); // ← le onBack dans UserMainController restaure la scène + dashboard
+        if (contentArea != null) {
+            loadHub();
+        } else if (onBack != null) {
+            onBack.run();
         } else if (dashboardController != null) {
             dashboardController.returnToDashboard();
         }

@@ -1,6 +1,7 @@
 package org.example.controller.user.user_managment;
 
 import org.example.controller.tests.LanguageSelectController;
+import org.example.controller.tests.MockTestHubController;
 import org.example.controller.user.user_managment.UserDashboardController;
 import org.example.entity.User;
 import org.example.service.tests.MockTestService;
@@ -164,27 +165,13 @@ public class UserMainController {
         setActive((Button) e.getSource(), "Mock Tests");
         try {
             Stage stage = (Stage) contentArea.getScene().getWindow();
-            Scene dashboardScene = contentArea.getScene();
-
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/fxml/tests/LanguageSelectView.fxml"));
-            Parent root = loader.load();
-            LanguageSelectController ctrl = loader.getController();
-            ctrl.initEmbedded(
-                    new MockTestService(),
-                    SessionManager.getCurrentUser(),
-                    () -> {
-                        stage.setScene(dashboardScene);
-                        stage.setTitle("LinguaLearn — Dashboard");
-                        showDashboard(null);
-                    },
-                    stage
-            );
-            Scene testScene = new Scene(root);
-            testScene.getStylesheets().add(
-                    getClass().getResource("/css/style.css").toExternalForm());
-            stage.setScene(testScene);
-            stage.setTitle("LinguaLearn — Langue");
+                    getClass().getResource("/fxml/tests/MockTestHubView.fxml"));
+            Node view = loader.load();
+            MockTestHubController ctrl = loader.getController();
+            ctrl.init(new MockTestService(), SessionManager.getCurrentUser(),
+                    stage, contentArea, () -> showDashboard(null));
+            contentArea.getChildren().setAll(view);
         } catch (IOException ex) {
             Label err = new Label("Failed to load tests: " + ex.getMessage());
             err.setStyle("-fx-text-fill: #d63939;");
