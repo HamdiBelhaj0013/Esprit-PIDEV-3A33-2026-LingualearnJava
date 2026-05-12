@@ -12,13 +12,18 @@ import java.net.http.HttpResponse;
 
 public class GeminiService {
 
-    private static final String API_KEY = "AIzaSyC7u03iYXlr0No-8DfJsrhXVn7m8jxCfNs";
+    private static final String API_KEY = System.getenv("GEMINI_API_KEY");
     private static final String URL =
             "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + API_KEY;
 
     private static final HttpClient client = HttpClient.newHttpClient();
 
     private static String ask(String prompt) {
+        if (API_KEY == null || API_KEY.isBlank()) {
+            System.err.println("GEMINI_API_KEY environment variable is not set.");
+            return null;
+        }
+
         try {
             JsonObject part = new JsonObject();
             part.addProperty("text", prompt);
@@ -42,7 +47,6 @@ public class GeminiService {
 
             String responseBody = response.body();
 
-            // ✅ Parse robuste avec vérification à chaque étape
             JsonObject json = JsonParser.parseString(responseBody).getAsJsonObject();
 
             if (json.has("error")) {

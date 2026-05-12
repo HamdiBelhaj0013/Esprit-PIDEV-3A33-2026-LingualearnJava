@@ -31,7 +31,7 @@ public class QuizFormController {
     @FXML private CheckBox  checkEnabled;
     @FXML private Button    btnSubmit;
 
-    // Validation error labels
+
     @FXML private Label errorTitle;
     @FXML private Label errorDifficulty;
     @FXML private Label errorPassingScore;
@@ -70,7 +70,7 @@ public class QuizFormController {
             fieldQuestionCount.setText(String.valueOf(quiz.getQuestionCount()));
             checkEnabled.setSelected(quiz.isEnabled());
 
-            // Set difficulty combo (index = difficulty - 1)
+
             int diff = Math.max(1, Math.min(5, quiz.getDifficulty()));
             comboDifficulty.getSelectionModel().select(diff - 1);
 
