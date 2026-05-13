@@ -5,16 +5,27 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<StackPane prefHeight="520.0" prefWidth="600.0" styleClass="root-pane" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controller.LoginController">
+<StackPane prefHeight="560.0" prefWidth="480.0" styleClass="auth-root" stylesheets="@../css/style.css"
+           xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="org.example.controller.LoginController">
 
-    <VBox alignment="TOP_CENTER" maxWidth="652.0" prefHeight="520.0" prefWidth="652.0" spacing="18.0" styleClass="login-card">
+    <VBox alignment="TOP_CENTER" maxWidth="420.0" styleClass="auth-card" spacing="16.0">
 
         <padding>
-            <Insets bottom="44.0" left="44.0" right="44.0" top="44.0" />
+            <Insets bottom="40.0" left="40.0" right="40.0" top="36.0" />
         </padding>
+
+        <!-- ── Logo accent ──────────────────────── -->
+        <HBox alignment="CENTER" spacing="8">
+            <Label styleClass="auth-logo-pill">
+                <graphic><FontIcon iconLiteral="mdi2t-translate" iconSize="28" styleClass="auth-logo-icon"/></graphic>
+            </Label>
+        </HBox>
 
         <!-- ── Brand ───────────────────────────── -->
         <Label styleClass="app-title" text="LinguaLearn" />
@@ -40,7 +51,7 @@
                 styleClass="link-btn" text="Forgot your password?" />
 
         <!-- ── General error message ───────────── -->
-        <Label fx:id="errorLabel" managed="false" maxWidth="292.0" styleClass="error-label" visible="false" wrapText="true" />
+        <Label fx:id="errorLabel" managed="false" maxWidth="340.0" styleClass="error-label" visible="false" wrapText="true" />
 
         <!-- ── Resend verification (shown when email unverified) ── -->
         <Button fx:id="resendVerificationBtn"
@@ -52,11 +63,18 @@
                 managed="false"/>
 
         <!-- ── Login button ────────────────────── -->
-        <Button defaultButton="true" maxWidth="Infinity" onAction="#handleLogin" styleClass="login-btn" text="Login">
+        <Button defaultButton="true" maxWidth="Infinity" onAction="#handleLogin" styleClass="login-btn" text="Sign In">
             <VBox.margin>
-                <Insets top="6.0" />
+                <Insets top="4.0" />
             </VBox.margin>
         </Button>
+
+        <!-- ── Divider ─────────────────────────── -->
+        <HBox alignment="CENTER" spacing="12" styleClass="auth-divider-row">
+            <Label styleClass="auth-divider-line" maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+            <Label text="or" styleClass="auth-divider-text"/>
+            <Label styleClass="auth-divider-line" maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+        </HBox>
 
         <!-- ── Register link ───────────────────── -->
         <Button alignment="CENTER" maxWidth="Infinity" onAction="#handleGoToRegister"

@@ -172,10 +172,23 @@ public class MockTestHubController {
                     getClass().getResource("/fxml/tests/LanguageSelectView.fxml"));
             Node view = loader.load();
             LanguageSelectController ctrl = loader.getController();
-            ctrl.initEmbedded(service, currentUser, onBack, currentStage);
+            ctrl.initEmbedded(service, currentUser, this::returnToHub, currentStage, contentArea);
             contentArea.getChildren().setAll(view);
         } catch (IOException e) {
             System.err.println("Erreur navigation take test : " + e.getMessage());
+        }
+    }
+
+    private void returnToHub() {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/fxml/tests/MockTestHubView.fxml"));
+            Node view = loader.load();
+            MockTestHubController ctrl = loader.getController();
+            ctrl.init(service, currentUser, currentStage, contentArea, onBack);
+            contentArea.getChildren().setAll(view);
+        } catch (IOException e) {
+            System.err.println("Erreur retour au hub : " + e.getMessage());
         }
     }
 
@@ -186,7 +199,7 @@ public class MockTestHubController {
                     getClass().getResource("/fxml/tests/LanguageSelectView.fxml"));
             Node view = loader.load();
             LanguageSelectController ctrl = loader.getController();
-            ctrl.initEmbeddedProfile(service, currentUser, onBack, currentStage);
+            ctrl.initEmbeddedProfile(service, currentUser, this::returnToHub, currentStage, contentArea);
             contentArea.getChildren().setAll(view);
         } catch (IOException e) {
             System.err.println("Erreur navigation profil : " + e.getMessage());

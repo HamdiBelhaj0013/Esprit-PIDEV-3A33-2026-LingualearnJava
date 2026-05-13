@@ -14,7 +14,7 @@
 <BorderPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.example.controllers.FrontLessonsController"
-            style="-fx-background-color: #eef2ff;"
+            style="-fx-background-color: #f0f2f5;"
             stylesheets="@../../../css/frontoffice.css">
 
     <!-- ===== MAIN CONTENT ===== -->
@@ -31,12 +31,8 @@
                                styleClass="link-label"/>
 
                         <!-- Progress card -->
-                        <VBox style="-fx-background-color:#ffffff;
-                                     -fx-background-radius:14;
-                                     -fx-border-color:#e2e8f0;
-                                     -fx-border-radius:14;
-                                     -fx-padding:14 20;
-                                     -fx-effect:dropshadow(gaussian,rgba(15,23,42,0.06),10,0,0,2);"
+                        <VBox styleClass="card"
+                              style="-fx-padding:14 20;"
                               spacing="10">
                             <HBox alignment="CENTER_LEFT" spacing="12">
                                 <Label fx:id="courseTitle"
@@ -52,13 +48,8 @@
                         </VBox>
 
                         <!-- Step tabs — full width pill row -->
-                        <HBox spacing="4"
-                              style="-fx-background-color:#ffffff;
-                                     -fx-background-radius:12;
-                                     -fx-border-color:#e2e8f0;
-                                     -fx-border-radius:12;
-                                     -fx-padding:5;
-                                     -fx-effect:dropshadow(gaussian,rgba(15,23,42,0.05),8,0,0,1);">
+                        <HBox spacing="4" styleClass="card"
+                              style="-fx-padding:5;">
                             <Button fx:id="btnReadTab"
                                     text="📖  Read"
                                     styleClass="player-step-tab player-step-tab-active"
@@ -87,8 +78,8 @@
     <!-- ===== RIGHT SIDEBAR — compact ===== -->
     <right>
         <VBox prefWidth="190" minWidth="170"
-              style="-fx-background-color:#ffffff;
-                     -fx-border-color:#e2e8f0;
+              style="-fx-background-color:white;
+                     -fx-border-color:#e8ecf0;
                      -fx-border-width: 0 0 0 1;">
             <padding>
                 <Insets top="22" right="14" bottom="20" left="14"/>

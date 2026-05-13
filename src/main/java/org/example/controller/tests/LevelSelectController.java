@@ -7,6 +7,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.example.controller.UserDashboardController;
@@ -22,6 +24,10 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class LevelSelectController implements Initializable {
+
+    @FXML private HBox  levelHeader;
+    @FXML private VBox  levelHero;
+    @FXML private HBox  levelWave;
 
     @FXML private Label userNameLabel;
     @FXML private Label languageTitleLabel;
@@ -49,8 +55,9 @@ public class LevelSelectController implements Initializable {
     private Stage                   currentStage;
     private PlatformLanguage        selectedLanguage;
     private Runnable                onBack;
-    private Scene                   originalScene; // ← NOUVEAU
-    private String                  originalTitle; // ← NOUVEAU
+    private Scene                   originalScene;
+    private String                  originalTitle;
+    private StackPane               contentArea;
 
     private boolean intermediateUnlocked = false;
     private boolean advancedUnlocked     = false;
@@ -60,7 +67,17 @@ public class LevelSelectController implements Initializable {
 
     public void setOnBack(Runnable onBack) { this.onBack = onBack; }
 
-    // ← NOUVEAU
+    public void setContentArea(StackPane contentArea) {
+        this.contentArea = contentArea;
+        hideInternalChrome();
+    }
+
+    private void hideInternalChrome() {
+        if (levelHeader != null) { levelHeader.setVisible(false); levelHeader.setManaged(false); }
+        if (levelHero   != null) { levelHero.setVisible(false);   levelHero.setManaged(false); }
+        if (levelWave   != null) { levelWave.setVisible(false);   levelWave.setManaged(false); }
+    }
+
     public void setOriginalScene(Scene scene, String title) {
         this.originalScene = scene;
         this.originalTitle = title;
@@ -201,13 +218,18 @@ public class LevelSelectController implements Initializable {
             UserTestListController ctrl = loader.getController();
             ctrl.initWithFilter(service, currentUser, dashboardController,
                     currentStage, selectedLanguage, levels, levelName);
-            ctrl.setOnBack(onBack);
-            ctrl.setOriginalScene(originalScene, originalTitle); // ← NOUVEAU
-            Scene scene = new Scene(root);
-            scene.getStylesheets().add(
-                    getClass().getResource("/css/style.css").toExternalForm());
-            currentStage.setScene(scene);
-            currentStage.setTitle("LinguaLearn — Tests " + levelName);
+            ctrl.setOnBack(this::handleBack);
+            if (contentArea != null) {
+                ctrl.setContentArea(contentArea);
+                contentArea.getChildren().setAll(root);
+            } else {
+                ctrl.setOriginalScene(originalScene, originalTitle);
+                Scene scene = new Scene(root);
+                scene.getStylesheets().add(
+                        getClass().getResource("/css/style.css").toExternalForm());
+                currentStage.setScene(scene);
+                currentStage.setTitle("LinguaLearn — Tests " + levelName);
+            }
         } catch (IOException e) {
             System.err.println("Erreur navigation tests : " + e.getMessage());
         }
@@ -215,23 +237,34 @@ public class LevelSelectController implements Initializable {
 
     @FXML
     private void handleBack() {
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/fxml/tests/LanguageSelectView.fxml"));
-            Parent root = loader.load();
-            LanguageSelectController ctrl = loader.getController();
-            if (onBack != null) {
-                ctrl.initEmbedded(service, currentUser, onBack, currentStage);
-            } else {
-                ctrl.init(service, currentUser, dashboardController, currentStage);
+        if (contentArea != null) {
+            try {
+                FXMLLoader loader = new FXMLLoader(
+                        getClass().getResource("/fxml/tests/LanguageSelectView.fxml"));
+                javafx.scene.Node root = loader.load();
+                LanguageSelectController ctrl = loader.getController();
+                ctrl.initEmbedded(service, currentUser, onBack, currentStage, contentArea);
+                contentArea.getChildren().setAll(root);
+            } catch (IOException e) {
+                System.err.println("Erreur retour langue : " + e.getMessage());
             }
-            Scene scene = new Scene(root);
-            scene.getStylesheets().add(
-                    getClass().getResource("/css/style.css").toExternalForm());
-            currentStage.setScene(scene);
-            currentStage.setTitle("LinguaLearn — Langue");
-        } catch (IOException e) {
-            System.err.println("Erreur retour langue : " + e.getMessage());
+        } else if (onBack != null) {
+            onBack.run();
+        } else {
+            try {
+                FXMLLoader loader = new FXMLLoader(
+                        getClass().getResource("/fxml/tests/LanguageSelectView.fxml"));
+                Parent root = loader.load();
+                LanguageSelectController ctrl = loader.getController();
+                ctrl.init(service, currentUser, dashboardController, currentStage);
+                Scene scene = new Scene(root);
+                scene.getStylesheets().add(
+                        getClass().getResource("/css/style.css").toExternalForm());
+                currentStage.setScene(scene);
+                currentStage.setTitle("LinguaLearn — Langue");
+            } catch (IOException e) {
+                System.err.println("Erreur retour langue : " + e.getMessage());
+            }
         }
     }
 

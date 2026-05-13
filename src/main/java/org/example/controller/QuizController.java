@@ -16,6 +16,7 @@ import org.example.services.LessonService;
 import org.example.service.QuizService;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -117,23 +118,23 @@ public class QuizController {
         Lesson lesson = filterLesson.getValue();
 
         List<Quiz> filtered = quizList.stream()
-            .filter(q -> q.getTitle().toLowerCase().contains(search)
+            .filter(q -> (q.getTitle() != null && q.getTitle().toLowerCase().contains(search))
                       || (q.getDescription() != null && q.getDescription().toLowerCase().contains(search)))
             .filter(q -> {
                 if (status == null || "All Status".equals(status)) return true;
                 return "Active".equals(status) ? q.isEnabled() : !q.isEnabled();
             })
-            .filter(q -> lesson == null || (q.getLessonId() != null && q.getLessonId() == lesson.getId()))
+            .filter(q -> lesson == null || (q.getLessonId() != null && q.getLessonId().equals(lesson.getId())))
             .collect(Collectors.toList());
 
         // Apply Sorting
         if (comboSort != null && comboSort.getValue() != null) {
             switch (comboSort.getValue()) {
                 case "Title (A-Z)":
-                    filtered.sort((q1, q2) -> q1.getTitle().compareToIgnoreCase(q2.getTitle()));
+                    filtered.sort(Comparator.comparing(q -> q.getTitle() != null ? q.getTitle() : "", String.CASE_INSENSITIVE_ORDER));
                     break;
                 case "Title (Z-A)":
-                    filtered.sort((q1, q2) -> q2.getTitle().compareToIgnoreCase(q1.getTitle()));
+                    filtered.sort(Comparator.comparing((Quiz q) -> q.getTitle() != null ? q.getTitle() : "", String.CASE_INSENSITIVE_ORDER).reversed());
                     break;
                 case "Difficulty (Low to High)":
                     filtered.sort((q1, q2) -> Integer.compare(q1.getDifficulty(), q2.getDifficulty()));

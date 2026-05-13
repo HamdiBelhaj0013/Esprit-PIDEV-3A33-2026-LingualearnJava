@@ -12,7 +12,8 @@
       style="-fx-background-color: #f0f4ff;">
 
     <!-- Header -->
-    <HBox style="-fx-background-color: #1a237e; -fx-padding: 16 32;"
+    <HBox fx:id="levelHeader" visible="false" managed="false"
+          style="-fx-background-color: #1a237e; -fx-padding: 16 32;"
           alignment="CENTER_LEFT" spacing="16">
         <Label text="LinguaLearn"
                style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: white;"/>
@@ -28,7 +29,8 @@
     </HBox>
 
     <!-- Hero -->
-    <VBox alignment="CENTER" spacing="8"
+    <VBox fx:id="levelHero" visible="false" managed="false"
+          alignment="CENTER" spacing="8"
           style="-fx-background-color: #1a237e; -fx-padding: 36 32 46 32;">
         <Label fx:id="languageTitleLabel" text="Choisissez votre niveau"
                style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: white;"/>
@@ -37,7 +39,8 @@
     </VBox>
 
     <!-- Wave -->
-    <HBox style="-fx-background-color: #1a237e; -fx-pref-height: 24;">
+    <HBox fx:id="levelWave" visible="false" managed="false"
+          style="-fx-background-color: #1a237e; -fx-pref-height: 24;">
         <Region HBox.hgrow="ALWAYS"
                 style="-fx-background-color: #f0f4ff; -fx-background-radius: 24 24 0 0;"/>
     </HBox>
@@ -49,7 +52,7 @@
         <VBox spacing="16" style="-fx-padding: 28 48 40 48;">
 
             <Label text="Selectionnez votre niveau"
-                   style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #9ca3af;"/>
+                   style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #6c7a99;"/>
 
             <!-- ═══ BEGINNER ═══ -->
             <VBox fx:id="beginnerCard" spacing="0"
@@ -131,7 +134,7 @@
                                                    -fx-font-size: 11px; -fx-font-weight: bold;
                                                    -fx-background-radius: 20; -fx-padding: 3 10;"/>
                             <Label fx:id="intermediateCountLabel" text="0 test(s)"
-                                   style="-fx-font-size: 11px; -fx-text-fill: #9ca3af;"/>
+                                   style="-fx-font-size: 11px; -fx-text-fill: #6c7a99;"/>
                         </HBox>
                         <Label fx:id="intermediateBestLabel" text=""
                                style="-fx-font-size: 12px; -fx-text-fill: #e65100; -fx-font-weight: bold;"/>
@@ -177,7 +180,7 @@
                                                    -fx-font-size: 11px; -fx-font-weight: bold;
                                                    -fx-background-radius: 20; -fx-padding: 3 10;"/>
                             <Label fx:id="advancedCountLabel" text="0 test(s)"
-                                   style="-fx-font-size: 11px; -fx-text-fill: #9ca3af;"/>
+                                   style="-fx-font-size: 11px; -fx-text-fill: #6c7a99;"/>
                         </HBox>
                         <Label fx:id="advancedBestLabel" text=""
                                style="-fx-font-size: 12px; -fx-text-fill: #4527a0; -fx-font-weight: bold;"/>

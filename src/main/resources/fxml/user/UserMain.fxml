@@ -8,19 +8,25 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.example.controller.user.user_managment.UserMainController"
             prefWidth="1100.0" prefHeight="700.0"
             styleClass="user-root"
-            stylesheets="@../../css/user.css">
+            stylesheets="@../../css/theme.css,@../../css/user.css">
 
     <!-- ── LEFT SIDEBAR ──────────────────────── -->
     <left>
         <VBox styleClass="sidebar" spacing="0.0">
 
-            <Label text="LinguaLearn" styleClass="sidebar-brand"/>
+            <!-- Brand -->
+            <HBox styleClass="sidebar-brand-row" alignment="CENTER_LEFT" spacing="10">
+                <padding><Insets top="20" right="16" bottom="20" left="16"/></padding>
+                <FontIcon iconLiteral="mdi2t-translate" iconSize="22" styleClass="sidebar-brand-icon"/>
+                <Label text="LinguaLearn" styleClass="sidebar-brand"/>
+            </HBox>
 
             <!-- Sidebar user info -->
             <VBox styleClass="sidebar-user-info" spacing="4" alignment="CENTER">
@@ -32,34 +38,78 @@
 
             <Label text="NAVIGATION" styleClass="sidebar-section"/>
 
-            <Button fx:id="btnDashboard" text="  Dashboard"
+            <Button fx:id="btnDashboard" text="Dashboard"
                     styleClass="sidebar-item" onAction="#showDashboard"
-                    maxWidth="Infinity"/>
-            <Button text="  📊 Learning Stats"
+                    maxWidth="Infinity">
+                <graphic><FontIcon iconLiteral="mdi2v-view-dashboard-outline" iconSize="18" styleClass="sidebar-icon"/></graphic>
+            </Button>
+            <Button text="Learning Stats"
                     styleClass="sidebar-item" onAction="#showLearningStats"
-                    maxWidth="Infinity"/>
-            <Button text="  🌍 Languages"        styleClass="sidebar-item" onAction="#showUserLanguages"  maxWidth="Infinity"/>
-            <Button fx:id="btnQuizzes" text="  🧠 Quizzes" styleClass="sidebar-item" onAction="#showQuizzes" maxWidth="Infinity"/>
-            <Button fx:id="btnExercices" text="  📚 Exercices" styleClass="sidebar-item" onAction="#showExercices" maxWidth="Infinity"/>
-            <Button text="  Forum"              styleClass="sidebar-item" onAction="#showForum"          maxWidth="Infinity"/>
-            <Button text="  FAQ"                styleClass="sidebar-item" onAction="#showFAQ"            maxWidth="Infinity"/>
-            <Button text="  Support"   styleClass="sidebar-item" onAction="#showReclamations"   maxWidth="Infinity"/>
-            <Button text="  Mock Tests"         styleClass="sidebar-item" onAction="#showMockTests"      maxWidth="Infinity"/>
+                    maxWidth="Infinity">
+                <graphic><FontIcon iconLiteral="mdi2c-chart-line" iconSize="18" styleClass="sidebar-icon"/></graphic>
+            </Button>
+            <Button text="Languages"
+                    styleClass="sidebar-item" onAction="#showUserLanguages"
+                    maxWidth="Infinity">
+                <graphic><FontIcon iconLiteral="mdi2t-translate" iconSize="18" styleClass="sidebar-icon"/></graphic>
+            </Button>
+            <Button fx:id="btnQuizzes" text="Quizzes"
+                    styleClass="sidebar-item" onAction="#showQuizzes"
+                    maxWidth="Infinity">
+                <graphic><FontIcon iconLiteral="mdi2b-brain" iconSize="18" styleClass="sidebar-icon"/></graphic>
+            </Button>
+            <Button fx:id="btnExercices" text="Exercices"
+                    styleClass="sidebar-item" onAction="#showExercices"
+                    maxWidth="Infinity">
+                <graphic><FontIcon iconLiteral="mdi2b-book-open-page-variant-outline" iconSize="18" styleClass="sidebar-icon"/></graphic>
+            </Button>
+            <Button text="Forum"
+                    styleClass="sidebar-item" onAction="#showForum"
+                    maxWidth="Infinity">
+                <graphic><FontIcon iconLiteral="mdi2f-forum-outline" iconSize="18" styleClass="sidebar-icon"/></graphic>
+            </Button>
+            <Button text="FAQ"
+                    styleClass="sidebar-item" onAction="#showFAQ"
+                    maxWidth="Infinity">
+                <graphic><FontIcon iconLiteral="mdi2h-help-circle-outline" iconSize="18" styleClass="sidebar-icon"/></graphic>
+            </Button>
+            <Button text="Support"
+                    styleClass="sidebar-item" onAction="#showReclamations"
+                    maxWidth="Infinity">
+                <graphic><FontIcon iconLiteral="mdi2h-headset" iconSize="18" styleClass="sidebar-icon"/></graphic>
+            </Button>
+            <Button text="Mock Tests"
+                    styleClass="sidebar-item" onAction="#showMockTests"
+                    maxWidth="Infinity">
+                <graphic><FontIcon iconLiteral="mdi2c-clipboard-list-outline" iconSize="18" styleClass="sidebar-icon"/></graphic>
+            </Button>
 
             <Label text="ACCOUNT" styleClass="sidebar-section"/>
 
-            <Button fx:id="btnProfile" text="  My Profile"
+            <Button fx:id="btnProfile" text="My Profile"
                     styleClass="sidebar-item" onAction="#showProfile"
-                    maxWidth="Infinity"/>
-            <Button fx:id="btnNotifications" text="  Notifications" styleClass="sidebar-item" onAction="#showNotifications" maxWidth="Infinity"/>
-            <Button fx:id="btnBilling" text="  Plans &amp; Billing" styleClass="sidebar-item" onAction="#showBilling" maxWidth="Infinity"/>
+                    maxWidth="Infinity">
+                <graphic><FontIcon iconLiteral="mdi2a-account-circle-outline" iconSize="18" styleClass="sidebar-icon"/></graphic>
+            </Button>
+            <Button fx:id="btnNotifications" text="Notifications"
+                    styleClass="sidebar-item" onAction="#showNotifications"
+                    maxWidth="Infinity">
+                <graphic><FontIcon iconLiteral="mdi2b-bell-outline" iconSize="18" styleClass="sidebar-icon"/></graphic>
+            </Button>
+            <Button fx:id="btnBilling" text="Plans &amp; Billing"
+                    styleClass="sidebar-item" onAction="#showBilling"
+                    maxWidth="Infinity">
+                <graphic><FontIcon iconLiteral="mdi2c-credit-card-outline" iconSize="18" styleClass="sidebar-icon"/></graphic>
+            </Button>
 
             <Region VBox.vgrow="ALWAYS"/>
 
-            <Button text="  Logout"
+            <Button text="Logout"
                     styleClass="sidebar-item, sidebar-item-logout"
                     onAction="#handleLogout"
-                    maxWidth="Infinity"/>
+                    maxWidth="Infinity">
+                <graphic><FontIcon iconLiteral="mdi2l-logout" iconSize="18" styleClass="sidebar-icon-danger"/></graphic>
+            </Button>
         </VBox>
     </left>
 

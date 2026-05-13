@@ -4,7 +4,7 @@
 
 .root {
     -fx-font-family: "Segoe UI", "Arial", sans-serif;
-    -fx-background-color: #f8fafc;
+    -fx-background-color: #f0f2f5;
 }
 
 /* ===== ELEGANT SIDEBAR ===== */
@@ -282,7 +282,7 @@
 }
 
 .primary-btn {
-    -fx-background-color: #4f46e5;
+    -fx-background-color: #3b5bdb;
     -fx-text-fill: white;
     -fx-background-radius: 8;
     -fx-padding: 8 16;
@@ -290,7 +290,7 @@
 }
 
 .primary-btn:hover {
-    -fx-background-color: #4338ca;
+    -fx-background-color: #2f4ac5;
     -fx-effect: dropshadow(gaussian, rgba(79,70,229,0.3), 8, 0, 0, 2);
 }
 
@@ -307,7 +307,7 @@
 }
 
 .danger-btn {
-    -fx-background-color: #dc2626;
+    -fx-background-color: #e03131;
     -fx-text-fill: white;
     -fx-background-radius: 8;
     -fx-padding: 8 16;
@@ -315,7 +315,7 @@
 }
 
 .danger-btn:hover {
-    -fx-background-color: #b91c1c;
+    -fx-background-color: #c92a2a;
     -fx-effect: dropshadow(gaussian, rgba(220,38,38,0.3), 8, 0, 0, 2);
 }
 
@@ -332,7 +332,7 @@
 
 .text-field:focused,
 .text-area:focused {
-    -fx-border-color: #4f46e5;
+    -fx-border-color: #3b5bdb;
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
 }
@@ -369,7 +369,7 @@
 
 /* ===== LABELS ===== */
 .label {
-    -fx-text-fill: #1e293b;
+    -fx-text-fill: #1a1f36;
     -fx-font-size: 13px;
 }
 

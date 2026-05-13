@@ -51,6 +51,8 @@
                 <TableColumn fx:id="colId" text="ID" prefWidth="80" maxWidth="90"/>
                 <TableColumn fx:id="colContenu" text="Contenu" prefWidth="520"/>
                 <TableColumn fx:id="colPublicationId" text="Publication ID" prefWidth="160"/>
+                <TableColumn fx:id="colAuteur" text="Auteur" prefWidth="160"/>
+                <TableColumn fx:id="colActions" text="Actions" prefWidth="140"/>
             </columns>
         </TableView>
 

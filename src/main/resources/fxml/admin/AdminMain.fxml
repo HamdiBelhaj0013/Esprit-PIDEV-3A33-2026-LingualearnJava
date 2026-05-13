@@ -8,73 +8,116 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.example.controller.admin.user_managment.AdminMainController"
             prefWidth="1200.0" prefHeight="740.0"
             styleClass="admin-root"
-            stylesheets="@../../css/admin.css">
+            stylesheets="@../../css/theme.css,@../../css/admin.css">
 
     <!-- ── LEFT SIDEBAR ──────────────────────── -->
     <left>
         <VBox styleClass="sidebar" spacing="0.0">
 
-            <Label text="LinguaLearn" styleClass="sidebar-brand"/>
+            <!-- Brand -->
+            <HBox styleClass="sidebar-brand-row" alignment="CENTER_LEFT" spacing="10">
+                <padding><Insets top="20" right="16" bottom="20" left="16"/></padding>
+                <FontIcon iconLiteral="mdi2t-translate" iconSize="22" styleClass="sidebar-brand-icon"/>
+                <Label text="LinguaLearn" styleClass="sidebar-brand"/>
+            </HBox>
+
             <Label text="NAVIGATION" styleClass="sidebar-section"/>
 
-            <Button fx:id="btnDashboard" text="  🏠 Dashboard"
+            <Button fx:id="btnDashboard" text="Dashboard"
                     styleClass="sidebar-item" onAction="#showDashboard"
-                    maxWidth="Infinity"/>
-            <Button fx:id="btnUsers" text="  👥 Users"
+                    maxWidth="Infinity">
+                <graphic><FontIcon iconLiteral="mdi2v-view-dashboard-outline" iconSize="18" styleClass="sidebar-icon"/></graphic>
+            </Button>
+            <Button fx:id="btnUsers" text="Users"
                     styleClass="sidebar-item" onAction="#showUsers"
-                    maxWidth="Infinity"/>
-            <Button fx:id="btnSupport" text="  🎧 Support"
+                    maxWidth="Infinity">
+                <graphic><FontIcon iconLiteral="mdi2a-account-group-outline" iconSize="18" styleClass="sidebar-icon"/></graphic>
+            </Button>
+            <Button fx:id="btnSupport" text="Support"
                     styleClass="sidebar-item" onAction="#showSupport"
-                    maxWidth="Infinity"/>
+                    maxWidth="Infinity">
+                <graphic><FontIcon iconLiteral="mdi2h-headset" iconSize="18" styleClass="sidebar-icon"/></graphic>
+            </Button>
 
             <Label text="MODULES" styleClass="sidebar-section"/>
 
-            <Button fx:id="btnTests" text="  🌍 Tests Internationaux"
+            <Button fx:id="btnTests" text="Tests Internationaux"
                     styleClass="sidebar-item" onAction="#showTests"
-                    maxWidth="Infinity"/>
-            <Button fx:id="btnQuizzes" text="  🧠 Quizzes"
+                    maxWidth="Infinity">
+                <graphic><FontIcon iconLiteral="mdi2c-certificate-outline" iconSize="18" styleClass="sidebar-icon"/></graphic>
+            </Button>
+            <Button fx:id="btnQuizzes" text="Quizzes"
                     styleClass="sidebar-item" onAction="#showQuizzes"
-                    maxWidth="Infinity"/>
-            <Button fx:id="btnExercices" text="  📚 Exercices"
+                    maxWidth="Infinity">
+                <graphic><FontIcon iconLiteral="mdi2b-brain" iconSize="18" styleClass="sidebar-icon"/></graphic>
+            </Button>
+            <Button fx:id="btnExercices" text="Exercices"
                     styleClass="sidebar-item" onAction="#showExercices"
-                    maxWidth="Infinity"/>
-            <Button fx:id="btnQuizStats" text="  📊 Quiz &amp; Ex Stats"
+                    maxWidth="Infinity">
+                <graphic><FontIcon iconLiteral="mdi2b-book-open-page-variant-outline" iconSize="18" styleClass="sidebar-icon"/></graphic>
+            </Button>
+            <Button fx:id="btnQuizStats" text="Quiz &amp; Ex Stats"
                     styleClass="sidebar-item" onAction="#showQuizStats"
-                    maxWidth="Infinity"/>
-            <Button text="  📈 Learning Stats"
+                    maxWidth="Infinity">
+                <graphic><FontIcon iconLiteral="mdi2c-chart-bar" iconSize="18" styleClass="sidebar-icon"/></graphic>
+            </Button>
+            <Button text="Learning Stats"
                     styleClass="sidebar-item" onAction="#showLearningStats"
-                    maxWidth="Infinity"/>
-            <Button fx:id="btnAiAssistant" text="  🤖 AI Assistant"
+                    maxWidth="Infinity">
+                <graphic><FontIcon iconLiteral="mdi2c-chart-line" iconSize="18" styleClass="sidebar-icon"/></graphic>
+            </Button>
+            <Button fx:id="btnAiAssistant" text="AI Assistant"
                     styleClass="sidebar-item" onAction="#showAiAssistant"
-                    maxWidth="Infinity"/>
+                    maxWidth="Infinity">
+                <graphic><FontIcon iconLiteral="mdi2r-robot-outline" iconSize="18" styleClass="sidebar-icon"/></graphic>
+            </Button>
 
             <Label text="PEDAGOGICAL CONTENT" styleClass="sidebar-section"/>
-            <Button text="  🌍 Languages" styleClass="sidebar-item"
-                    onAction="#showLanguages" maxWidth="Infinity"/>
-            <Button text="  📚 Courses" styleClass="sidebar-item"
-                    onAction="#showCourses" maxWidth="Infinity"/>
-            <Button text="  📖 Lessons" styleClass="sidebar-item"
-                    onAction="#showLessons" maxWidth="Infinity"/>
+            <Button text="Languages"
+                    styleClass="sidebar-item" onAction="#showLanguages"
+                    maxWidth="Infinity">
+                <graphic><FontIcon iconLiteral="mdi2t-translate" iconSize="18" styleClass="sidebar-icon"/></graphic>
+            </Button>
+            <Button text="Courses"
+                    styleClass="sidebar-item" onAction="#showCourses"
+                    maxWidth="Infinity">
+                <graphic><FontIcon iconLiteral="mdi2s-school-outline" iconSize="18" styleClass="sidebar-icon"/></graphic>
+            </Button>
+            <Button text="Lessons"
+                    styleClass="sidebar-item" onAction="#showLessons"
+                    maxWidth="Infinity">
+                <graphic><FontIcon iconLiteral="mdi2b-book-open-variant" iconSize="18" styleClass="sidebar-icon"/></graphic>
+            </Button>
 
             <Label text="FORUM" styleClass="sidebar-section"/>
-            <Button fx:id="btnForumStats" text="  📊 Forum Stats"
+            <Button fx:id="btnForumStats" text="Forum Stats"
                     styleClass="sidebar-item" onAction="#showForumStats"
-                    maxWidth="Infinity"/>
-            <Button fx:id="btnForumPubs" text="  📰 Publications"
+                    maxWidth="Infinity">
+                <graphic><FontIcon iconLiteral="mdi2c-chart-bubble" iconSize="18" styleClass="sidebar-icon"/></graphic>
+            </Button>
+            <Button fx:id="btnForumPubs" text="Publications"
                     styleClass="sidebar-item" onAction="#showForumPublications"
-                    maxWidth="Infinity"/>
-            <Button fx:id="btnForumComments" text="  💬 Comments"
+                    maxWidth="Infinity">
+                <graphic><FontIcon iconLiteral="mdi2n-newspaper-variant-outline" iconSize="18" styleClass="sidebar-icon"/></graphic>
+            </Button>
+            <Button fx:id="btnForumComments" text="Comments"
                     styleClass="sidebar-item" onAction="#showForumComments"
-                    maxWidth="Infinity"/>
+                    maxWidth="Infinity">
+                <graphic><FontIcon iconLiteral="mdi2c-comment-multiple-outline" iconSize="18" styleClass="sidebar-icon"/></graphic>
+            </Button>
 
-            <Button text="  Reports" styleClass="sidebar-item"
-                    disable="true" maxWidth="Infinity"/>
+            <Button text="Reports"
+                    styleClass="sidebar-item" onAction="#showReports"
+                    disable="true" maxWidth="Infinity">
+                <graphic><FontIcon iconLiteral="mdi2f-file-chart-outline" iconSize="18" styleClass="sidebar-icon"/></graphic>
+            </Button>
 
             <Region VBox.vgrow="ALWAYS"/>
         </VBox>

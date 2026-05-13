@@ -20,7 +20,7 @@
             stylesheets="@../../../css/frontoffice.css">
 
     <content>
-        <VBox spacing="28" style="-fx-background-color:#eef2ff;">
+        <VBox spacing="28" style="-fx-background-color:#f0f2f5;">
             <padding><Insets top="32" right="36" bottom="40" left="36"/></padding>
 
             <!-- ===== HEADER ===== -->
@@ -106,14 +106,14 @@
 
                     <HBox alignment="CENTER_LEFT" spacing="12">
                         <Label fx:id="lblLevelXp"  text="0 XP"
-                               style="-fx-font-size:28px;-fx-font-weight:bold;-fx-text-fill:#2563eb;"/>
+                               style="-fx-font-size:28px;-fx-font-weight:bold;-fx-text-fill:#3b5bdb;"/>
                         <VBox spacing="3" HBox.hgrow="ALWAYS">
                             <HBox alignment="CENTER_LEFT">
                                 <Label fx:id="lblLevelName" text="Level 1"
-                                       style="-fx-font-size:13px;-fx-font-weight:bold;-fx-text-fill:#0f172a;"/>
+                                       style="-fx-font-size:13px;-fx-font-weight:bold;-fx-text-fill:#1a1f36;"/>
                                 <Region HBox.hgrow="ALWAYS"/>
                                 <Label fx:id="lblLevelNext" text="100 XP to next"
-                                       style="-fx-font-size:11px;-fx-text-fill:#64748b;"/>
+                                       style="-fx-font-size:11px;-fx-text-fill:#6c7a99;"/>
                             </HBox>
                             <ProgressBar fx:id="levelProgressBar"
                                          maxWidth="Infinity"
@@ -158,12 +158,12 @@
                     <Label text="📅  This Week" styleClass="stats-card-title"/>
                     <HBox fx:id="weeklyHeatmap" spacing="8" alignment="CENTER"/>
                     <HBox alignment="CENTER_LEFT" spacing="6">
-                        <Label text="Less" style="-fx-font-size:11px;-fx-text-fill:#94a3b8;"/>
+                        <Label text="Less" style="-fx-font-size:11px;-fx-text-fill:#6c7a99;"/>
                         <Label styleClass="heatmap-dot heatmap-0"/>
                         <Label styleClass="heatmap-dot heatmap-1"/>
                         <Label styleClass="heatmap-dot heatmap-2"/>
                         <Label styleClass="heatmap-dot heatmap-3"/>
-                        <Label text="More" style="-fx-font-size:11px;-fx-text-fill:#94a3b8;"/>
+                        <Label text="More" style="-fx-font-size:11px;-fx-text-fill:#6c7a99;"/>
                     </HBox>
                 </VBox>
 

@@ -510,13 +510,19 @@ public class ProfileController implements Initializable {
                 listCtrl.init(mockTestService, currentUser, dashboardController, currentStage);
             }
 
+            listCtrl.setOnBack(embeddedOnBack);
             ctrl.init(mockTestService, test, currentUser, listCtrl, currentStage);
-
-            Scene scene = new Scene(root);
-            scene.getStylesheets().add(
-                    getClass().getResource("/css/style.css").toExternalForm());
-            currentStage.setScene(scene);
-            currentStage.setTitle("LinguaLearn — Aperçu : " + test.getTitle());
+            if (contentArea != null) {
+                listCtrl.setContentArea(contentArea);
+                ctrl.setContentArea(contentArea);
+                contentArea.getChildren().setAll(root);
+            } else {
+                Scene scene = new Scene(root);
+                scene.getStylesheets().add(
+                        getClass().getResource("/css/style.css").toExternalForm());
+                currentStage.setScene(scene);
+                currentStage.setTitle("LinguaLearn — Aperçu : " + test.getTitle());
+            }
         } catch (IOException e) {
             System.err.println("Erreur navigation test : " + e.getMessage());
         }

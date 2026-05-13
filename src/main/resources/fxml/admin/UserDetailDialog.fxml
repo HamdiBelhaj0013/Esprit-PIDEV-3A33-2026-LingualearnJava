@@ -93,10 +93,12 @@
                 <Button fx:id="aiSummaryBtn"
                         text="AI Summary ✦"
                         onAction="#handleGenerateSummary"
-                        style="-fx-background-color:#6366f1; -fx-text-fill:white; -fx-background-radius:6; -fx-font-size:12px; -fx-cursor:hand; -fx-padding:5 12 5 12;"/>
+                        styleClass="btn-primary"
+                        style="-fx-background-radius:6; -fx-font-size:12px; -fx-padding:5 12 5 12;"/>
                 <Label fx:id="aiSummaryCard" text="" wrapText="true"
                        visible="false" managed="false"
-                       style="-fx-font-size:12px; -fx-text-fill:#1e3a5f; -fx-background-color:#dbeafe; -fx-padding:10; -fx-background-radius:6;"/>
+                       styleClass="badge-monthly"
+                       style="-fx-font-size:12px; -fx-padding:10; -fx-background-radius:6;"/>
             </VBox>
 
             <!-- ── RECENT NOTIFICATIONS section ── -->

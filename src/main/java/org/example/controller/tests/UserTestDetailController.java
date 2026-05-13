@@ -36,6 +36,7 @@ import java.util.*;
 public class UserTestDetailController implements Initializable {
 
     // ── FXML ──────────────────────────────────────────────────────────────────
+    @FXML private HBox       embeddedHeader;
     @FXML private Label      testTitleLabel;
     @FXML private Label      testTypeLabel;
     @FXML private Label      testLevelLabel;
@@ -60,10 +61,19 @@ public class UserTestDetailController implements Initializable {
     private TestResultService      resultService;
     private TestAnswerRepository   answerRepo;
     private ExamTimeGuardService   timeGuard;
-    private AntiCheatGuard         antiCheat;        // ← NOUVEAU
+    private AntiCheatGuard         antiCheat;
     private MockTest               currentTest;
     private User                   currentUser;
     private UserTestListController listController;
+    private javafx.scene.layout.StackPane contentArea;
+
+    public void setContentArea(javafx.scene.layout.StackPane contentArea) {
+        this.contentArea = contentArea;
+        if (embeddedHeader != null) {
+            embeddedHeader.setVisible(false);
+            embeddedHeader.setManaged(false);
+        }
+    }
     private List<TestQuestion>     questions;
     private LocalDateTime          startTime;
     private Timeline               chronoTimeline;
@@ -137,17 +147,21 @@ public class UserTestDetailController implements Initializable {
     /** Redirige vers SpeakingTestController si le test est 100% Speaking. */
     private void naviguerVersSpeaking() {
         try {
-            Stage stage = (Stage) testTitleLabel.getScene().getWindow();
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/fxml/tests/SpeakingTestView.fxml"));
             Parent root = loader.load();
             SpeakingTestController ctrl = loader.getController();
             ctrl.init(mockTestService, currentTest, currentUser, listController);
-            Scene scene = new Scene(root);
-            scene.getStylesheets().add(
-                    getClass().getResource("/css/style.css").toExternalForm());
-            stage.setScene(scene);
-            stage.setTitle("LinguaLearn — Speaking Test");
+            if (contentArea != null) {
+                contentArea.getChildren().setAll(root);
+            } else {
+                Stage stage = (Stage) testTitleLabel.getScene().getWindow();
+                Scene scene = new Scene(root);
+                scene.getStylesheets().add(
+                        getClass().getResource("/css/style.css").toExternalForm());
+                stage.setScene(scene);
+                stage.setTitle("LinguaLearn — Speaking Test");
+            }
         } catch (IOException e) {
             new Alert(Alert.AlertType.ERROR,
                     "Erreur navigation Speaking : " + e.getMessage()).showAndWait();
@@ -867,12 +881,18 @@ public class UserTestDetailController implements Initializable {
                 ctrl.init(mockTestService, currentUser,
                         listController.getDashboardController(), stage);
             }
+            ctrl.setOnBack(listController.getOnBack());
             ctrl.refreshData();
-            Scene scene = new Scene(root);
-            scene.getStylesheets().add(
-                    getClass().getResource("/css/style.css").toExternalForm());
-            stage.setScene(scene);
-            stage.setTitle("LinguaLearn — Tests de Certification");
+            if (contentArea != null) {
+                ctrl.setContentArea(contentArea);
+                contentArea.getChildren().setAll(root);
+            } else {
+                Scene scene = new Scene(root);
+                scene.getStylesheets().add(
+                        getClass().getResource("/css/style.css").toExternalForm());
+                stage.setScene(scene);
+                stage.setTitle("LinguaLearn — Tests de Certification");
+            }
         } catch (IOException e) {
             new Alert(Alert.AlertType.ERROR,
                     "Erreur retour : " + e.getMessage()).showAndWait();

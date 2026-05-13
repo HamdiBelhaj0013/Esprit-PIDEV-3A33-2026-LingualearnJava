@@ -5,7 +5,7 @@
 .root {
     -fx-font-family: 'Segoe UI', 'SF Pro Display', system-ui;
     -fx-font-size: 13px;
-    -fx-background-color: #f8fafc;
+    -fx-background-color: #f0f2f5;
 }
 
 /* ─── SIDEBAR ─────────────────────────────────────────────── */
@@ -63,18 +63,18 @@
 }
 
 .nav-button-active {
-    -fx-background-color: #f0f7ff;
-    -fx-text-fill: #0056D2;
-    -fx-border-color: #0056D2;
+    -fx-background-color: #eff3ff;
+    -fx-text-fill: #3b5bdb;
+    -fx-border-color: #3b5bdb;
     -fx-border-width: 0 0 0 4;
 }
 
 .nav-button-active .label {
-    -fx-text-fill: #0056D2;
+    -fx-text-fill: #3b5bdb;
 }
 
 .nav-button-active .font-icon {
-    -fx-icon-color: #0056D2;
+    -fx-icon-color: #3b5bdb;
 }
 
 .logout-btn {
@@ -131,17 +131,17 @@
 
 /* ─── BUTTONS ─────────────────────────────────────────────── */
 .btn-primary {
-    -fx-background-color: #0d6efd;
+    -fx-background-color: #3b5bdb;
     -fx-text-fill: white;
     -fx-font-weight: bold;
     -fx-background-radius: 8;
     -fx-padding: 10 24;
     -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(13, 110, 253, 0.3), 10, 0, 0, 4);
+    -fx-effect: dropshadow(gaussian, rgba(59, 91, 219, 0.3), 10, 0, 0, 4);
 }
 
 .btn-primary:hover {
-    -fx-background-color: #0b5ed7;
+    -fx-background-color: #2f4ac5;
 }
 
 .btn-outline {
@@ -154,9 +154,9 @@
 }
 
 .btn-outline:hover {
-    -fx-border-color: #0d6efd;
-    -fx-text-fill: #0d6efd;
-    -fx-background-color: #f8f9fa;
+    -fx-border-color: #3b5bdb;
+    -fx-text-fill: #3b5bdb;
+    -fx-background-color: #eff3ff;
 }
 
 /* ─── FORMS ───────────────────────────────────────────────── */
@@ -170,8 +170,8 @@
 }
 
 .text-field-modern:focused {
-    -fx-border-color: #0d6efd;
-    -fx-effect: dropshadow(gaussian, rgba(13, 110, 253, 0.1), 10, 0, 0, 0);
+    -fx-border-color: #3b5bdb;
+    -fx-effect: dropshadow(gaussian, rgba(59, 91, 219, 0.1), 10, 0, 0, 0);
 }
 
 .text-field-error {
@@ -179,7 +179,7 @@
 }
 
 .error-label {
-    -fx-text-fill: #ef4444;
+    -fx-text-fill: #e03131;
     -fx-font-size: 11px;
     -fx-font-weight: bold;
 }
@@ -312,7 +312,7 @@
 
 /* ─── LOGIN PAGE ──────────────────────────────────────────── */
 .login-root {
-    -fx-background-color: #f8fafc;
+    -fx-background-color: #f0f2f5;
     /* Optional: We can simulate dots with an image but a base color is safe */
 }
 .login-card {
@@ -324,25 +324,25 @@
     -fx-border-width: 1;
 }
 .login-card-blue-top {
-    -fx-background-color: #2563eb;
+    -fx-background-color: #3b5bdb;
     -fx-background-radius: 16 16 0 0;
     -fx-min-height: 4px;
     -fx-max-height: 4px;
 }
 .login-input {
-    -fx-background-color: #eff6ff;
-    -fx-border-color: #dbeafe;
+    -fx-background-color: #eff3ff;
+    -fx-border-color: #dbe4ff;
     -fx-border-radius: 8;
     -fx-background-radius: 8;
     -fx-padding: 12 16;
     -fx-font-size: 14px;
-    -fx-text-fill: #1e293b;
+    -fx-text-fill: #1a1f36;
 }
 .login-input:focused {
-    -fx-border-color: #2563eb;
+    -fx-border-color: #3b5bdb;
 }
 .login-btn-primary {
-    -fx-background-color: #2563eb;
+    -fx-background-color: #3b5bdb;
     -fx-text-fill: #ffffff;
     -fx-font-weight: bold;
     -fx-font-size: 14px;
@@ -351,10 +351,10 @@
     -fx-cursor: hand;
 }
 .login-btn-primary:hover {
-    -fx-background-color: #1d4ed8;
+    -fx-background-color: #2f4ac5;
 }
 .login-link {
-    -fx-text-fill: #2563eb;
+    -fx-text-fill: #3b5bdb;
     -fx-cursor: hand;
 }
 .login-link:hover {

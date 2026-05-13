@@ -7,6 +7,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.example.entity.User;
 import org.example.entity.tests.MockTest;
@@ -36,6 +37,9 @@ public class TestPreviewController implements Initializable {
     private User                   user;
     private UserTestListController listController;
     private Stage                  stage;
+    private StackPane              contentArea;
+
+    public void setContentArea(StackPane contentArea) { this.contentArea = contentArea; }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {}
@@ -74,11 +78,16 @@ public class TestPreviewController implements Initializable {
             Parent root = loader.load();
             UserTestDetailController ctrl = loader.getController();
             ctrl.init(service, test, user, listController);
-            Scene scene = new Scene(root);
-            scene.getStylesheets().add(
-                    getClass().getResource("/css/style.css").toExternalForm());
-            stage.setScene(scene);
-            stage.setTitle("LinguaLearn — " + test.getTitle());
+            if (contentArea != null) {
+                ctrl.setContentArea(contentArea);
+                contentArea.getChildren().setAll(root);
+            } else {
+                Scene scene = new Scene(root);
+                scene.getStylesheets().add(
+                        getClass().getResource("/css/style.css").toExternalForm());
+                stage.setScene(scene);
+                stage.setTitle("LinguaLearn — " + test.getTitle());
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -99,12 +108,18 @@ public class TestPreviewController implements Initializable {
             } else {
                 ctrl.init(service, user, listController.getDashboardController(), stage);
             }
+            ctrl.setOnBack(listController.getOnBack());
             ctrl.refreshData();
-            Scene scene = new Scene(root);
-            scene.getStylesheets().add(
-                    getClass().getResource("/css/style.css").toExternalForm());
-            stage.setScene(scene);
-            stage.setTitle("LinguaLearn — Tests de Certification");
+            if (contentArea != null) {
+                ctrl.setContentArea(contentArea);
+                contentArea.getChildren().setAll(root);
+            } else {
+                Scene scene = new Scene(root);
+                scene.getStylesheets().add(
+                        getClass().getResource("/css/style.css").toExternalForm());
+                stage.setScene(scene);
+                stage.setTitle("LinguaLearn — Tests de Certification");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

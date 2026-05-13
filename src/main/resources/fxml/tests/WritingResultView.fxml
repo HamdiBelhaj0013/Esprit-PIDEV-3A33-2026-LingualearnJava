@@ -7,6 +7,7 @@
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="org.example.controller.tests.WritingResultController"
       spacing="0"
+      stylesheets="@../../css/theme.css"
       style="-fx-background-color:#f0f4f8;">
 
     <!-- ══ HEADER ══════════════════════════════════════════════════════════════ -->

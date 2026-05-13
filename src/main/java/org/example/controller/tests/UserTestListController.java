@@ -12,6 +12,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.example.controller.UserDashboardController;
 import org.example.entity.User;
@@ -28,6 +30,7 @@ import java.util.ResourceBundle;
 
 public class UserTestListController implements Initializable {
 
+    @FXML private HBox             testListHeader;
     @FXML private Label            userNameLabel;
     @FXML private Label            totalTestsLabel;
     @FXML private TextField        searchField;
@@ -51,8 +54,9 @@ public class UserTestListController implements Initializable {
     private Stage                   currentStage;
     private List<TestResult>        cachedResults;
     private Runnable                onBack;
-    private Scene                   originalScene; // ← NOUVEAU
-    private String                  originalTitle; // ← NOUVEAU
+    private Scene                   originalScene;
+    private String                  originalTitle;
+    private StackPane               contentArea;
 
     private PlatformLanguage filterLanguage  = null;
     private String[]         filterLevels    = null;
@@ -66,7 +70,15 @@ public class UserTestListController implements Initializable {
 
     public void setOnBack(Runnable onBack) { this.onBack = onBack; }
 
-    // ← NOUVEAU
+    public void setContentArea(StackPane contentArea) {
+        this.contentArea = contentArea;
+        hideInternalChrome();
+    }
+
+    private void hideInternalChrome() {
+        if (testListHeader != null) { testListHeader.setVisible(false); testListHeader.setManaged(false); }
+    }
+
     public void setOriginalScene(Scene scene, String title) {
         this.originalScene = scene;
         this.originalTitle = title;
@@ -252,18 +264,22 @@ public class UserTestListController implements Initializable {
                 LevelSelectController ctrl = loader.getController();
                 ctrl.init(service, currentUser, dashboardController, currentStage, filterLanguage);
                 ctrl.setOnBack(onBack);
-                ctrl.setOriginalScene(originalScene, originalTitle); // ← NOUVEAU
-                Scene scene = new Scene(root);
-                scene.getStylesheets().add(
-                        getClass().getResource("/css/style.css").toExternalForm());
-                currentStage.setScene(scene);
-                currentStage.setTitle("LinguaLearn — Niveau");
+                if (contentArea != null) {
+                    ctrl.setContentArea(contentArea);
+                    contentArea.getChildren().setAll(root);
+                } else {
+                    ctrl.setOriginalScene(originalScene, originalTitle);
+                    Scene scene = new Scene(root);
+                    scene.getStylesheets().add(
+                            getClass().getResource("/css/style.css").toExternalForm());
+                    currentStage.setScene(scene);
+                    currentStage.setTitle("LinguaLearn — Niveau");
+                }
             } catch (IOException e) {
                 System.err.println("Erreur retour niveau : " + e.getMessage());
             }
         } else {
             if (onBack != null) {
-                // ← NOUVEAU : restaure la scène originale avant d'appeler onBack
                 if (originalScene != null) {
                     currentStage.setScene(originalScene);
                     currentStage.setTitle(originalTitle != null ? originalTitle : "LinguaLearn");
@@ -282,11 +298,16 @@ public class UserTestListController implements Initializable {
             Parent root = loader.load();
             TestPreviewController ctrl = loader.getController();
             ctrl.init(service, test, currentUser, this, currentStage);
-            Scene scene = new Scene(root);
-            scene.getStylesheets().add(
-                    getClass().getResource("/css/style.css").toExternalForm());
-            currentStage.setScene(scene);
-            currentStage.setTitle("LinguaLearn — Aperçu : " + test.getTitle());
+            if (contentArea != null) {
+                ctrl.setContentArea(contentArea);
+                contentArea.getChildren().setAll(root);
+            } else {
+                Scene scene = new Scene(root);
+                scene.getStylesheets().add(
+                        getClass().getResource("/css/style.css").toExternalForm());
+                currentStage.setScene(scene);
+                currentStage.setTitle("LinguaLearn — Aperçu : " + test.getTitle());
+            }
         } catch (IOException e) {
             showError("Impossible d'ouvrir l'aperçu : " + e.getMessage());
         }
@@ -298,19 +319,31 @@ public class UserTestListController implements Initializable {
                     getClass().getResource("/fxml/tests/UserTestListView.fxml"));
             Parent root = loader.load();
             UserTestListController ctrl = loader.getController();
-            ctrl.init(service, currentUser, dashboardController, currentStage);
+            if (filterLanguage != null && filterLevels != null) {
+                ctrl.initWithFilter(service, currentUser, dashboardController,
+                        currentStage, filterLanguage, filterLevels, filterLevelName);
+            } else {
+                ctrl.init(service, currentUser, dashboardController, currentStage);
+            }
             ctrl.setOnBack(onBack);
-            ctrl.setOriginalScene(originalScene, originalTitle); // ← NOUVEAU
             ctrl.refreshData();
-            Scene scene = new Scene(root);
-            scene.getStylesheets().add(
-                    getClass().getResource("/css/style.css").toExternalForm());
-            currentStage.setScene(scene);
-            currentStage.setTitle("LinguaLearn — Tests de Certification");
+            if (contentArea != null) {
+                ctrl.setContentArea(contentArea);
+                contentArea.getChildren().setAll(root);
+            } else {
+                ctrl.setOriginalScene(originalScene, originalTitle);
+                Scene scene = new Scene(root);
+                scene.getStylesheets().add(
+                        getClass().getResource("/css/style.css").toExternalForm());
+                currentStage.setScene(scene);
+                currentStage.setTitle("LinguaLearn — Tests de Certification");
+            }
         } catch (IOException e) {
             showError("Erreur retour : " + e.getMessage());
         }
     }
+
+    public StackPane getContentArea() { return contentArea; }
 
     private void showInfo(String msg)  { new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK).showAndWait(); }
     private void showError(String msg) { new Alert(Alert.AlertType.ERROR,       msg, ButtonType.OK).showAndWait(); }

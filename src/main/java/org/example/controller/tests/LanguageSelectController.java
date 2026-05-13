@@ -47,11 +47,13 @@ public class LanguageSelectController implements Initializable {
     public void init(MockTestService service, User user,
                      UserDashboardController dashboardController, Stage stage) {
         initWithMode(service, user, dashboardController, stage, Mode.TEST);
+        showInternalChrome();
     }
 
     public void initForProfile(MockTestService service, User user,
                                UserDashboardController dashboardController, Stage stage) {
         initWithMode(service, user, dashboardController, stage, Mode.PROFILE);
+        showInternalChrome();
     }
 
     public void initEmbedded(MockTestService service, User user,
@@ -69,11 +71,17 @@ public class LanguageSelectController implements Initializable {
     }
 
     public void initEmbeddedProfile(MockTestService service, User user,
-                                    Runnable onBack, Stage stage) {
+                                    Runnable onBack, Stage stage, StackPane contentArea) {
         this.contentArea = contentArea;
         this.onBack = onBack;
         initWithMode(service, user, null, stage, Mode.PROFILE);
         hideInternalChrome();
+    }
+
+    private void showInternalChrome() {
+        if (embeddedHeader != null) { embeddedHeader.setVisible(true); embeddedHeader.setManaged(true); }
+        if (embeddedHero   != null) { embeddedHero.setVisible(true);   embeddedHero.setManaged(true); }
+        if (embeddedWave   != null) { embeddedWave.setVisible(true);   embeddedWave.setManaged(true); }
     }
 
     private void hideInternalChrome() {
@@ -193,6 +201,7 @@ public class LanguageSelectController implements Initializable {
             LevelSelectController ctrl = loader.getController();
             ctrl.init(service, currentUser, dashboardController, currentStage, lang);
             ctrl.setOnBack(contentArea != null ? this::loadHub : onBack);
+            if (contentArea != null) ctrl.setContentArea(contentArea);
             if (contentArea != null) {
                 contentArea.getChildren().setAll(root);
             } else {

@@ -15,9 +15,9 @@
             <VBox spacing="3">
                 <HBox spacing="10" alignment="CENTER_LEFT">
                     <FontIcon iconLiteral="fas-brain" iconSize="22" iconColor="#1e293b"/>
-                    <Label fx:id="headerTitle" text="Quiz Management" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                    <Label fx:id="headerTitle" text="Quiz Management" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #1a1f36;"/>
                 </HBox>
-                <Label fx:id="headerSubtitle" text="Create, manage and organize your linguistic quizzes" style="-fx-text-fill: #64748b; -fx-font-size: 12px;"/>
+                <Label fx:id="headerSubtitle" text="Create, manage and organize your linguistic quizzes" style="-fx-text-fill: #6c7a99; -fx-font-size: 12px;"/>
             </VBox>
             <Region HBox.hgrow="ALWAYS"/>
             <Button fx:id="btnAddNew" onAction="#goToCreateForm" styleClass="btn-primary">
@@ -40,8 +40,8 @@
                             <FontIcon iconLiteral="fas-layer-group" iconSize="20" iconColor="#0d6efd"/>
                         </StackPane>
                         <VBox spacing="2">
-                            <Label fx:id="statTotal" text="0" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
-                            <Label text="Total Quizzes" style="-fx-text-fill: #64748b; -fx-font-size: 12px;"/>
+                            <Label fx:id="statTotal" text="0" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #1a1f36;"/>
+                            <Label text="Total Quizzes" style="-fx-text-fill: #6c7a99; -fx-font-size: 12px;"/>
                         </VBox>
                     </HBox>
                     <HBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="16" alignment="CENTER_LEFT">
@@ -49,7 +49,7 @@
                             <FontIcon iconLiteral="fas-check-circle" iconSize="20" iconColor="#22c55e"/>
                         </StackPane>
                         <VBox spacing="2">
-                            <Label fx:id="statActive" text="0" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #22c55e;"/>
+                            <Label fx:id="statActive" text="0" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2f9e44;"/>
                             <Label text="Active" style="-fx-text-fill: #64748b; -fx-font-size: 12px;"/>
                         </VBox>
                     </HBox>
@@ -58,31 +58,31 @@
                             <FontIcon iconLiteral="fas-pause-circle" iconSize="20" iconColor="#f59e0b"/>
                         </StackPane>
                         <VBox spacing="2">
-                            <Label fx:id="statInactive" text="0" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #f59e0b;"/>
+                            <Label fx:id="statInactive" text="0" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #e67700;"/>
                             <Label text="Inactive" style="-fx-text-fill: #64748b; -fx-font-size: 12px;"/>
                         </VBox>
                     </HBox>
                 </HBox>
 
                 <!-- FILTERS BAR -->
-                <HBox spacing="15" alignment="CENTER_LEFT" styleClass="filter-bar" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 12;">
+                <HBox spacing="15" alignment="CENTER_LEFT" styleClass="filter-bar card" style="-fx-padding: 20;">
                     <VBox spacing="6" HBox.hgrow="ALWAYS">
-                        <Label text="SEARCH" style="-fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: #94a3b8;"/>
+                        <Label text="SEARCH" style="-fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: #6c7a99;"/>
                         <TextField fx:id="searchField" promptText="Search quizzes..." styleClass="text-field-modern"/>
                     </VBox>
 
                     <VBox spacing="6">
-                        <Label text="STATUS" style="-fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: #94a3b8;"/>
+                        <Label text="STATUS" style="-fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: #6c7a99;"/>
                         <ComboBox fx:id="filterStatus" prefWidth="150" styleClass="text-field-modern"/>
                     </VBox>
 
                     <VBox spacing="6">
-                        <Label text="LESSON" style="-fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: #94a3b8;"/>
+                        <Label text="LESSON" style="-fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: #6c7a99;"/>
                         <ComboBox fx:id="filterLesson" prefWidth="180" styleClass="text-field-modern"/>
                     </VBox>
 
                     <VBox spacing="6">
-                        <Label text="SORT BY" style="-fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: #94a3b8;"/>
+                        <Label text="SORT BY" style="-fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: #6c7a99;"/>
                         <ComboBox fx:id="comboSort" prefWidth="150" styleClass="text-field-modern"/>
                     </VBox>
 
@@ -99,7 +99,7 @@
                 <FlowPane fx:id="quizGrid" hgap="25" vgap="25" alignment="TOP_LEFT"/>
 
                 <HBox alignment="CENTER_LEFT" style="-fx-padding: 10 0 30 0;">
-                    <Label fx:id="labelTotalCount" text="Showing 0 quizzes" style="-fx-text-fill: #94a3b8; -fx-font-size: 12px;"/>
+                    <Label fx:id="labelTotalCount" text="Showing 0 quizzes" style="-fx-text-fill: #6c7a99; -fx-font-size: 12px;"/>
                 </HBox>
             </VBox>
         </ScrollPane>
