@@ -64,31 +64,7 @@
             <VBox styleClass="profile-card" HBox.hgrow="ALWAYS" spacing="12.0">
                 <Label text="My Languages" styleClass="form-section-title"/>
 
-                <!-- Arabic row -->
-                <HBox spacing="10.0" alignment="CENTER_LEFT" styleClass="notif-row">
-                    <Label text="AR"
-                           style="-fx-background-color: #1a1f36; -fx-text-fill: white;
-                                  -fx-font-weight: bold; -fx-font-size: 11px;
-                                  -fx-background-radius: 4; -fx-padding: 3 8;
-                                  -fx-alignment: center;" />
-                    <Label text="Arabe" HBox.hgrow="ALWAYS"
-                           style="-fx-font-size: 13px; -fx-text-fill: #1a1f36;"/>
-                    <Region HBox.hgrow="ALWAYS"/>
-                    <Label text="A1" styleClass="badge-active"/>
-                </HBox>
-
-                <!-- French row -->
-                <HBox spacing="10.0" alignment="CENTER_LEFT" styleClass="notif-row">
-                    <Label text="FR"
-                           style="-fx-background-color: #1a1f36; -fx-text-fill: white;
-                                  -fx-font-weight: bold; -fx-font-size: 11px;
-                                  -fx-background-radius: 4; -fx-padding: 3 8;
-                                  -fx-alignment: center;"/>
-                    <Label text="Fran&#xE7;ais" HBox.hgrow="ALWAYS"
-                           style="-fx-font-size: 13px; -fx-text-fill: #1a1f36;"/>
-                    <Region HBox.hgrow="ALWAYS"/>
-                    <Label text="A1" styleClass="badge-active"/>
-                </HBox>
+                <VBox fx:id="languagesBox" spacing="8.0"/>
             </VBox>
 
             <!-- Recent Notifications -->

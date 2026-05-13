@@ -41,7 +41,24 @@
       "Bash(JAVA_HOME=\"/c/Program Files/JetBrains/IntelliJ IDEA 2023.2.3/jbr\" mvn.cmd compile -q)",
       "Bash(cmd.exe:*)",
       "Bash(kill %1 wait)",
-      "Bash(JAVA_HOME=\"/c/Program Files/JetBrains/IntelliJ IDEA 2023.2.3/jbr\" \"/c/Users/belha/.m2/wrapper/dists/apache-maven-3.8.5-bin/5i5jha092a3i37g0paqnfr15e0/apache-maven-3.8.5/bin/mvn\" compile -q)"
+      "Bash(JAVA_HOME=\"/c/Program Files/JetBrains/IntelliJ IDEA 2023.2.3/jbr\" \"/c/Users/belha/.m2/wrapper/dists/apache-maven-3.8.5-bin/5i5jha092a3i37g0paqnfr15e0/apache-maven-3.8.5/bin/mvn\" compile -q)",
+      "Bash(xargs grep -l \"class LearningStats\")",
+      "Bash(xargs grep -l \"UserLanguage\\\\|enrolledLanguage\\\\|UserEnrolled\")",
+      "Bash(xargs grep -l \"getLanguages\\\\|enrolledIn\\\\|language\")",
+      "Bash(xargs grep -l \"getEnrolledLanguages\\\\|getUserLanguage\\\\|findByUser\\\\|languages\")",
+      "Bash(xargs grep -l \"class.*Language\\\\|UserEnrollment\\\\|Enrollment\\\\|enrolled\")",
+      "Bash(xargs grep -l \"class UserLanguage\")",
+      "Bash(xargs grep -l \"user_language\\\\|user_enrolled\\\\|UserLanguage\")",
+      "Bash(xargs grep -l \"getUserId\\\\|user_id\\\\|userId\")",
+      "Bash(xargs grep -l \"getBy\\\\|findBy\")",
+      "PowerShell(Get-Command *)",
+      "PowerShell(Get-ChildItem \"C:\\\\Program Files\" -ErrorAction SilentlyContinue | Where-Object {$_.Name -match \"maven|Maven|jdk|JDK|java|Java\"} | Select-Object Name; Get-ChildItem \"C:\\\\opt\" -ErrorAction SilentlyContinue | Select-Object Name)",
+      "PowerShell(Get-ChildItem \"C:\\\\Program Files\" -ErrorAction SilentlyContinue | Where-Object {$_.Name -match \"Java|jdk|jre|maven|Maven\"} | Select-Object Name; Get-ChildItem \"C:\\\\Program Files \\(x86\\)\" -ErrorAction SilentlyContinue | Where-Object {$_.Name -match \"Java|jdk|jre|maven|Maven\"} | Select-Object Name)",
+      "PowerShell($env:JAVA_HOME; $env:JDK_HOME; Get-ChildItem \"C:\\\\Users\\\\Takwa\" -ErrorAction SilentlyContinue | Where-Object {$_.Name -match \"java|jdk|maven|jre\"} | Select-Object Name; Get-ChildItem \"C:\\\\Users\\\\Takwa\\\\AppData\\\\Local\" -ErrorAction SilentlyContinue | Where-Object {$_.Name -match \"java|jdk|maven\"} | Select-Object Name)",
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\Takwa\\\\AppData\\\\Roaming\" -ErrorAction SilentlyContinue | Where-Object {$_.Name -match \"java|jdk|maven\"} | Select-Object Name; Test-Path \"C:\\\\Users\\\\Takwa\\\\.m2\"; Test-Path \"C:\\\\Users\\\\Takwa\\\\.jdks\")",
+      "PowerShell(Get-ChildItem \"C:\\\\Program Files\\\\JetBrains\\\\IntelliJ IDEA 2025.2.1\\\\plugins\" -ErrorAction SilentlyContinue | Where-Object {$_.Name -match \"maven|Maven\"} | Select-Object Name)",
+      "PowerShell($env:JAVA_HOME = \"C:\\\\Users\\\\Takwa\\\\.jdks\\\\temurin-21.0.11\"; $env:PATH = $env:PATH + \";C:\\\\Users\\\\Takwa\\\\.jdks\\\\temurin-21.0.11\\\\bin\"; Set-Location \"C:\\\\Users\\\\Takwa\\\\Desktop\\\\last\\\\Esprit-PIDEV-3A33-2026-LingualearnJava\"; & \"C:\\\\Program Files\\\\JetBrains\\\\IntelliJ IDEA 2025.2.1\\\\plugins\\\\maven\\\\lib\\\\maven3\\\\bin\\\\mvn.cmd\" compile 2>&1 | Select-Object -Last 30)",
+      "PowerShell($env:JAVA_HOME = \"C:\\\\Users\\\\Takwa\\\\.jdks\\\\temurin-21.0.11\"; $env:PATH = $env:PATH + \";C:\\\\Users\\\\Takwa\\\\.jdks\\\\temurin-21.0.11\\\\bin\"; Set-Location \"C:\\\\Users\\\\Takwa\\\\Desktop\\\\last\\\\Esprit-PIDEV-3A33-2026-LingualearnJava\"; & \"C:\\\\Program Files\\\\JetBrains\\\\IntelliJ IDEA 2025.2.1\\\\plugins\\\\maven\\\\lib\\\\maven3\\\\bin\\\\mvn.cmd\" compile 2>&1 | Select-Object -Last 20)"
     ]
   }
 }

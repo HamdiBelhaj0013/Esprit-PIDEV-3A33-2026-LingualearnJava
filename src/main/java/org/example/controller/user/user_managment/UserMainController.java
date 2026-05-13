@@ -113,7 +113,7 @@ public class UserMainController {
         loadView("/fxml/user/UserProfileView.fxml");
     }
 
-    @FXML private void showUserLanguages(ActionEvent e) {
+    @FXML public void showUserLanguages(ActionEvent e) {
         if (e != null && e.getSource() instanceof Button) setActive((Button) e.getSource(), "Languages");
         org.example.controllers.FrontRouter.setContentPane(contentArea);
         loadView("/fxml/modules/frontoffice/front-languages.fxml");
@@ -136,7 +136,7 @@ public class UserMainController {
         showComingSoonContent();
     }
 
-    @FXML private void showQuizzes(ActionEvent e) {
+    @FXML public void showQuizzes(ActionEvent e) {
         setActive((Button) e.getSource(), "Quizzes");
         loadView("/fxml/QuizView.fxml");
     }
@@ -161,7 +161,7 @@ public class UserMainController {
         loadView("/fxml/user/user_view.fxml");
     }
 
-    @FXML private void showMockTests(ActionEvent e) {
+    @FXML public void showMockTests(ActionEvent e) {
         setActive((Button) e.getSource(), "Mock Tests");
         try {
             Stage stage = (Stage) contentArea.getScene().getWindow();
@@ -265,7 +265,7 @@ public class UserMainController {
         }
     }
 
-    void showComingSoonFor(String title) {
+    public void showComingSoonFor(String title) {
         topbarTitle.setText(title);
         showComingSoonContent();
     }

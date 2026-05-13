@@ -28,6 +28,7 @@ public class UserDashboardController {
     @FXML private VBox       notificationsBox;
     @FXML private VBox       subscriptionCard;
     @FXML private VBox       accountInfoBox;
+    @FXML private VBox       languagesBox;
 
     private UserMainController parentController;
 
@@ -55,6 +56,18 @@ public class UserDashboardController {
         SessionManager.setCurrentUser(user);
 
         LearningStats stats = user.getLearningStats();
+        if (stats == null) {
+            try {
+                org.example.services.FrontProgressService fps =
+                    new org.example.services.FrontProgressService();
+                int uid = user.getId().intValue();
+                LearningStats fresh = new LearningStats();
+                fresh.setTotalXP(fps.getTotalXp(uid));
+                fresh.setWordsLearned(fps.getWordsLearned(uid));
+                fresh.setTotalMinutesStudied(fps.getTotalMinutesStudied(uid));
+                stats = fresh;
+            } catch (Exception ignored) {}
+        }
 
         // ── Header ──────────────────────────────────────────────────────────
         welcomeLabel.setText("Welcome back, " + user.getFirstName() + " \uD83D\uDC4B");
@@ -79,6 +92,7 @@ public class UserDashboardController {
         studyTimeValue.setText(String.valueOf(minutes));
 
         loadNotifications(user);
+        loadLanguages(user);
         buildSubscriptionCard(user);
         buildAccountInfo(user, stats);
     }
@@ -127,6 +141,50 @@ public class UserDashboardController {
             Label err = new Label("Could not load notifications.");
             err.setStyle("-fx-text-fill: #d63939; -fx-font-size: 12px;");
             notificationsBox.getChildren().add(err);
+        }
+    }
+
+    // ── Languages ────────────────────────────────────────────────────────────
+
+    private void loadLanguages(User user) {
+        if (languagesBox == null) return;
+        languagesBox.getChildren().clear();
+        try {
+            List<org.example.entities.PlatformLanguage> languages =
+                new org.example.services.PlatformLanguageService().getEnabledLanguages();
+            if (languages == null || languages.isEmpty()) {
+                Label empty = new Label("No languages added yet.");
+                empty.setStyle("-fx-text-fill: #6c7a99; -fx-font-size: 13px;");
+                languagesBox.getChildren().add(empty);
+            } else {
+                for (var lang : languages) {
+                    String code = lang.getCode() != null ? lang.getCode().toUpperCase() : "??";
+                    String name = lang.getName();
+
+                    HBox row = new HBox(10);
+                    row.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+                    row.getStyleClass().add("notif-row");
+
+                    Label codeLbl = new Label(code);
+                    codeLbl.setStyle("-fx-background-color: #1a1f36; -fx-text-fill: white;" +
+                        "-fx-font-weight: bold; -fx-font-size: 11px;" +
+                        "-fx-background-radius: 4; -fx-padding: 3 8;");
+
+                    Label nameLbl = new Label(name);
+                    nameLbl.setStyle("-fx-font-size: 13px; -fx-text-fill: #1a1f36;");
+                    HBox.setHgrow(nameLbl, Priority.ALWAYS);
+
+                    javafx.scene.layout.Region spacer = new javafx.scene.layout.Region();
+                    HBox.setHgrow(spacer, Priority.ALWAYS);
+
+                    row.getChildren().addAll(codeLbl, nameLbl, spacer);
+                    languagesBox.getChildren().add(row);
+                }
+            }
+        } catch (Exception e) {
+            Label err = new Label("Could not load languages.");
+            err.setStyle("-fx-text-fill: #d63939; -fx-font-size: 12px;");
+            languagesBox.getChildren().add(err);
         }
     }
 
@@ -294,15 +352,15 @@ public class UserDashboardController {
     }
 
     @FXML private void onBrowseCourses() {
-        if (parentController != null) parentController.showComingSoonFor("My Courses");
+        if (parentController != null) parentController.showUserLanguages(null);
     }
 
     @FXML private void onPracticeNow() {
-        if (parentController != null) parentController.showComingSoonFor("Practice");
+        if (parentController != null) parentController.showQuizzes(null);
     }
 
     @FXML private void onMockTest() {
-        if (parentController != null) parentController.showComingSoonFor("Mock Tests");
+        if (parentController != null) parentController.showMockTests(null);
     }
 
     @FXML private void onEditProfile() {
